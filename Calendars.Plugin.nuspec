@@ -16,6 +16,8 @@
          Perform basic CRUD calendar operations on iOS/Android/WinPhone through a simple common API.
          
          See project site README for usage notes and limitations.
+         
+         Warning: Using this to edit events that it did not create is not recommended and could lead to data loss. See README for details. 
        </description>
        <summary>Cross-platform abstraction for querying and modifying device calendars.</summary>
        <tags>xamarin, pcl, xam.pcl, plugin, plugin for xamarin, windows phone, winphone, wp8, android, xamarin.forms, ios</tags>
