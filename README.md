@@ -5,6 +5,7 @@ Cross-platform plugin for querying and modifying device calendars. Supports basi
 WARNING: I do not recommend using this to edit events that it did not create, as data could be lost if those events use fields that it does not yet support. (see Limitations for details)
 
 ### Setup & Usage
+* Available on NuGet: http://www.nuget.org/packages/CClarke.Plugin.Calendars
 * Install into your PCL project and Client projects.
 * Call CrossCalendars.Current from any project or PCL to gain access to APIs.
 
