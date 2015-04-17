@@ -6,7 +6,7 @@
        <title>Calendars API Plugin for Xamarin and Windows Phone</title>
        <authors>Caleb Clarke</authors>
        <owners>Caleb Clarke</owners>
-       <licenseUrl>https://github.com/TheAlmightyBob/Calendars/blob/master/LICENSE.md</licenseUrl>
+       <licenseUrl>https://github.com/TheAlmightyBob/Calendars/blob/master/LICENSE</licenseUrl>
        <projectUrl>https://github.com/TheAlmightyBob/Calendars</projectUrl>
      <!--Default Icon, a template can be found:  https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Plugins-Templates/icons/plugin_icon.png-->  
      <iconUrl>https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Plugins-Templates/icons/plugin_icon_nuget.png</iconUrl>
