@@ -19,9 +19,14 @@ WARNING: I do not recommend using this to edit events that it did not create, as
 Windows Store 8.1 currently just throws NotSupportedException (as the platform does not provide a corresponding native API).
 
 ### Platform Notes:
-* Android: Requires Read_Calendar & WriteCalendar permissions.
-* Windows Phone: Calendar color is read-only.
-* iOS: Calendar permission will be requested the first time any API function is called, if it has not already been granted. The end time for all-day events will be returned as midnight of the following day (which is consistent with WinPhone/Android, but different from native iOS).
+* Android:
+  * Requires ReadCalendar & WriteCalendar permissions.
+  * Android calendars have additional "account name" and "owner account" properties. By default, this will set those properties for new calendars according to the application package label. However, custom names can be set via the Android implementation class.
+* Windows Phone:
+  * Calendar color is read-only.
+* iOS:
+  * Calendar permission will be requested the first time any API function is called, if it has not already been granted.
+  * The end time for all-day events will be returned as midnight of the following day (which is consistent with WinPhone/Android, but different from native iOS).
 
 ### Limitations:
 * Recurring events are not currently supported. At all. This should not be used to edit existing recurring events. Bad things will likely happen.
