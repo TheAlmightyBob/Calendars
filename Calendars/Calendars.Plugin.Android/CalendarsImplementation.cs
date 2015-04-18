@@ -581,7 +581,7 @@ namespace Calendars.Plugin
             }
             catch (Java.Lang.Exception ex)
             {
-                throw new PlatformException(ex.Message, ex);
+                throw TranslateException(ex);
             }
         }
 
@@ -596,7 +596,7 @@ namespace Calendars.Plugin
             }
             catch (Java.Lang.Exception ex)
             {
-                throw new PlatformException(ex.Message, ex);
+                throw TranslateException(ex);
             }
         }
 
@@ -608,7 +608,7 @@ namespace Calendars.Plugin
             }
             catch (Java.Lang.Exception ex)
             {
-                throw new PlatformException(ex.Message, ex);
+                throw TranslateException(ex);
             }
         }
 
@@ -620,7 +620,19 @@ namespace Calendars.Plugin
             }
             catch (Java.Lang.Exception ex)
             {
-                throw new PlatformException(ex.Message, ex);
+                throw TranslateException(ex);
+            }
+        }
+
+        private static Exception TranslateException(Java.Lang.Exception ex)
+        {
+            if (ex is Java.Lang.SecurityException)
+            {
+                return new UnauthorizedAccessException(ex.Message, ex);
+            }
+            else
+            {
+                return new PlatformException(ex.Message, ex);
             }
         }
             
