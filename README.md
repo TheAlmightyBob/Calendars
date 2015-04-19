@@ -32,7 +32,7 @@ Windows Store 8.1 currently just throws NotSupportedException (as the platform d
 * Recurring events are not currently supported. At all. This should not be used to edit existing recurring events. Bad things will likely happen.
 * Reminders, location, meeting attendees, and other custom fields are also not supported.
 * Async is a lie on Android and iOS. Windows Phone provides a native async API, so to provide a common API abstraction, the Android and iOS implementations use background threads.
-* Some performance tradeoffs were made in the interest of providing a clear and consistent API across all platforms with helpful error checking. Android in particular provides certain optimizations for activities that are unavailable to a cross-platform API. However, this may still useful to an Android that is not constantly re-querying calendar data, or to one that is written with Xamarin.Forms.
+* Some performance tradeoffs were made in the interest of providing a clear and consistent API across all platforms with helpful error checking. Android in particular provides certain optimizations for activities that are unavailable to a cross-platform API. However, this may still useful to an Android app that is not constantly re-querying calendar data, or to one that is written with Xamarin.Forms.
 * Does not currently provide access to the native platform UIs.
 
 tl;dr: You probably don't want to use this to write a replacement calendar app.
