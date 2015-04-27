@@ -40,6 +40,7 @@ namespace Calendars.Plugin.Abstractions
         /// <summary>
         /// Platform-specific unique calendar event identifier
         /// </summary>
+        /// <remarks>This ID will be the same for each instance of a recurring event.</remarks>
         public string ExternalID { get; set; }
 
         /// <summary>
