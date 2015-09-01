@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 #if SILVERLIGHT
 namespace Calendars.Plugin.WinPhoneSL81.Tests
+#elif WINDOWS_UWP
+namespace Calendars.Plugin.UWP.Tests
 #else
 namespace Calendars.Plugin.WinPhone81.Tests
 #endif
@@ -19,11 +21,15 @@ namespace Calendars.Plugin.WinPhone81.Tests
 #if SILVERLIGHT
         private const string _testCategory = "WinPhoneSL";
         private const string _calendarName = "Calendars.Plugin.WinPhoneSL81.Tests.TestCalendar";
+#elif WINDOWS_UWP
+        private const string _testCategory = "UWP";
+        private const string _calendarName = "Calendars.Plugin.UWP.Tests.TestCalendar";
 #else
         private const string _testCategory = "WinPhone";
         private const string _calendarName = "Calendars.Plugin.WinPhone81.Tests.TestCalendar";
 #endif
         private EventComparer _eventComparer;
+        private CalendarComparer _calendarComparer;
 
         private CalendarsImplementation _service;
 
@@ -32,6 +38,7 @@ namespace Calendars.Plugin.WinPhone81.Tests
         {
             _service = new CalendarsImplementation();
             _eventComparer = new EventComparer();
+            _calendarComparer = new CalendarComparer();
         }
 
         [TestCleanup]
@@ -50,8 +57,19 @@ namespace Calendars.Plugin.WinPhone81.Tests
         {
             var cals = await _service.GetCalendarsAsync();
 
-            Assert.IsNotNull(cals);
             Assert.IsTrue(cals.Count > 0);
+        }
+
+        [TestMethod, TestCategory(_testCategory)]
+        public async Task Calendars_GetCalendarById_MatchesGetCalendars()
+        {
+            var cals = await _service.GetCalendarsAsync();
+
+            Assert.IsTrue(cals.Count > 0);
+
+            var calsById = await Task.WhenAll(cals.Select(cal => _service.GetCalendarByIdAsync(cal.ExternalID)));
+
+            CollectionAssert.AreEqual(cals as ICollection, calsById as ICollection, _calendarComparer);
         }
 
         [TestMethod, TestCategory(_testCategory)]

@@ -29,7 +29,7 @@ namespace Calendars.Plugin
         /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<IList<Calendar>> GetCalendarsAsync()
         {
-            await EnsureInitialized().ConfigureAwait(false);
+            await EnsureInitializedAsync().ConfigureAwait(false);
 
             var allCalendars = await _apptStore.FindAppointmentCalendarsAsync().ConfigureAwait(false);
             var localCalendars = await _localApptStore.FindAppointmentCalendarsAsync().ConfigureAwait(false);
@@ -57,11 +57,12 @@ namespace Calendars.Plugin
                 return null;
             }
 
-            await EnsureInitialized().ConfigureAwait(false);
+            await EnsureInitializedAsync().ConfigureAwait(false);
 
             bool writeable = true;
 
-            var calendar = await _localApptStore.GetAppointmentCalendarAsync(externalId).ConfigureAwait(false);
+            //var calendar = await _localApptStore.GetAppointmentCalendarAsync(externalId).ConfigureAwait(false);
+            var calendar = await GetLocalCalendarAsync(externalId).ConfigureAwait(false);
 
             if (calendar == null)
             {
@@ -89,7 +90,7 @@ namespace Calendars.Plugin
         /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<IList<CalendarEvent>> GetEventsAsync(Calendar calendar, DateTime start, DateTime end)
         {
-            await EnsureInitialized().ConfigureAwait(false);
+            await EnsureInitializedAsync().ConfigureAwait(false);
 
             AppointmentCalendar deviceCalendar = null;
 
@@ -131,7 +132,7 @@ namespace Calendars.Plugin
                 return null;
             }
 
-            await EnsureInitialized().ConfigureAwait(false);
+            await EnsureInitializedAsync().ConfigureAwait(false);
 
             var appt = await _apptStore.GetAppointmentAsync(externalId).ConfigureAwait(false);
 
@@ -147,13 +148,13 @@ namespace Calendars.Plugin
         /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task AddOrUpdateCalendarAsync(Calendar calendar)
         {
-            await EnsureInitialized().ConfigureAwait(false);
+            await EnsureInitializedAsync().ConfigureAwait(false);
 
             AppointmentCalendar existingCalendar = null;
 
             if (!string.IsNullOrEmpty(calendar.ExternalID))
             {
-                existingCalendar = await GetLocalCalendar(calendar.ExternalID).ConfigureAwait(false);
+                existingCalendar = await GetAndValidateLocalCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
             }
 
             // Note: DisplayColor is read-only, we cannot set/update it.
@@ -162,7 +163,7 @@ namespace Calendars.Plugin
             {
                 // Create new calendar
                 //
-                var appCalendar = await CreateAppCalendar(calendar.Name).ConfigureAwait(false);
+                var appCalendar = await CreateAppCalendarAsync(calendar.Name).ConfigureAwait(false);
 
                 calendar.ExternalID = appCalendar.LocalId;
                 calendar.Color = appCalendar.DisplayColor.ToString();
@@ -188,7 +189,7 @@ namespace Calendars.Plugin
         /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task AddOrUpdateEventAsync(Calendar calendar, CalendarEvent calendarEvent)
         {
-            await EnsureInitialized().ConfigureAwait(false);
+            await EnsureInitializedAsync().ConfigureAwait(false);
 
             AppointmentCalendar appCalendar = null;
 
@@ -198,7 +199,7 @@ namespace Calendars.Plugin
             }
             else
             {
-                appCalendar = await GetLocalCalendar(calendar.ExternalID).ConfigureAwait(false);
+                appCalendar = await GetAndValidateLocalCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
             }
 
             Appointment appt = null;
@@ -247,10 +248,11 @@ namespace Calendars.Plugin
                 return false;
             }
 
-            await EnsureInitialized().ConfigureAwait(false);
+            await EnsureInitializedAsync().ConfigureAwait(false);
 
             bool deleted = false;
-            var appCalendar = await _localApptStore.GetAppointmentCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
+            //var appCalendar = await _localApptStore.GetAppointmentCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
+            var appCalendar = await GetLocalCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
 
             if (appCalendar != null)
             {
@@ -291,10 +293,11 @@ namespace Calendars.Plugin
                 return false;
             }
 
-            await EnsureInitialized().ConfigureAwait(false);
+            await EnsureInitializedAsync().ConfigureAwait(false);
 
             bool deleted = false;
-            var appCalendar = await _localApptStore.GetAppointmentCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
+            //var appCalendar = await _localApptStore.GetAppointmentCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
+            var appCalendar = await GetLocalCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
 
             if (appCalendar != null)
             {
@@ -336,7 +339,7 @@ namespace Calendars.Plugin
 
         #region Private Methods
 
-        private async Task EnsureInitialized()
+        private async Task EnsureInitializedAsync()
         {
             if (_apptStore == null)
             {
@@ -349,9 +352,9 @@ namespace Calendars.Plugin
             }
         }
 
-        private async Task<AppointmentCalendar> CreateAppCalendar(string calendarName)
+        private async Task<AppointmentCalendar> CreateAppCalendarAsync(string calendarName)
         {
-            await EnsureInitialized().ConfigureAwait(false);
+            await EnsureInitializedAsync().ConfigureAwait(false);
 
             var appCalendar = await _localApptStore.CreateAppointmentCalendarAsync(calendarName).ConfigureAwait(false);
 
@@ -367,16 +370,17 @@ namespace Calendars.Plugin
         /// <summary>
         /// The main purpose of this is just to throw an appropriate exception on failure.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        private async Task<AppointmentCalendar> GetLocalCalendar(string id)
+        /// <param name="id">Local calendar ID</param>
+        /// <returns>App calendar with write access (will not return null)</returns>
+        /// <exception cref="System.ArgumentException">Calendar ID does not refer to an app-owned calendar</exception>
+        private async Task<AppointmentCalendar> GetAndValidateLocalCalendarAsync(string id)
         {
             AppointmentCalendar appCalendar = null;
             Exception platformException = null;
 
             try
             {
-                appCalendar = await _localApptStore.GetAppointmentCalendarAsync(id);
+                appCalendar = await GetLocalCalendarAsync(id).ConfigureAwait(false);
             }
             catch (ArgumentException ex)
             {
@@ -391,6 +395,31 @@ namespace Calendars.Plugin
             return appCalendar;
         }
 
-        #endregion
+        /// <summary>
+        /// This is to handle a difference in the behavior of Windows UWP and WinPhone 8.1.
+        /// On UWP, GetAppointmentCalendarAsync for a store created with AppCalendarsReadWrite
+        /// access will still return non-app calendars that the app does not have write access
+        /// to. FindAppointmentCalendarsAsync, however, does still respect the access type,
+        /// so we just iterate.
+        /// </summary>
+        /// <remarks>
+        /// Trying to save changes to the calendar would have thrown an appropriate
+        /// UnauthorizedAccessException, but that would be inconsistent with our
+        /// behavior on other platforms and wouldn't help with setting the
+        /// CanEditCalendar/CanEditEvents properties.
+        /// </remarks>
+        /// <param name="id">Local calendar ID</param>
+        /// <returns>App calendar with write access, or null if not found.</returns>
+        private async Task<AppointmentCalendar> GetLocalCalendarAsync(string id)
+        {
+#if WINDOWS_UWP
+            var calendars = await _localApptStore.FindAppointmentCalendarsAsync().ConfigureAwait(false);
+            return calendars.FirstOrDefault(cal => cal.LocalId == id);
+#else
+            return await _localApptStore.GetAppointmentCalendarAsync(id).ConfigureAwait(false);
+#endif
+        }
+
+#endregion
     }
 }
