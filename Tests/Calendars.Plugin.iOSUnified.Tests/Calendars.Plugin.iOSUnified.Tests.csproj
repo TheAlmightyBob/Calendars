@@ -94,8 +94,8 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default.png" />
-    <BundleResource Include="Resources\Default@2x.png" />
-    <BundleResource Include="Resources\Default-568h@2x.png" />
+    <BundleResource Include="Resources\Default%402x.png" />
+    <BundleResource Include="Resources\Default-568h%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoTouch.NUnitLite" />

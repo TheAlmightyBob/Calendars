@@ -2,8 +2,8 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
    <metadata minClientVersion="2.8.1">
        <id>CClarke.Plugin.Calendars</id>
-       <version>0.1.0-alpha</version>
-       <title>Calendars API Plugin for Xamarin and Windows Phone</title>
+       <version>0.2.0-alpha</version>
+       <title>Calendars API Plugin for Xamarin and Windows</title>
        <authors>Caleb Clarke</authors>
        <owners>Caleb Clarke</owners>
        <licenseUrl>https://github.com/TheAlmightyBob/Calendars/blob/master/LICENSE</licenseUrl>
@@ -13,14 +13,17 @@
      
        <requireLicenseAcceptance>false</requireLicenseAcceptance>
        <description>
-         Perform basic CRUD calendar operations on iOS/Android/WinPhone through a simple common API.
+         Perform basic CRUD calendar operations on iOS/Android/WinPhone/UWP through a simple common API.
          
-         See project site README for usage notes and limitations.
+See project site README for usage notes and limitations.
          
-         Warning: Using this to edit events that it did not create is not recommended and could lead to data loss. See README for details. 
+Warning: Using this to edit events that it did not create is not recommended and could lead to data loss. See README for details. 
        </description>
+     <releaseNotes>
+       Added support for Universal Windows Platform.
+     </releaseNotes>
        <summary>Cross-platform abstraction for querying and modifying device calendars.</summary>
-       <tags>xamarin, pcl, xam.pcl, plugin, plugin for xamarin, windows phone, winphone, wp8, android, xamarin.forms, ios</tags>
+       <tags>xamarin, pcl, xam.pcl, plugin, plugin for xamarin, windows phone, winphone, wp8, android, xamarin.forms, ios, uwp</tags>
        <dependencies>
        </dependencies>
    </metadata>
@@ -57,6 +60,13 @@
      <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\Calendars.Plugin.Abstractions.dll" target="lib\win8\Calendars.Plugin.Abstractions.dll" />
      <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\Calendars.Plugin.Abstractions.xml" target="lib\win8\Calendars.Plugin.Abstractions.xml" />
      <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\Calendars.Plugin.Abstractions.pdb" target="lib\win8\Calendars.Plugin.Abstractions.pdb" />
+
+     <!--Universal Windows Platform-->
+     <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Calendars.Plugin.dll" target="lib\uap10.0\Calendars.Plugin.dll" />
+     <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Calendars.Plugin.pdb" target="lib\uap10.0\Calendars.Plugin.pdb" />
+     <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\Calendars.Plugin.Abstractions.dll" target="lib\uap10.0\Calendars.Plugin.Abstractions.dll" />
+     <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\Calendars.Plugin.Abstractions.xml" target="lib\uap10.0\Calendars.Plugin.Abstractions.xml" />
+     <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\Calendars.Plugin.Abstractions.pdb" target="lib\uap10.0\Calendars.Plugin.Abstractions.pdb" />
 
 
      <!--Xamarin.Android-->
