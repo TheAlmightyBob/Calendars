@@ -177,6 +177,7 @@ namespace Calendars.Plugin
                 CalendarContract.Events.InterfaceConsts.Dtstart,
                 CalendarContract.Events.InterfaceConsts.Dtend,
                 CalendarContract.Events.InterfaceConsts.AllDay,
+                CalendarContract.Events.InterfaceConsts.EventLocation,
                 CalendarContract.Instances.EventId
             };
 
@@ -204,6 +205,7 @@ namespace Calendars.Plugin
                                     Description = cursor.GetString(CalendarContract.Events.InterfaceConsts.Description),
                                     Start = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtstart),
                                     End = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtend),
+                                    Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
                                     AllDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay)
                                 });
                         } while (cursor.MoveToNext());
@@ -241,6 +243,7 @@ namespace Calendars.Plugin
                 CalendarContract.Events.InterfaceConsts.Description,
                 CalendarContract.Events.InterfaceConsts.Dtstart,
                 CalendarContract.Events.InterfaceConsts.Dtend,
+                CalendarContract.Events.InterfaceConsts.EventLocation,
                 CalendarContract.Events.InterfaceConsts.AllDay
             };
                     
@@ -262,6 +265,7 @@ namespace Calendars.Plugin
                             Description = cursor.GetString(CalendarContract.Events.InterfaceConsts.Description),
                             Start = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtstart),
                             End = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtend),
+                            Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
                             AllDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay)
                         };
                     }
@@ -333,6 +337,7 @@ namespace Calendars.Plugin
                 values.Put(CalendarContract.Calendars.InterfaceConsts.AccountName, AccountName);
                 values.Put(CalendarContract.Calendars.InterfaceConsts.OwnerAccount, OwnerAccount);
                 values.Put(CalendarContract.Calendars.InterfaceConsts.Visible, true);
+                values.Put(CalendarContract.Calendars.InterfaceConsts.SyncEvents, true);
 
                 values.Put(CalendarContract.Calendars.InterfaceConsts.AccountType, CalendarContract.AccountTypeLocal);
             }
@@ -421,6 +426,8 @@ namespace Calendars.Plugin
                         DateConversions.GetDateAsAndroidMS(calendarEvent.End));
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.AllDay,
                         calendarEvent.AllDay);
+                    eventValues.Put(CalendarContract.Events.InterfaceConsts.EventLocation,
+                        calendarEvent.Location ?? string.Empty);
 
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.EventTimezone,
                         Java.Util.TimeZone.Default.ID);

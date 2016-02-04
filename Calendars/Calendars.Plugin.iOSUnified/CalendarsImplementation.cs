@@ -253,6 +253,7 @@ namespace Calendars.Plugin
             iosEvent.Title = calendarEvent.Name;
             iosEvent.Notes = calendarEvent.Description;
             iosEvent.AllDay = calendarEvent.AllDay;
+            iosEvent.Location = calendarEvent.Location ?? string.Empty;
             iosEvent.StartDate = calendarEvent.Start.ToNSDate();
 
             // If set to AllDay and given an EndDate of 12am the next day, EventKit
