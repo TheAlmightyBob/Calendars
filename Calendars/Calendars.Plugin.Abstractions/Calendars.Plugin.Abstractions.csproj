@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="Calendar.cs" />
     <Compile Include="CalendarEvent.cs" />
+    <Compile Include="CalendarEventReminder.cs" />
     <Compile Include="ICalendars.cs" />
     <Compile Include="ICalendarsExtensions.cs" />
     <Compile Include="PlatformException.cs" />

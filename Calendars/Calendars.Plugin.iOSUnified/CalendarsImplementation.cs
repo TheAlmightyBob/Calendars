@@ -291,6 +291,50 @@ namespace Calendars.Plugin
         }
 
         /// <summary>
+        /// Adds an event reminder to specified calendar event
+        /// </summary>
+        /// <param name="calendarEvent">Event to add the reminder to</param>
+        /// <param name="reminder">The reminder</param>
+        /// <returns>Success or failure</returns>
+        /// <exception cref="ArgumentException">If calendar event is not create or note valid</exception>
+        /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        public Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
+        {
+            if (string.IsNullOrEmpty(calendarEvent.ExternalID))
+            {
+                throw new ArgumentException("Missing calendar event identifier", "calendarEvent");
+            }
+
+            //Grab current event
+            var existingEvent = _eventStore.EventFromIdentifier(calendarEvent.ExternalID);
+        
+            if (existingEvent == null)
+            {
+                throw new ArgumentException("Specified calendar event not found on device");
+            }
+            var seconds = reminder.MinutesBefore * -60;
+            var alarm = EKAlarm.FromTimeInterval(seconds);
+
+            existingEvent.AddAlarm(alarm);
+            NSError error = null;
+            if (!_eventStore.SaveEvent(existingEvent, EKSpan.ThisEvent, out error))
+            {
+                // Without this, the eventStore will continue to return the "updated"
+                // event even though the save failed!
+                // (this obviously also resets any other changes, but since we own the eventStore
+                //  we can be pretty confident that won't be an issue)
+                //
+                _eventStore.Reset();
+
+
+                throw new ArgumentException(error.LocalizedDescription, "reminder", new NSErrorException(error));
+            }
+
+
+            return Task.FromResult(true);
+        }
+
+        /// <summary>
         /// Removes a calendar and all its events from the system.
         /// </summary>
         /// <param name="calendar">Calendar to delete</param>

@@ -236,6 +236,45 @@ namespace Calendars.Plugin
         }
 
         /// <summary>
+        /// Adds an event reminder to specified calendar event
+        /// </summary>
+        /// <param name="calendarEvent">Event to add the reminder to</param>
+        /// <param name="reminder">The reminder</param>
+        /// <returns>Success or failure</returns>
+        /// <exception cref="ArgumentException">If calendar event is not create or note valid</exception>
+        /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        public async Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
+        {
+            if (string.IsNullOrEmpty(calendarEvent.ExternalID))
+            {
+                throw new ArgumentException("Missing calendar event identifier", "calendarEvent");
+            }
+           
+            
+            var existingAppt = await _localApptStore.GetAppointmentAsync(calendarEvent.ExternalID);
+            
+
+            if (existingAppt == null)
+            {
+                throw new ArgumentException("Specified calendar event not found on device");
+            }
+
+
+            var appCalendar = await _localApptStore.GetAppointmentCalendarAsync(existingAppt.CalendarId);
+
+            if(appCalendar == null)
+            {
+                throw new ArgumentException("Event does not have a valid calendar.");
+            }
+
+            existingAppt.Reminder = TimeSpan.FromMinutes(reminder.MinutesBefore);
+            
+            await appCalendar.SaveAppointmentAsync(existingAppt);
+
+            return true;
+        }
+
+        /// <summary>
         /// Removes a calendar and all its events from the system.
         /// </summary>
         /// <param name="calendar">Calendar to delete</param>
@@ -337,9 +376,9 @@ namespace Calendars.Plugin
             return deleted;
         }
 
-        #endregion
+#endregion
 
-        #region Private Methods
+#region Private Methods
 
         private async Task EnsureInitializedAsync()
         {

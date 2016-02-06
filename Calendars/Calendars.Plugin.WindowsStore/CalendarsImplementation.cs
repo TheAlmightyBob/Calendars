@@ -72,7 +72,15 @@ namespace Calendars.Plugin
       /// <summary>
       /// Not supported for Windows Store apps
       /// </summary>
-      public Task<bool> DeleteCalendarAsync(Calendar calendar)
+      public Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
+      {
+          throw new NotSupportedException();
+      }
+
+      /// <summary>
+      /// Not supported for Windows Store apps
+      /// </summary>
+        public Task<bool> DeleteCalendarAsync(Calendar calendar)
       {
           throw new NotSupportedException();
       }

@@ -442,7 +442,60 @@ namespace Calendars.Plugin
                     }
                 });
         }
+
+        /// <summary>
+        /// Adds an event reminder to specified calendar event
+        /// </summary>
+        /// <param name="calendarEvent">Event to add the reminder to</param>
+        /// <param name="reminder">The reminder</param>
+        /// <returns>Success or failure</returns>
+        /// <exception cref="ArgumentException">If calendar event is not create or note valid</exception>
+        /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        public async Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
+        {
+            if (string.IsNullOrEmpty(calendarEvent.ExternalID))
+            {
+                throw new ArgumentException("Missing calendar event identifier", "calendarEvent");
+            }
+            // Verify calendar event exists 
+            var existingAppt = await GetEventByIdAsync(calendarEvent.ExternalID).ConfigureAwait(false);
+
+            if (existingAppt == null)
+            {
+                throw new ArgumentException("Specified calendar event not found on device");
+            }
             
+            return await Task.Run(() =>
+            {
+                var reminderValues = new ContentValues();
+                reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Minutes, reminder.MinutesBefore);
+                reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.EventId, calendarEvent.ExternalID);
+                switch(reminder.Method)
+                {
+                    case CalendarReminderMethod.Alert:
+                        reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Method, (int)RemindersMethod.Alert);
+                        break;
+                    case CalendarReminderMethod.Default:
+                        reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Method, (int)RemindersMethod.Default);
+                        break;
+                    case CalendarReminderMethod.Email:
+                        reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Method, (int)RemindersMethod.Email);
+                        break;
+                    case CalendarReminderMethod.Sms:
+                        reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Method, (int)RemindersMethod.Sms);
+                        break;
+
+                }
+                var uri = CalendarContract.Reminders.ContentUri;
+                Insert(uri, reminderValues);
+                
+
+                return true;
+            });
+
+        }
+
+
         /// <summary>
         /// Removes a calendar and all its events from the system.
         /// </summary>

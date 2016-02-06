@@ -47,6 +47,7 @@ namespace Calendars.Plugin.Abstractions
         /// </summary>
         /// <remarks>This ID will be the same for each instance of a recurring event.</remarks>
         public string ExternalID { get; set; }
+        
 
         /// <summary>
         /// Simple ToString helper, to assist with debugging.

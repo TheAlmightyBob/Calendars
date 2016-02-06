@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendars.Plugin", "Calendars\Calendars.Plugin\Calendars.Plugin.csproj", "{A6FCEF44-D2BA-42C7-B3CB-13667BCD7B54}"
 EndProject
@@ -273,6 +273,7 @@ Global
 		{56A56F17-7DE1-4CA1-9617-BF32E971AC84}.Debug|iPhone.ActiveCfg = Debug|Any CPU
 		{56A56F17-7DE1-4CA1-9617-BF32E971AC84}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
 		{56A56F17-7DE1-4CA1-9617-BF32E971AC84}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{56A56F17-7DE1-4CA1-9617-BF32E971AC84}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{56A56F17-7DE1-4CA1-9617-BF32E971AC84}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{56A56F17-7DE1-4CA1-9617-BF32E971AC84}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{56A56F17-7DE1-4CA1-9617-BF32E971AC84}.Release|Android.ActiveCfg = Release|Any CPU
@@ -717,6 +718,8 @@ Global
 		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E}.Debug|iPhone.ActiveCfg = Debug|Any CPU
 		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
 		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E}.Debug|Mixed Platforms.Deploy.0 = Debug|Any CPU
 		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E}.Release|Android.ActiveCfg = Release|Any CPU
