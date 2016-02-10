@@ -13,9 +13,10 @@ namespace Calendars.Plugin.Abstractions
     {
 
         /// <summary>
-        /// How many minutes before the event the reminder happens
+        /// Amount of time to set the reminder before the start of an event.
+        /// Default is 15 minutes
         /// </summary>
-        public uint MinutesBefore { get; set; } = 0;
+        public TimeSpan TimeBefore { get; set; } = TimeSpan.FromMinutes(15);
         /// <summary>
         /// Type of reminder to display
         /// </summary>

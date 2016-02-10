@@ -312,7 +312,7 @@ namespace Calendars.Plugin
             {
                 throw new ArgumentException("Specified calendar event not found on device");
             }
-            var seconds = reminder.MinutesBefore * -60;
+            var seconds = -reminder?.TimeBefore.TotalSeconds ?? -900;
             var alarm = EKAlarm.FromTimeInterval(seconds);
 
             existingEvent.AddAlarm(alarm);

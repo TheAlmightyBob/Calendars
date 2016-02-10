@@ -468,7 +468,7 @@ namespace Calendars.Plugin
             return await Task.Run(() =>
             {
                 var reminderValues = new ContentValues();
-                reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Minutes, reminder.MinutesBefore);
+                reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Minutes, reminder?.TimeBefore.TotalMinutes ?? 15);
                 reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.EventId, calendarEvent.ExternalID);
                 switch(reminder.Method)
                 {

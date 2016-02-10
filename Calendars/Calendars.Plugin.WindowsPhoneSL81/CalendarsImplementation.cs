@@ -267,7 +267,7 @@ namespace Calendars.Plugin
                 throw new ArgumentException("Event does not have a valid calendar.");
             }
 
-            existingAppt.Reminder = TimeSpan.FromMinutes(reminder.MinutesBefore);
+            existingAppt.Reminder = reminder?.TimeBefore ?? TimeSpan.FromMinutes(15);
             
             await appCalendar.SaveAppointmentAsync(existingAppt);
 
