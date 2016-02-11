@@ -458,7 +458,14 @@ namespace Calendars.Plugin
         private EKCalendar CreateEKCalendar(string calendarName, string color = null)
         {
             var calendar = EKCalendar.Create(EKEntityType.Event, _eventStore);
-            calendar.Source = _eventStore.Sources.First(source => source.SourceType == EKSourceType.Local);
+
+            //if the user has iCloud then we must set to iCloud or it will not show up
+            var iCloud = _eventStore.Sources.FirstOrDefault(source => source.SourceType == EKSourceType.CalDav && source.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase));
+            if (iCloud != null)
+                calendar.Source = iCloud;
+            else
+                calendar.Source = _eventStore.Sources.First(source => source.SourceType == EKSourceType.Local);
+
             calendar.Title = calendarName;
 
             if (!string.IsNullOrEmpty(color))
