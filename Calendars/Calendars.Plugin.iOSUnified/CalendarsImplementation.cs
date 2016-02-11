@@ -168,7 +168,8 @@ namespace Calendars.Plugin
                 calendar.ExternalID = deviceCalendar.CalendarIdentifier;
 
                 // Update color in case iOS assigned one
-                calendar.Color = ColorConversion.ToHexColor(deviceCalendar.CGColor);
+                if(deviceCalendar?.CGColor != null)
+                    calendar.Color = ColorConversion.ToHexColor(deviceCalendar.CGColor);
             }
             else
             {
@@ -466,7 +467,7 @@ namespace Calendars.Plugin
                 source = _eventStore.Sources.FirstOrDefault(s => s.SourceType == EKSourceType.CalDav && s.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase));
             //if still can't find then get a local
             if(source == null)
-                calendar.Source = _eventStore.Sources.FirstOrDefault(s => source.SourceType == EKSourceType.Local);
+                source = _eventStore.Sources.FirstOrDefault(s => source.SourceType == EKSourceType.Local);
 
 
             calendar.Title = calendarName;
