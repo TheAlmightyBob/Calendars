@@ -34,6 +34,7 @@ namespace Calendars.Plugin
 
         private EKEventStore _eventStore;
         private bool? _hasCalendarAccess;
+        private double defaultTimeBefore;
 
         #endregion
 
@@ -45,6 +46,8 @@ namespace Calendars.Plugin
         public CalendarsImplementation()
         {
             _eventStore = new EKEventStore();
+            //iOS stores in negative seconds before the event
+            defaultTimeBefore = -TimeSpan.FromMinutes(15).TotalSeconds;
         }
 
         #endregion
@@ -313,7 +316,9 @@ namespace Calendars.Plugin
             {
                 throw new ArgumentException("Specified calendar event not found on device");
             }
-            var seconds = -reminder?.TimeBefore.TotalSeconds ?? -900;
+
+            //
+            var seconds = -reminder?.TimeBefore.TotalSeconds ?? defaultTimeBefore;
             var alarm = EKAlarm.FromTimeInterval(seconds);
 
             existingEvent.AddAlarm(alarm);
