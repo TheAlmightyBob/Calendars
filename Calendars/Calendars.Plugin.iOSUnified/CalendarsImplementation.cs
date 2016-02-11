@@ -459,14 +459,18 @@ namespace Calendars.Plugin
         {
             var calendar = EKCalendar.Create(EKEntityType.Event, _eventStore);
 
-            //if the user has iCloud then we must set to iCloud or it will not show up
-            var iCloud = _eventStore.Sources.FirstOrDefault(source => source.SourceType == EKSourceType.CalDav && source.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase));
-            if (iCloud != null)
-                calendar.Source = iCloud;
-            else
-                calendar.Source = _eventStore.Sources.First(source => source.SourceType == EKSourceType.Local);
+            //try to get default source for calendar
+            var source =  _eventStore?.DefaultCalendarForNewEvents?.Source;
+            //try to get iCloud
+            if(source == null)
+                source = _eventStore.Sources.FirstOrDefault(s => s.SourceType == EKSourceType.CalDav && s.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase));
+            //if still can't find then get a local
+            if(source == null)
+                calendar.Source = _eventStore.Sources.FirstOrDefault(s => source.SourceType == EKSourceType.Local);
+
 
             calendar.Title = calendarName;
+            calendar.Source = source;
 
             if (!string.IsNullOrEmpty(color))
             {
