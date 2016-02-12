@@ -465,14 +465,15 @@ namespace Calendars.Plugin
         {
             var calendar = EKCalendar.Create(EKEntityType.Event, _eventStore);
 
-            //try to get default source for calendar
-            var source =  _eventStore?.DefaultCalendarForNewEvents?.Source;
-            //try to get iCloud
-            if(source == null)
-                source = _eventStore.Sources.FirstOrDefault(s => s.SourceType == EKSourceType.CalDav && s.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase));
-            //if still can't find then get a local
-            if(source == null)
-                source = _eventStore.Sources.FirstOrDefault(s => source.SourceType == EKSourceType.Local);
+            //try to get source for the default calendar
+            var source = _eventStore?.DefaultCalendarForNewEvents?.Source;
+
+            //check if source is iCloud as new calendars can be added there
+            var iCloud = source != null && source.SourceType == EKSourceType.CalDav && source.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase);
+
+            //if still can't find then get a local for calendars to be created
+            if(source == null || (!iCloud))
+                source = _eventStore.Sources.FirstOrDefault(s => s.SourceType == EKSourceType.Local);
 
 
             calendar.Title = calendarName;
