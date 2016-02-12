@@ -461,43 +461,75 @@ namespace Calendars.Plugin
             return _hasCalendarAccess.Value;
         }
 
-        private EKCalendar CreateEKCalendar(string calendarName, string color = null)
+
+        EKCalendar SaveEKCalendar(EKSource source, string calendarName, string color = null)
         {
             var calendar = EKCalendar.Create(EKEntityType.Event, _eventStore);
 
-            //try to get source for the default calendar
-            var source = _eventStore?.DefaultCalendarForNewEvents?.Source;
-
-            //check if source is iCloud as new calendars can be added there
-            var iCloud = source != null && source.SourceType == EKSourceType.CalDav && source.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase);
-
-            //if still can't find then get a local for calendars to be created
-            if(source == null || (!iCloud))
-                source = _eventStore.Sources.FirstOrDefault(s => s.SourceType == EKSourceType.Local);
-
-
+            //Setup calendar to be inserted
             calendar.Title = calendarName;
-            calendar.Source = source;
 
+            NSError error = null; 
             if (!string.IsNullOrEmpty(color))
             {
                 calendar.CGColor = ColorConversion.ToCGColor(color);
             }
 
-            NSError error = null;
-            if (!_eventStore.SaveCalendar(calendar, true, out error))
-            {
-                // Without this, the eventStore may return the new calendar even though the save failed.
-                // (this obviously also resets any other changes, but since we own the eventStore
-                //  we can be pretty confident that won't be an issue)
-                //
-                _eventStore.Reset();
+            calendar.Source = source;
 
-                throw new PlatformException(error.LocalizedDescription, new NSErrorException(error));
+            if (_eventStore.SaveCalendar(calendar, true, out error))
+            {
+                return calendar;
             }
 
-            return calendar;
+            _eventStore.Reset();
+
+            return null;
+
         }
+
+        private EKCalendar CreateEKCalendar(string calendarName, string color = null)
+        {
+           
+            NSError error = null;
+            //first attempt to find any and all iCloud sources
+            var iCloudSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.CalDav && s.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase));
+            foreach (var source in iCloudSources)
+            {
+                
+                //Ensure that the calendar is enabled
+                if (source.GetCalendars(EKEntityType.Event).Count > 0)
+                {
+                    var cal = SaveEKCalendar(source, calendarName, color);
+                    if (cal != null)
+                        return cal;
+                }
+            }
+
+            //other sources that we didn't try before that are caldav
+            var otherSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.CalDav && !s.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase));
+            foreach (var source in otherSources)
+            {
+                var cal = SaveEKCalendar(source, calendarName, color);
+                if (cal != null)
+                    return cal;
+            }
+          
+
+            //finally attempt just local sources
+            var localSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.Local);
+            foreach (var source in localSources)
+            {
+                var cal = SaveEKCalendar(source, calendarName, color);
+                if (cal != null)
+                    return cal;
+            }
+               
+
+
+            throw new ArgumentException("No active calendar sources available to create calendar on.");
+        }
+
 
         #endregion
     }
