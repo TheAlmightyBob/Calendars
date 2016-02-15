@@ -111,6 +111,7 @@ namespace Calendars.Plugin
             options.FetchProperties.Add(AppointmentProperties.StartTime);
             options.FetchProperties.Add(AppointmentProperties.Duration);
             options.FetchProperties.Add(AppointmentProperties.AllDay);
+            options.FetchProperties.Add(AppointmentProperties.Location);
 
             var appointments = await deviceCalendar.FindAppointmentsAsync(start, end - start, options).ConfigureAwait(false);
             var events = appointments.Select(a => a.ToCalendarEvent()).ToList();
@@ -227,10 +228,50 @@ namespace Calendars.Plugin
             appt.StartTime = calendarEvent.Start;
             appt.Duration = calendarEvent.End - calendarEvent.Start;
             appt.AllDay = calendarEvent.AllDay;
+            appt.Location = calendarEvent.Location ?? string.Empty;
 
             await appCalendar.SaveAppointmentAsync(appt);
 
             calendarEvent.ExternalID = appt.LocalId;
+        }
+
+        /// <summary>
+        /// Adds an event reminder to specified calendar event
+        /// </summary>
+        /// <param name="calendarEvent">Event to add the reminder to</param>
+        /// <param name="reminder">The reminder</param>
+        /// <returns>Success or failure</returns>
+        /// <exception cref="ArgumentException">If calendar event is not created or not valid</exception>
+        /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        public async Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
+        {
+            if (string.IsNullOrEmpty(calendarEvent.ExternalID))
+            {
+                throw new ArgumentException("Missing calendar event identifier", "calendarEvent");
+            }
+           
+            
+            var existingAppt = await _localApptStore.GetAppointmentAsync(calendarEvent.ExternalID);
+            
+
+            if (existingAppt == null)
+            {
+                throw new ArgumentException("Specified calendar event not found on device");
+            }
+
+
+            var appCalendar = await _localApptStore.GetAppointmentCalendarAsync(existingAppt.CalendarId);
+
+            if(appCalendar == null)
+            {
+                throw new ArgumentException("Event does not have a valid calendar.");
+            }
+
+            existingAppt.Reminder = reminder?.TimeBefore ?? TimeSpan.FromMinutes(15);
+            
+            await appCalendar.SaveAppointmentAsync(existingAppt);
+
+            return true;
         }
 
         /// <summary>
@@ -335,9 +376,9 @@ namespace Calendars.Plugin
             return deleted;
         }
 
-        #endregion
+#endregion
 
-        #region Private Methods
+#region Private Methods
 
         private async Task EnsureInitializedAsync()
         {

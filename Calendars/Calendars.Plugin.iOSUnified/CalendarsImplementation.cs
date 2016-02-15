@@ -34,6 +34,7 @@ namespace Calendars.Plugin
 
         private EKEventStore _eventStore;
         private bool? _hasCalendarAccess;
+        private double defaultTimeBefore;
 
         #endregion
 
@@ -45,6 +46,8 @@ namespace Calendars.Plugin
         public CalendarsImplementation()
         {
             _eventStore = new EKEventStore();
+            //iOS stores in negative seconds before the event
+            defaultTimeBefore = -TimeSpan.FromMinutes(15).TotalSeconds;
         }
 
         #endregion
@@ -168,7 +171,8 @@ namespace Calendars.Plugin
                 calendar.ExternalID = deviceCalendar.CalendarIdentifier;
 
                 // Update color in case iOS assigned one
-                calendar.Color = ColorConversion.ToHexColor(deviceCalendar.CGColor);
+                if(deviceCalendar?.CGColor != null)
+                    calendar.Color = ColorConversion.ToHexColor(deviceCalendar.CGColor);
             }
             else
             {
@@ -253,6 +257,7 @@ namespace Calendars.Plugin
             iosEvent.Title = calendarEvent.Name;
             iosEvent.Notes = calendarEvent.Description;
             iosEvent.AllDay = calendarEvent.AllDay;
+            iosEvent.Location = calendarEvent.Location ?? string.Empty;
             iosEvent.StartDate = calendarEvent.Start.ToNSDate();
 
             // If set to AllDay and given an EndDate of 12am the next day, EventKit
@@ -287,6 +292,52 @@ namespace Calendars.Plugin
             }
 
             calendarEvent.ExternalID = iosEvent.EventIdentifier;
+        }
+
+        /// <summary>
+        /// Adds an event reminder to specified calendar event
+        /// </summary>
+        /// <param name="calendarEvent">Event to add the reminder to</param>
+        /// <param name="reminder">The reminder</param>
+        /// <returns>Success or failure</returns>
+        /// <exception cref="ArgumentException">If calendar event is not created or not valid</exception>
+        /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        public Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
+        {
+            if (string.IsNullOrEmpty(calendarEvent.ExternalID))
+            {
+                throw new ArgumentException("Missing calendar event identifier", "calendarEvent");
+            }
+
+            //Grab current event
+            var existingEvent = _eventStore.EventFromIdentifier(calendarEvent.ExternalID);
+        
+            if (existingEvent == null)
+            {
+                throw new ArgumentException("Specified calendar event not found on device");
+            }
+
+            //
+            var seconds = -reminder?.TimeBefore.TotalSeconds ?? defaultTimeBefore;
+            var alarm = EKAlarm.FromTimeInterval(seconds);
+
+            existingEvent.AddAlarm(alarm);
+            NSError error = null;
+            if (!_eventStore.SaveEvent(existingEvent, EKSpan.ThisEvent, out error))
+            {
+                // Without this, the eventStore will continue to return the "updated"
+                // event even though the save failed!
+                // (this obviously also resets any other changes, but since we own the eventStore
+                //  we can be pretty confident that won't be an issue)
+                //
+                _eventStore.Reset();
+
+
+                throw new ArgumentException(error.LocalizedDescription, "reminder", new NSErrorException(error));
+            }
+
+
+            return Task.FromResult(true);
         }
 
         /// <summary>
@@ -410,31 +461,75 @@ namespace Calendars.Plugin
             return _hasCalendarAccess.Value;
         }
 
-        private EKCalendar CreateEKCalendar(string calendarName, string color = null)
+
+        EKCalendar SaveEKCalendar(EKSource source, string calendarName, string color = null)
         {
             var calendar = EKCalendar.Create(EKEntityType.Event, _eventStore);
-            calendar.Source = _eventStore.Sources.First(source => source.SourceType == EKSourceType.Local);
+
+            //Setup calendar to be inserted
             calendar.Title = calendarName;
 
+            NSError error = null; 
             if (!string.IsNullOrEmpty(color))
             {
                 calendar.CGColor = ColorConversion.ToCGColor(color);
             }
 
-            NSError error = null;
-            if (!_eventStore.SaveCalendar(calendar, true, out error))
-            {
-                // Without this, the eventStore may return the new calendar even though the save failed.
-                // (this obviously also resets any other changes, but since we own the eventStore
-                //  we can be pretty confident that won't be an issue)
-                //
-                _eventStore.Reset();
+            calendar.Source = source;
 
-                throw new PlatformException(error.LocalizedDescription, new NSErrorException(error));
+            if (_eventStore.SaveCalendar(calendar, true, out error))
+            {
+                return calendar;
             }
 
-            return calendar;
+            _eventStore.Reset();
+
+            return null;
+
         }
+
+        private EKCalendar CreateEKCalendar(string calendarName, string color = null)
+        {
+           
+            NSError error = null;
+            //first attempt to find any and all iCloud sources
+            var iCloudSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.CalDav && s.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase));
+            foreach (var source in iCloudSources)
+            {
+                
+                //Ensure that the calendar is enabled
+                if (source.GetCalendars(EKEntityType.Event).Count > 0)
+                {
+                    var cal = SaveEKCalendar(source, calendarName, color);
+                    if (cal != null)
+                        return cal;
+                }
+            }
+
+            //other sources that we didn't try before that are caldav
+            var otherSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.CalDav && !s.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase));
+            foreach (var source in otherSources)
+            {
+                var cal = SaveEKCalendar(source, calendarName, color);
+                if (cal != null)
+                    return cal;
+            }
+          
+
+            //finally attempt just local sources
+            var localSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.Local);
+            foreach (var source in localSources)
+            {
+                var cal = SaveEKCalendar(source, calendarName, color);
+                if (cal != null)
+                    return cal;
+            }
+               
+
+
+            throw new ArgumentException("No active calendar sources available to create calendar on.");
+        }
+
 
         #endregion
     }

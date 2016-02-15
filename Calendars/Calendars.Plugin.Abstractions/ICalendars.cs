@@ -88,5 +88,15 @@ namespace Calendars.Plugin.Abstractions
       /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
       /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
       Task<bool> DeleteEventAsync(Calendar calendar, CalendarEvent calendarEvent);
+
+      /// <summary>
+      /// Adds a reminder to the specified calendar event
+      /// </summary>
+      /// <param name="calendarEvent">Event to add</param>
+      /// <param name="reminder">Reminder to add</param>
+      /// <returns>If successful</returns>
+      /// <exception cref="ArgumentException">If calendar event is not created or not valid</exception>
+      /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+      Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder);
   }
 }

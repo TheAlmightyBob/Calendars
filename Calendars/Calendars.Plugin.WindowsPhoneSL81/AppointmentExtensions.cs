@@ -27,6 +27,7 @@ namespace Calendars.Plugin
                 Start = appt.StartTime.LocalDateTime,
                 End = appt.StartTime.Add(appt.Duration).LocalDateTime,
                 AllDay = appt.AllDay,
+                Location = appt.Location,
                 ExternalID = appt.LocalId
             };
         }

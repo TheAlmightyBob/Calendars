@@ -31,6 +31,7 @@ namespace Calendars.Plugin
                     //
                     End = ekEvent.EndDate.ToDateTime().AddSeconds(ekEvent.AllDay ? 1 : 0),
                     AllDay = ekEvent.AllDay,
+                    Location = ekEvent.Location,
                     ExternalID = ekEvent.EventIdentifier
                 };
         }

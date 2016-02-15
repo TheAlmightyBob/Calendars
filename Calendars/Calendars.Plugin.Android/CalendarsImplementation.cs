@@ -177,6 +177,7 @@ namespace Calendars.Plugin
                 CalendarContract.Events.InterfaceConsts.Dtstart,
                 CalendarContract.Events.InterfaceConsts.Dtend,
                 CalendarContract.Events.InterfaceConsts.AllDay,
+                CalendarContract.Events.InterfaceConsts.EventLocation,
                 CalendarContract.Instances.EventId
             };
 
@@ -204,6 +205,7 @@ namespace Calendars.Plugin
                                     Description = cursor.GetString(CalendarContract.Events.InterfaceConsts.Description),
                                     Start = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtstart),
                                     End = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtend),
+                                    Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
                                     AllDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay)
                                 });
                         } while (cursor.MoveToNext());
@@ -241,6 +243,7 @@ namespace Calendars.Plugin
                 CalendarContract.Events.InterfaceConsts.Description,
                 CalendarContract.Events.InterfaceConsts.Dtstart,
                 CalendarContract.Events.InterfaceConsts.Dtend,
+                CalendarContract.Events.InterfaceConsts.EventLocation,
                 CalendarContract.Events.InterfaceConsts.AllDay
             };
                     
@@ -262,6 +265,7 @@ namespace Calendars.Plugin
                             Description = cursor.GetString(CalendarContract.Events.InterfaceConsts.Description),
                             Start = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtstart),
                             End = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtend),
+                            Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
                             AllDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay)
                         };
                     }
@@ -333,6 +337,7 @@ namespace Calendars.Plugin
                 values.Put(CalendarContract.Calendars.InterfaceConsts.AccountName, AccountName);
                 values.Put(CalendarContract.Calendars.InterfaceConsts.OwnerAccount, OwnerAccount);
                 values.Put(CalendarContract.Calendars.InterfaceConsts.Visible, true);
+                values.Put(CalendarContract.Calendars.InterfaceConsts.SyncEvents, true);
 
                 values.Put(CalendarContract.Calendars.InterfaceConsts.AccountType, CalendarContract.AccountTypeLocal);
             }
@@ -421,6 +426,8 @@ namespace Calendars.Plugin
                         DateConversions.GetDateAsAndroidMS(calendarEvent.End));
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.AllDay,
                         calendarEvent.AllDay);
+                    eventValues.Put(CalendarContract.Events.InterfaceConsts.EventLocation,
+                        calendarEvent.Location ?? string.Empty);
 
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.EventTimezone,
                         Java.Util.TimeZone.Default.ID);
@@ -435,7 +442,60 @@ namespace Calendars.Plugin
                     }
                 });
         }
+
+        /// <summary>
+        /// Adds an event reminder to specified calendar event
+        /// </summary>
+        /// <param name="calendarEvent">Event to add the reminder to</param>
+        /// <param name="reminder">The reminder</param>
+        /// <returns>Success or failure</returns>
+        /// <exception cref="ArgumentException">If calendar event is not created or not valid</exception>
+        /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        public async Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
+        {
+            if (string.IsNullOrEmpty(calendarEvent.ExternalID))
+            {
+                throw new ArgumentException("Missing calendar event identifier", "calendarEvent");
+            }
+            // Verify calendar event exists 
+            var existingAppt = await GetEventByIdAsync(calendarEvent.ExternalID).ConfigureAwait(false);
+
+            if (existingAppt == null)
+            {
+                throw new ArgumentException("Specified calendar event not found on device");
+            }
             
+            return await Task.Run(() =>
+            {
+                var reminderValues = new ContentValues();
+                reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Minutes, reminder?.TimeBefore.TotalMinutes ?? 15);
+                reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.EventId, calendarEvent.ExternalID);
+                switch(reminder.Method)
+                {
+                    case CalendarReminderMethod.Alert:
+                        reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Method, (int)RemindersMethod.Alert);
+                        break;
+                    case CalendarReminderMethod.Default:
+                        reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Method, (int)RemindersMethod.Default);
+                        break;
+                    case CalendarReminderMethod.Email:
+                        reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Method, (int)RemindersMethod.Email);
+                        break;
+                    case CalendarReminderMethod.Sms:
+                        reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Method, (int)RemindersMethod.Sms);
+                        break;
+
+                }
+                var uri = CalendarContract.Reminders.ContentUri;
+                Insert(uri, reminderValues);
+                
+
+                return true;
+            });
+
+        }
+
+
         /// <summary>
         /// Removes a calendar and all its events from the system.
         /// </summary>

@@ -22,6 +22,8 @@ build/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
+*.lock.json
+
 *_i.c
 *_p.c
 *.ilk
