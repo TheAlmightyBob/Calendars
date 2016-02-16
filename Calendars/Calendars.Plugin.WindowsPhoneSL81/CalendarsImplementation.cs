@@ -1,11 +1,11 @@
-using Calendars.Plugin.Abstractions;
+using Plugin.Calendars.Abstractions;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Windows.ApplicationModel.Appointments;
 
-namespace Calendars.Plugin
+namespace Plugin.Calendars
 {
     /// <summary>
     /// Implementation for Calendars

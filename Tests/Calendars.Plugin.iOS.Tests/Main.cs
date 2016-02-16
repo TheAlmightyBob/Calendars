@@ -5,7 +5,7 @@ using System.Linq;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
-namespace Calendars.Plugin.iOS.Tests
+namespace Plugin.Calendars.iOS.Tests
 {
     public class Application
     {

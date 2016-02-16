@@ -11,7 +11,7 @@
 
 [assembly: global::Android.Runtime.ResourceDesignerAttribute("Calendars.Plugin.Android.Tests.Resource", IsApplication=true)]
 
-namespace Calendars.Plugin.Android.Tests
+namespace Plugin.Calendars.Android.Tests
 {
 	
 	

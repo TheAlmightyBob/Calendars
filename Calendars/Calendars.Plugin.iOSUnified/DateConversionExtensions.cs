@@ -11,7 +11,7 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 #endif
 
-namespace Calendars.Plugin
+namespace Plugin.Calendars
 {
     /// <summary>
     /// iOS date conversion extension helpers, based on Xamarin sample for Unified migration

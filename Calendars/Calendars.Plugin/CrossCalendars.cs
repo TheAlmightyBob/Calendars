@@ -1,7 +1,7 @@
-﻿using Calendars.Plugin.Abstractions;
+﻿using Plugin.Calendars.Abstractions;
 using System;
 
-namespace Calendars.Plugin
+namespace Plugin.Calendars
 {
   /// <summary>
   /// Cross platform Calendars implemenations

@@ -1,4 +1,4 @@
-﻿using Calendars.Plugin.Abstractions;
+﻿using Plugin.Calendars.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Appointments;
 
-namespace Calendars.Plugin
+namespace Plugin.Calendars
 {
     /// <summary>
     /// Appointment extensions

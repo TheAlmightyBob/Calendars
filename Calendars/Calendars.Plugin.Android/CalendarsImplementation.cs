@@ -1,4 +1,4 @@
-using Calendars.Plugin.Abstractions;
+using Plugin.Calendars.Abstractions;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using Android.Database;
 using System.Globalization;
 using Calendar = Calendars.Plugin.Abstractions.Calendar;
 
-namespace Calendars.Plugin
+namespace Plugin.Calendars
 {
     /// <summary>
     /// Implementation for Calendars

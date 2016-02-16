@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Calendars.Plugin.WinPhoneSL81.Tests.Resources
+namespace Plugin.Calendars.WinPhoneSL81.Tests.Resources
 {
     using System;
 

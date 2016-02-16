@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Calendars.Plugin.Abstractions
+namespace Plugin.Calendars.Abstractions
 {
     /// <summary>
     /// Simple wrapper for iOS NSErrorExceptions and Android Java.Lang.Exception,

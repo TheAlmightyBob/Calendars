@@ -1,5 +1,5 @@
-﻿using Calendars.Plugin.Abstractions;
-using Calendars.Plugin.TestUtilities;
+﻿using Plugin.Calendars.Abstractions;
+using Plugin.Calendars.TestUtilities;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using System;
 using System.Collections;
@@ -8,11 +8,11 @@ using System.Linq;
 using System.Threading.Tasks;
 
 #if SILVERLIGHT
-namespace Calendars.Plugin.WinPhoneSL81.Tests
+namespace Plugin.Calendars.WinPhoneSL81.Tests
 #elif WINDOWS_UWP
-namespace Calendars.Plugin.UWP.Tests
+namespace Plugin.Calendars.UWP.Tests
 #else
-namespace Calendars.Plugin.WinPhone81.Tests
+namespace Plugin.Calendars.WinPhone81.Tests
 #endif
 {
     [TestClass]

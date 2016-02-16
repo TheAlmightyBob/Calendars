@@ -1,4 +1,4 @@
-using Calendars.Plugin.Abstractions;
+using Plugin.Calendars.Abstractions;
 
 #if __UNIFIED__
 using EventKit;
@@ -6,7 +6,7 @@ using EventKit;
 using MonoTouch.EventKit;
 #endif
 
-namespace Calendars.Plugin
+namespace Plugin.Calendars
 {
     /// <summary>
     /// iOS EKEvent extensions

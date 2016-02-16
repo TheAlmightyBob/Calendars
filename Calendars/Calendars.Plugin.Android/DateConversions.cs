@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Calendars.Plugin
+namespace Plugin.Calendars
 {
     /// <summary>
     /// Date conversion helpers.

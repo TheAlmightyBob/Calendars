@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 
 using NUnit.Framework;
-using Calendars.Plugin.Abstractions;
-using Calendars.Plugin.TestUtilities;
+using Plugin.Calendars.Abstractions;
+using Plugin.Calendars.TestUtilities;
 
 #if __UNIFIED__
 using EventKit;
@@ -16,9 +16,9 @@ using MonoTouch.Foundation;
 #endif
 
 #if __UNIFIED__
-namespace Calendars.Plugin.iOSUnified.Tests
+namespace Plugin.Calendars.iOSUnified.Tests
 #else
-namespace Calendars.Plugin.iOS.Tests
+namespace Plugin.Calendars.iOS.Tests
 #endif
 {
     [TestFixture]
