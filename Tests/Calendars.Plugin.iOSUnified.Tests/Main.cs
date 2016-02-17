@@ -5,7 +5,7 @@ using System.Linq;
 using Foundation;
 using UIKit;
 
-namespace Calendars.Plugin.iOSUnified.Tests
+namespace Plugin.Calendars.iOSUnified.Tests
 {
     public class Application
     {

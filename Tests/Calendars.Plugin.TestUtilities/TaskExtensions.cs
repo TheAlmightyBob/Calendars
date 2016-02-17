@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Calendars.Plugin.TestUtilities
+namespace Plugin.Calendars.TestUtilities
 {
     public static class TaskExtensions
     {

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using Calendars.Plugin.Abstractions;
-using Calendars.Plugin.TestUtilities;
+using Plugin.Calendars.Abstractions;
+using Plugin.Calendars.TestUtilities;
 
-namespace Calendars.Plugin.Android.Tests
+namespace Plugin.Calendars.Android.Tests
 {
     [TestFixture]
     [Category("Android")]

@@ -1,6 +1,6 @@
-﻿using Calendars.Plugin.WinPhoneSL81.Tests.Resources;
+﻿using Plugin.Calendars.WinPhoneSL81.Tests.Resources;
 
-namespace Calendars.Plugin.WinPhoneSL81.Tests
+namespace Plugin.Calendars.WinPhoneSL81.Tests
 {
     /// <summary>
     /// Provides access to string resources.

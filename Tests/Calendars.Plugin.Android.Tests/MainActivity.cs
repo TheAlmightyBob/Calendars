@@ -4,7 +4,7 @@ using Android.App;
 using Android.OS;
 using Xamarin.Android.NUnitLite;
 
-namespace Calendars.Plugin.Android.Tests
+namespace Plugin.Calendars.Android.Tests
 {
 	[Activity (Label = "Calendars.Plugin.Android.Tests", MainLauncher = true)]
 	public class MainActivity : TestSuiteActivity

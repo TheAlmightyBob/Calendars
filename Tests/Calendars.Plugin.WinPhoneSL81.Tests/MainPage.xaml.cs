@@ -7,14 +7,14 @@ using System.Windows.Controls;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using Calendars.Plugin.WinPhoneSL81.Tests.Resources;
+using Plugin.Calendars.WinPhoneSL81.Tests.Resources;
 using System.Threading;
 using Microsoft.VisualStudio.TestPlatform.Core;
 using vstest_executionengine_platformbridge;
 using Microsoft.VisualStudio.TestPlatform.TestExecutor;
 using System.Reflection;
 
-namespace Calendars.Plugin.WinPhoneSL81.Tests
+namespace Plugin.Calendars.WinPhoneSL81.Tests
 {
     public partial class MainPage : PhoneApplicationPage
     {

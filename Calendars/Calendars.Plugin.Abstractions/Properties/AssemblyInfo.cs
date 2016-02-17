@@ -6,17 +6,17 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Calendars.Plugin.Abstractions")]
+[assembly: AssemblyTitle("Plugin.Calendars.Abstractions")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Calendars.Plugin.Abstractions")]
+[assembly: AssemblyProduct("Plugin.Calendars.Abstractions")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
 
-[assembly: InternalsVisibleTo("Calendars.Plugin")]
+[assembly: InternalsVisibleTo("Plugin.Calendars")]
 
 // Version information for an assembly consists of the following four values:
 //

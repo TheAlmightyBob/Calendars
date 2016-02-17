@@ -6,9 +6,9 @@ using System.Windows.Markup;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using Calendars.Plugin.WinPhoneSL81.Tests.Resources;
+using Plugin.Calendars.WinPhoneSL81.Tests.Resources;
 
-namespace Calendars.Plugin.WinPhoneSL81.Tests
+namespace Plugin.Calendars.WinPhoneSL81.Tests
 {
     public partial class App : Application
     {

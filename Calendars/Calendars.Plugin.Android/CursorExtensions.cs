@@ -1,7 +1,7 @@
 ﻿using System;
 using Android.Database;
 
-namespace Calendars.Plugin
+namespace Plugin.Calendars
 {
     /// <summary>
     /// Cursor extensions.

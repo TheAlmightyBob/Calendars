@@ -1,4 +1,4 @@
-﻿using Calendars.Plugin.Abstractions;
+﻿using Plugin.Calendars.Abstractions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Calendars.Plugin.TestUtilities
+namespace Plugin.Calendars.TestUtilities
 {
     public class EventComparer : IComparer<CalendarEvent>, IComparer
     {

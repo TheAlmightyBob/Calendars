@@ -7,7 +7,7 @@ using CGColor = CoreGraphics.CGColor;
 using MonoTouch.CoreGraphics;
 #endif
 
-namespace Calendars.Plugin
+namespace Plugin.Calendars
 {
     /// <summary>
     /// iOS color conversion helpers

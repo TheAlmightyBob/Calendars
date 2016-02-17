@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Calendars.Plugin.Abstractions
+namespace Plugin.Calendars.Abstractions
 {
   /// <summary>
   /// Interface for Calendars
