@@ -12,7 +12,7 @@ namespace Plugin.Calendars.Android.Tests
     [Category("Android")]
     class CalendarTests
     {
-        private const string _calendarName = "Calendars.Plugin.Android.Tests.TestCalendar";
+        private const string _calendarName = "Plugin.Calendars.Android.Tests.TestCalendar";
         private EventComparer _eventComparer;
 
         private CalendarsImplementation _service;

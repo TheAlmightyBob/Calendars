@@ -7,7 +7,7 @@ using Android.Provider;
 using Android.Content;
 using Android.Database;
 using System.Globalization;
-using Calendar = Calendars.Plugin.Abstractions.Calendar;
+using Calendar = Plugin.Calendars.Abstractions.Calendar;
 
 namespace Plugin.Calendars
 {

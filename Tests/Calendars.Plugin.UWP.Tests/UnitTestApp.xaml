@@ -1,8 +1,8 @@
 ﻿<Application
-    x:Class="Calendars.Plugin.UWP.Tests.App"
+    x:Class="Plugin.Calendars.UWP.Tests.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Calendars.Plugin.UWP.Tests"
+    xmlns:local="using:Plugin.Calendars.UWP.Tests"
     RequestedTheme="Light">
 
 </Application>

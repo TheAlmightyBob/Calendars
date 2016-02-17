@@ -30,9 +30,9 @@ namespace Plugin.Calendars.iOS.Tests
     class CalendarTests
     {
 #if __UNIFIED__
-        private const string _calendarName = "Calendars.Plugin.iOSUnified.Tests.TestCalendar";
+        private const string _calendarName = "Plugin.Calendars.iOSUnified.Tests.TestCalendar";
 #else
-        private const string _calendarName = "Calendars.Plugin.iOS.Tests.TestCalendar";
+        private const string _calendarName = "Plugin.Calendars.iOS.Tests.TestCalendar";
 #endif
         private EventComparer _eventComparer;
 
