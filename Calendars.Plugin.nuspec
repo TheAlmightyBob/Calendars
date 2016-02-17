@@ -15,9 +15,9 @@
        <description>
          Perform basic CRUD calendar operations on iOS/Android/WinPhone/UWP through a simple common API.
          
-         See project site README for usage notes and limitations.
+See project site README for usage notes and limitations.
          
-         Warning: Using this to edit events that it did not create is not recommended and could lead to data loss. See README for details. 
+Warning: Using this to edit events that it did not create is not recommended and could lead to data loss. See README for details. 
        </description>
      <releaseNotes>
        Added support for Universal Windows Platform.
