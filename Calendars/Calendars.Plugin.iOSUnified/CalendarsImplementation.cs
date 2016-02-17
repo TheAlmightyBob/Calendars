@@ -490,8 +490,6 @@ namespace Plugin.Calendars
 
         private EKCalendar CreateEKCalendar(string calendarName, string color = null)
         {
-           
-            NSError error = null;
             //first attempt to find any and all iCloud sources
             var iCloudSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.CalDav && s.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase));
             foreach (var source in iCloudSources)

@@ -1,5 +1,5 @@
 ﻿<Application
-    x:Class="Calendars.Plugin.WinPhoneSL81.Tests.App"
+    x:Class="Plugin.Calendars.WinPhoneSL81.Tests.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
@@ -7,7 +7,7 @@
 
     <!--Application Resources-->
     <Application.Resources>
-        <local:LocalizedStrings xmlns:local="clr-namespace:Calendars.Plugin.WinPhoneSL81.Tests" x:Key="LocalizedStrings"/>
+        <local:LocalizedStrings xmlns:local="clr-namespace:Plugin.Calendars.WinPhoneSL81.Tests" x:Key="LocalizedStrings"/>
     </Application.Resources>
 
     <Application.ApplicationLifetimeObjects>

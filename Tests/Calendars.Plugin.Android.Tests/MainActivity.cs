@@ -6,7 +6,7 @@ using Xamarin.Android.NUnitLite;
 
 namespace Plugin.Calendars.Android.Tests
 {
-	[Activity (Label = "Calendars.Plugin.Android.Tests", MainLauncher = true)]
+	[Activity (Label = "Plugin.Calendars.Android.Tests", MainLauncher = true)]
 	public class MainActivity : TestSuiteActivity
 	{
 		protected override void OnCreate (Bundle bundle)
