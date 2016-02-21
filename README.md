@@ -39,6 +39,3 @@ Windows Store 8.1 currently just throws NotSupportedException (as the platform d
 * Does not currently provide access to the native platform UIs.
 
 tl;dr: You probably don't want to use this to write a replacement calendar app.
-
-### Developer Notes:
-The solution configurations are a bit unconventional. I am unable to use Visual Studio with Xamarin.Android, so it is specifically excluded from the AnyCPU and Mixed Platform configurations.
