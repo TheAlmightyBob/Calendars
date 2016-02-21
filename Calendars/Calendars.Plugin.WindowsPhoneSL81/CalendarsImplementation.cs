@@ -26,7 +26,7 @@ namespace Plugin.Calendars
         /// </summary>
         /// <returns>Calendars</returns>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
-        /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<IList<Calendar>> GetCalendarsAsync()
         {
             await EnsureInitializedAsync().ConfigureAwait(false);
@@ -49,7 +49,7 @@ namespace Plugin.Calendars
         /// <param name="externalId">Platform-specific calendar identifier</param>
         /// <returns>The corresponding calendar, or null if not found</returns>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
-        /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<Calendar> GetCalendarByIdAsync(string externalId)
         {
             if (string.IsNullOrWhiteSpace(externalId))
@@ -87,7 +87,7 @@ namespace Plugin.Calendars
         /// <returns>Calendar events</returns>
         /// <exception cref="System.ArgumentException">Calendar does not exist on device</exception>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
-        /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<IList<CalendarEvent>> GetEventsAsync(Calendar calendar, DateTime start, DateTime end)
         {
             await EnsureInitializedAsync().ConfigureAwait(false);
@@ -125,7 +125,7 @@ namespace Plugin.Calendars
         /// <param name="externalId">Platform-specific calendar event identifier</param>
         /// <returns>The corresponding calendar event, or null if not found</returns>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
-        /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<CalendarEvent> GetEventByIdAsync(string externalId)
         {
             if (string.IsNullOrWhiteSpace(externalId))
@@ -146,7 +146,7 @@ namespace Plugin.Calendars
         /// <param name="calendar">The calendar to create/update</param>
         /// <exception cref="System.ArgumentException">Calendar does not exist on device or is read-only</exception>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
-        /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task AddOrUpdateCalendarAsync(Calendar calendar)
         {
             await EnsureInitializedAsync().ConfigureAwait(false);
@@ -187,7 +187,7 @@ namespace Plugin.Calendars
         /// <param name="calendarEvent">Event to add or update</param>
         /// <exception cref="System.ArgumentException">Calendar is not specified, does not exist on device, or is read-only</exception>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
-        /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task AddOrUpdateEventAsync(Calendar calendar, CalendarEvent calendarEvent)
         {
             await EnsureInitializedAsync().ConfigureAwait(false);
@@ -242,27 +242,24 @@ namespace Plugin.Calendars
         /// <param name="reminder">The reminder</param>
         /// <returns>Success or failure</returns>
         /// <exception cref="ArgumentException">If calendar event is not created or not valid</exception>
-        /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
         {
             if (string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
                 throw new ArgumentException("Missing calendar event identifier", "calendarEvent");
             }
-           
             
             var existingAppt = await _localApptStore.GetAppointmentAsync(calendarEvent.ExternalID);
             
-
             if (existingAppt == null)
             {
                 throw new ArgumentException("Specified calendar event not found on device");
             }
-
-
+            
             var appCalendar = await _localApptStore.GetAppointmentCalendarAsync(existingAppt.CalendarId);
 
-            if(appCalendar == null)
+            if (appCalendar == null)
             {
                 throw new ArgumentException("Event does not have a valid calendar.");
             }
@@ -281,7 +278,7 @@ namespace Plugin.Calendars
         /// <returns>True if successfully removed</returns>
         /// <exception cref="System.ArgumentException">Calendar is read-only</exception>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
-        /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<bool> DeleteCalendarAsync(Calendar calendar)
         {
             if (string.IsNullOrEmpty(calendar.ExternalID))
@@ -326,7 +323,7 @@ namespace Plugin.Calendars
         /// <returns>True if successfully removed</returns>
         /// <exception cref="System.ArgumentException">Calendar is read-only</exception>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
-        /// <exception cref="Calendars.Plugin.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<bool> DeleteEventAsync(Calendar calendar, CalendarEvent calendarEvent)
         {
             if (string.IsNullOrEmpty(calendar.ExternalID) || string.IsNullOrEmpty(calendarEvent.ExternalID))
@@ -337,7 +334,6 @@ namespace Plugin.Calendars
             await EnsureInitializedAsync().ConfigureAwait(false);
 
             bool deleted = false;
-            //var appCalendar = await _localApptStore.GetAppointmentCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
             var appCalendar = await GetLocalCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
 
             if (appCalendar != null)
