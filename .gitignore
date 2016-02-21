@@ -17,6 +17,9 @@ build/
 [Bb]in/
 [Oo]bj/
 
+# CI tools (downloaded by Cake build process)
+CI/tools
+
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
 !packages/*/build/
 
