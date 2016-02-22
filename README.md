@@ -1,4 +1,5 @@
 ## Calendar API plugin for Xamarin and Windows
+[![Build status](https://ci.appveyor.com/api/projects/status/rdco9mbbsbvgf66r?svg=true)](https://ci.appveyor.com/project/TheAlmightyBob/calendars)
 
 Cross-platform plugin for querying and modifying device calendars. Supports basic CRUD operations with calendars and events.
 
