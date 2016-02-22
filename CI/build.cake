@@ -5,54 +5,55 @@ var TARGET = Argument ("target", Argument ("t", "Default"));
 var version = EnvironmentVariable ("APPVEYOR_BUILD_VERSION") ?? Argument("version", "0.0.9999");
 
 var libraries = new Dictionary<string, string> {
- 	{ "./../Calendars.sln", "Any" },
+    { "./../Calendars.sln", "Any" },
 };
 
 var samples = new Dictionary<string, string> {
-	{ "./../Samples/CalendarsSample.sln", "Win" },
+    { "./../Samples/CalendarsSample.sln", "Win" },
 };
 
 var BuildAction = new Action<Dictionary<string, string>> (solutions =>
 {
 
-	foreach (var sln in solutions) 
+    foreach (var sln in solutions) 
     {
 
-		// If the platform is Any build regardless
-		//  If the platform is Win and we are running on windows build
-		//  If the platform is Mac and we are running on Mac, build
-		if ((sln.Value == "Any")
-				|| (sln.Value == "Win" && IsRunningOnWindows ())
-				|| (sln.Value == "Mac" && IsRunningOnUnix ())) 
+        // If the platform is Any build regardless
+        //  If the platform is Win and we are running on windows build
+        //  If the platform is Mac and we are running on Mac, build
+        if ((sln.Value == "Any")
+                || (sln.Value == "Win" && IsRunningOnWindows ())
+                || (sln.Value == "Mac" && IsRunningOnUnix ())) 
         {
-			
-			// Bit of a hack to use nuget3 to restore packages for project.json
-			if (IsRunningOnWindows ()) 
+            
+            // Bit of a hack to use nuget3 to restore packages for project.json
+            if (IsRunningOnWindows ()) 
             {
-				
-				Information ("RunningOn: {0}", "Windows");
+                
+                Information ("RunningOn: {0}", "Windows");
 
-				NuGetRestore (sln.Key, new NuGetRestoreSettings
+                NuGetRestore (sln.Key, new NuGetRestoreSettings
                 {
-					ToolPath = "./tools/nuget3.exe"
-				});
+                    ToolPath = "./tools/nuget3.exe"
+                });
 
-				// Windows Phone / Universal projects require not using the amd64 msbuild
-				MSBuild (sln.Key, c => 
+                // Windows Phone / Universal projects require not using the amd64 msbuild
+                MSBuild (sln.Key, c => 
                 { 
-					c.Configuration = "Release";
-					c.MSBuildPlatform = Cake.Common.Tools.MSBuild.MSBuildPlatform.x86;
-				});
-			} 
+                    c.Configuration = "Release";
+                    c.MSBuildPlatform = Cake.Common.Tools.MSBuild.MSBuildPlatform.x86;
+					c.PlatformTarget = Cake.Common.Tools.MSBuild.PlatformTarget.MSIL;
+                });
+            } 
             else 
             {
                 // Mac is easy ;)
-				NuGetRestore (sln.Key);
+                NuGetRestore (sln.Key);
 
-				DotNetBuild (sln.Key, c => c.Configuration = "Release");
-			}
-		}
-	}
+                DotNetBuild (sln.Key, c => c.Configuration = "Release");
+            }
+        }
+    }
 });
 
 Task("Libraries").Does(()=>
@@ -68,18 +69,18 @@ Task("Samples")
 });
 
 Task ("NuGet")
-	.IsDependentOn ("Samples")
-	.Does (() =>
+    .IsDependentOn ("Samples")
+    .Does (() =>
 {
     if(!DirectoryExists("./../Build/nuget/"))
         CreateDirectory("./../Build/nuget");
         
-	NuGetPack ("./../Calendars.nuspec", new NuGetPackSettings { 
-		Version = version,
-		Verbosity = NuGetVerbosity.Detailed,
-		OutputDirectory = "./../Build/nuget/",
-		BasePath = "./../",
-	});	
+    NuGetPack ("./../Calendars.nuspec", new NuGetPackSettings { 
+        Version = version,
+        Verbosity = NuGetVerbosity.Detailed,
+        OutputDirectory = "./../Build/nuget/",
+        BasePath = "./../",
+    });	
 });
 
 Task("Component")
@@ -88,18 +89,18 @@ Task("Component")
     .Does(()=>
 {
     // Clear out xml files from build (they interfere with the component packaging)
-	//DeleteFiles ("./../Build/**/*.xml");
+    //DeleteFiles ("./../Build/**/*.xml");
 
-	// Generate component.yaml files from templates
-	//CopyFile ("./../Component/component.template.yaml", "./../Component/component.yaml");
+    // Generate component.yaml files from templates
+    //CopyFile ("./../Component/component.template.yaml", "./../Component/component.yaml");
 
-	// Replace version in template files
-	//ReplaceTextInFiles ("./../**/component.yaml", "{VERSION}", version);
+    // Replace version in template files
+    //ReplaceTextInFiles ("./../**/component.yaml", "{VERSION}", version);
 
-	//var xamCompSettings = new XamarinComponentSettings { ToolPath = "./tools/xamarin-component.exe" };
+    //var xamCompSettings = new XamarinComponentSettings { ToolPath = "./tools/xamarin-component.exe" };
 
-	// Package both components
-	//PackageComponent ("./../Component/", xamCompSettings);
+    // Package both components
+    //PackageComponent ("./../Component/", xamCompSettings);
 });
 
 //Build the component, which build samples, nugets, and libraries
@@ -108,12 +109,12 @@ Task ("Default").IsDependentOn("Component");
 
 Task ("Clean").Does (() => 
 {
-	CleanDirectory ("./../Component/tools/");
+    CleanDirectory ("./../Component/tools/");
 
-	CleanDirectories ("./../Build/");
+    CleanDirectories ("./../Build/");
 
-	CleanDirectories ("./../**/bin");
-	CleanDirectories ("./../**/obj");
+    CleanDirectories ("./../**/bin");
+    CleanDirectories ("./../**/obj");
 });
 
 

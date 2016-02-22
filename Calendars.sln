@@ -739,6 +739,7 @@ Global
 		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
 		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E}.Release|x64.ActiveCfg = Release|Any CPU
 		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E}.Release|x86.ActiveCfg = Release|Any CPU
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Ad-Hoc|Android.ActiveCfg = Release|Any CPU

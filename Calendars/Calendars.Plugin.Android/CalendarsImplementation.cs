@@ -55,7 +55,7 @@ namespace Plugin.Calendars
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Calendars.Plugin.CalendarsImplementation"/> class.
+        /// Initializes a new instance of the <see cref="Plugin.Calendars.CalendarsImplementation"/> class.
         /// </summary>
         public CalendarsImplementation()
         {
