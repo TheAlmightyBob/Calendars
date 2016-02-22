@@ -18,7 +18,7 @@ WARNING: I do not recommend using this to edit events that it did not create, as
 * Windows Phone 8.1 RT
 * Universal Windows Platform (uap10.0 NuGet target)
 
-Windows Store 8.1 currently just throws NotSupportedException (as the platform does not provide a corresponding native API).
+Windows Store 8.1 just throws NotSupportedException (as the platform does not provide a corresponding native API).
 
 ### Platform Notes:
 * Android:
