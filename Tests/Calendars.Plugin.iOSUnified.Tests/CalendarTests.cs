@@ -87,7 +87,7 @@ namespace Plugin.Calendars.iOS.Tests
         [Test]
         public async void Calendars_CreateCalendar_IsFoundByGetCalendars()
         {
-            var calendar = await _service.CreateCalendarAsync(_calendarName);
+            await _service.CreateCalendarAsync(_calendarName);
             var calendars = await _service.GetCalendarsAsync();
 
             Assert.IsTrue(calendars.Any(c => c.Name == _calendarName));
