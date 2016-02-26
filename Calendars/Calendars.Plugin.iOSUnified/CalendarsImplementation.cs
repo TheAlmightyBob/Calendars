@@ -34,7 +34,7 @@ namespace Plugin.Calendars
 
         private EKEventStore _eventStore;
         private bool? _hasCalendarAccess;
-        private double defaultTimeBefore;
+        private double _defaultTimeBefore;
 
         #endregion
 
@@ -47,7 +47,7 @@ namespace Plugin.Calendars
         {
             _eventStore = new EKEventStore();
             //iOS stores in negative seconds before the event
-            defaultTimeBefore = -TimeSpan.FromMinutes(15).TotalSeconds;
+            _defaultTimeBefore = -TimeSpan.FromMinutes(15).TotalSeconds;
         }
 
         #endregion
@@ -161,7 +161,7 @@ namespace Plugin.Calendars
 
                 if (deviceCalendar == null)
                 {
-                    throw new ArgumentException("Specified calendar does not exist on device", "calendar");
+                    throw new ArgumentException("Specified calendar does not exist on device", nameof(calendar));
                 }
             }
 
@@ -222,7 +222,7 @@ namespace Plugin.Calendars
 
             if (string.IsNullOrEmpty(calendar.ExternalID))
             {
-                throw new ArgumentException("Missing calendar identifier", "calendar");
+                throw new ArgumentException("Missing calendar identifier", nameof(calendar));
             }
             else
             {
@@ -306,7 +306,7 @@ namespace Plugin.Calendars
         {
             if (string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
-                throw new ArgumentException("Missing calendar event identifier", "calendarEvent");
+                throw new ArgumentException("Missing calendar event identifier", nameof(calendarEvent));
             }
 
             //Grab current event
@@ -317,11 +317,11 @@ namespace Plugin.Calendars
                 throw new ArgumentException("Specified calendar event not found on device");
             }
 
-            //
-            var seconds = -reminder?.TimeBefore.TotalSeconds ?? defaultTimeBefore;
+            var seconds = -reminder?.TimeBefore.TotalSeconds ?? _defaultTimeBefore;
             var alarm = EKAlarm.FromTimeInterval(seconds);
 
             existingEvent.AddAlarm(alarm);
+
             NSError error = null;
             if (!_eventStore.SaveEvent(existingEvent, EKSpan.ThisEvent, out error))
             {
@@ -332,8 +332,7 @@ namespace Plugin.Calendars
                 //
                 _eventStore.Reset();
 
-
-                throw new ArgumentException(error.LocalizedDescription, "reminder", new NSErrorException(error));
+                throw new ArgumentException(error.LocalizedDescription, nameof(reminder), new NSErrorException(error));
             }
 
 
@@ -373,7 +372,7 @@ namespace Plugin.Calendars
                 //
                 _eventStore.Reset();
                 
-                throw new ArgumentException(error.LocalizedDescription, "calendar", new NSErrorException(error));
+                throw new ArgumentException(error.LocalizedDescription, nameof(calendar), new NSErrorException(error));
             }
 
             return true;
@@ -422,7 +421,7 @@ namespace Plugin.Calendars
 
                 if (error.Domain == _ekErrorDomain && error.Code == (int)EKErrorCode.CalendarReadOnly)
                 {
-                    throw new ArgumentException(error.LocalizedDescription, "calendar", new NSErrorException(error));
+                    throw new ArgumentException(error.LocalizedDescription, nameof(calendar), new NSErrorException(error));
                 }
                 else
                 {
@@ -461,15 +460,26 @@ namespace Plugin.Calendars
             return _hasCalendarAccess.Value;
         }
 
-
+        /// <summary>
+        /// Tries to create a new calendar with the specified source/name/color.
+        /// May fail depending on source.
+        /// </summary>
+        /// <remarks>
+        /// This is only intended as a helper method for CreateEKCalendar,
+        /// not to be called independently.
+        /// </remarks>
+        /// <returns>The created native calendar, or null on failure</returns>
+        /// <param name="source">Calendar source (e.g. iCloud vs local vs gmail)</param>
+        /// <param name="calendarName">Calendar name.</param>
+        /// <param name="color">Calendar color.</param>
         EKCalendar SaveEKCalendar(EKSource source, string calendarName, string color = null)
         {
             var calendar = EKCalendar.Create(EKEntityType.Event, _eventStore);
 
-            //Setup calendar to be inserted
+            // Setup calendar to be inserted
+            //
             calendar.Title = calendarName;
 
-            NSError error = null; 
             if (!string.IsNullOrEmpty(color))
             {
                 calendar.CGColor = ColorConversion.ToCGColor(color);
@@ -477,6 +487,7 @@ namespace Plugin.Calendars
 
             calendar.Source = source;
 
+            NSError error = null; 
             if (_eventStore.SaveCalendar(calendar, true, out error))
             {
                 return calendar;
@@ -485,16 +496,52 @@ namespace Plugin.Calendars
             _eventStore.Reset();
 
             return null;
-
         }
 
+        /// <summary>
+        /// Creates a new calendar.
+        /// </summary>
+        /// <remarks>
+        /// This crazy series of loops and save attempts is necessary because it is difficult
+        /// to determine which EKSource we should use for a new calendar.
+        /// 1. If iCloud calendars are enabled, then local device calendars will be hidden from
+        ///    the user (and from our own GetCalendars requests), even though they still exist on device.
+        ///    Therefore we must create new calendars with the iCloud source.
+        /// 2. If iCloud calendars are *not* enabled, then the opposite is true and we should go local.
+        /// 3. It is difficult to identify the iCloud EKSource(s?) and to even determine if iCloud
+        ///    is enabled.
+        ///    a. By default, the name is "iCloud." Most of the time, that will be unchanged and
+        ///       should be an effective way to locate an/the iCloud source.
+        ///    b. However, it *might* have changed. iOS previously allowed the user to rename it in
+        ///       Settings. They removed that setting, but users may have already changed it.
+        ///       Additionally, some users have discovered elaborate workarounds to change it in
+        ///       newer versions. Because, you know, Apple took away their setting and they wanted it back.
+        ///       So, if we don't find any "iCloud" sources, we fall back to searching for any
+        ///       CalDav sources.
+        ///       - This does mean that we may try storing calendars to non-iCloud CalDav sources,
+        ///         such as Gmail. Gmail is expected to fail, which is fine and we just keep searching.
+        ///         Uncertain if there are other possible CalDav sources that could *succeed* and
+        ///         that we would want to avoid.
+        ///    c. Also, the mere existence of the iCloud source does not necessarily prove that
+        ///       iCloud calendar sync is currently enabled. Turning iCloud calendars on and off
+        ///       may leave the source in the event store even though it's disabled. So we also
+        ///       check that there exists at least one calendar for that source.
+        ///    d. We do not know if we can save to a calendar source until we actually try to do
+        ///       so. Hence the repeated save attempts.
+        /// 
+        /// Full lengthy discussion at https://github.com/TheAlmightyBob/Calendars/issues/10
+        /// </remarks>
+        /// <returns>The new native calendar.</returns>
+        /// <param name="calendarName">Calendar name.</param>
+        /// <param name="color">Calendar color.</param>
+        /// <exception cref="System.InvalidOperationException">No active calendar sources available to create calendar on.</exception>
         private EKCalendar CreateEKCalendar(string calendarName, string color = null)
         {
-            //first attempt to find any and all iCloud sources
+            // first attempt to find any and all iCloud sources
+            //
             var iCloudSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.CalDav && s.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase));
             foreach (var source in iCloudSources)
             {
-                
                 //Ensure that the calendar is enabled
                 if (source.GetCalendars(EKEntityType.Event).Count > 0)
                 {
@@ -504,7 +551,8 @@ namespace Plugin.Calendars
                 }
             }
 
-            //other sources that we didn't try before that are caldav
+            // other sources that we didn't try before that are caldav
+            //
             var otherSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.CalDav && !s.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase));
             foreach (var source in otherSources)
             {
@@ -513,8 +561,8 @@ namespace Plugin.Calendars
                     return cal;
             }
           
-
-            //finally attempt just local sources
+            // finally attempt just local sources
+            //
             var localSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.Local);
             foreach (var source in localSources)
             {
@@ -522,12 +570,9 @@ namespace Plugin.Calendars
                 if (cal != null)
                     return cal;
             }
-               
 
-
-            throw new ArgumentException("No active calendar sources available to create calendar on.");
+            throw new InvalidOperationException("No active calendar sources available to create calendar on.");
         }
-
 
         #endregion
     }
