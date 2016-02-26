@@ -302,12 +302,14 @@ namespace Plugin.Calendars
         /// <returns>Success or failure</returns>
         /// <exception cref="ArgumentException">If calendar event is not created or not valid</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
-        public Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
+        public async Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
         {
             if (string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
                 throw new ArgumentException("Missing calendar event identifier", nameof(calendarEvent));
             }
+
+            await RequestCalendarAccess().ConfigureAwait(false);
 
             //Grab current event
             var existingEvent = _eventStore.EventFromIdentifier(calendarEvent.ExternalID);
@@ -335,8 +337,7 @@ namespace Plugin.Calendars
                 throw new ArgumentException(error.LocalizedDescription, nameof(reminder), new NSErrorException(error));
             }
 
-
-            return Task.FromResult(true);
+            return true;
         }
 
         /// <summary>
