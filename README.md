@@ -32,6 +32,13 @@ Windows Store 8.1 just throws NotSupportedException (as the platform does not pr
   * Calendar permission will be requested the first time any API function is called, if it has not already been granted.
   * The end time for all-day events will be returned as midnight of the following day (which is consistent with WinPhone/Android, but different from native iOS).
 
+### A Note on Creating Calendars:
+* Android’s default Calendar app (the Google one) does not allow creating *or deleting* calendars. Most 3rd-party calendars do (including those provided by manufacturers like Samsung)… it is not a limitation of Android itself. But it is worth being aware that it’s possible the user may not know how to later remove a calendar your app created.
+* Windows does not allow 3rd-party apps to write to the default calendar. You *must* create an app-specific calendar in order to add events.
+* iOS allows creating/deleting calendars, but it’s a bit tricky: it is very important to specify the correct “calendar source” (e.g. iCloud/Gmail/local) for the user’s device configuration (i.e. whether or not iCloud is enabled), otherwise it may be successfully created but hidden (both from the built-in calendar app and from the API). This library attempts to take care of that for you, but it is theoretically possible that it could fail.
+  * I have noticed that although iOS calendar app allows creating/deleting calendars, most 3rd-party calendar apps do *not* (quite contrary to the Android scenario). Possibly due to this complication.
+* More discussion of this in [Issue #10](https://github.com/TheAlmightyBob/Calendars/issues/10)
+
 ### Limitations:
 * Recurring events are not currently supported. At all. This should not be used to edit existing recurring events. Bad things will likely happen.
 * Reminders, location, meeting attendees, and other custom fields are also not supported.
