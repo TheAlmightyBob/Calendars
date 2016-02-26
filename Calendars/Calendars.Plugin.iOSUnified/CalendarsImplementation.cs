@@ -148,6 +148,7 @@ namespace Plugin.Calendars
         /// <param name="calendar">The calendar to create/update</param>
         /// <exception cref="System.ArgumentException">Calendar does not exist on device or is read-only</exception>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
+        /// <exception cref="System.InvalidOperationException">No active calendar sources available to create calendar on.</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task AddOrUpdateCalendarAsync(Calendar calendar)
         {
@@ -299,8 +300,8 @@ namespace Plugin.Calendars
         /// </summary>
         /// <param name="calendarEvent">Event to add the reminder to</param>
         /// <param name="reminder">The reminder</param>
-        /// <returns>Success or failure</returns>
-        /// <exception cref="ArgumentException">If calendar event is not created or not valid</exception>
+        /// <returns>If successful</returns>
+        /// <exception cref="ArgumentException">Calendar event is not created or not valid</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
         {
@@ -491,6 +492,9 @@ namespace Plugin.Calendars
             NSError error = null; 
             if (_eventStore.SaveCalendar(calendar, true, out error))
             {
+                // TODO: Should we try calling GetCalendars to make sure that
+                //       the calendar isn't hidden??
+                //
                 return calendar;
             }
 

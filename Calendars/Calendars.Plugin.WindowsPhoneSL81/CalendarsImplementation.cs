@@ -236,12 +236,12 @@ namespace Plugin.Calendars
         }
 
         /// <summary>
-        /// Adds an event reminder to specified calendar event
+        /// Sets/replaces the event reminder for the specified calendar event
         /// </summary>
         /// <param name="calendarEvent">Event to add the reminder to</param>
         /// <param name="reminder">The reminder</param>
-        /// <returns>Success or failure</returns>
-        /// <exception cref="ArgumentException">If calendar event is not created or not valid</exception>
+        /// <returns>If successful</returns>
+        /// <exception cref="ArgumentException">Calendar event is not created or not valid</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
         {
