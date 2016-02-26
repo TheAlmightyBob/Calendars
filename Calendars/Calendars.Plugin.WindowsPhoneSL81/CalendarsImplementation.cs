@@ -249,6 +249,8 @@ namespace Plugin.Calendars
             {
                 throw new ArgumentException("Missing calendar event identifier", "calendarEvent");
             }
+
+            await EnsureInitializedAsync().ConfigureAwait(false);
             
             var existingAppt = await _localApptStore.GetAppointmentAsync(calendarEvent.ExternalID);
             
