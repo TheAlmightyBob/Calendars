@@ -474,7 +474,7 @@ namespace Plugin.Calendars
         /// <param name="source">Calendar source (e.g. iCloud vs local vs gmail)</param>
         /// <param name="calendarName">Calendar name.</param>
         /// <param name="color">Calendar color.</param>
-        EKCalendar SaveEKCalendar(EKSource source, string calendarName, string color = null)
+        private EKCalendar SaveEKCalendar(EKSource source, string calendarName, string color = null)
         {
             var calendar = EKCalendar.Create(EKEntityType.Event, _eventStore);
 
@@ -499,6 +499,33 @@ namespace Plugin.Calendars
             }
 
             _eventStore.Reset();
+
+            return null;
+        }
+
+        /// <summary>
+        /// Tries creating the specified calendar with each provided source in sequence,
+        /// returning the first successfully-created calendar (or null on failure).
+        /// </summary>
+        /// <returns>The created native calendar, or null on failure.</returns>
+        /// <param name="sources">Possible calendar sources to try</param>
+        /// <param name="calendarName">Calendar name.</param>
+        /// <param name="color">Calendar color.</param>
+        /// <param name="allowEmptySources">Whether to include empty sources (sources that currently lack calendars).</param>
+        private EKCalendar SaveEKCalendar(IEnumerable<EKSource> sources, string calendarName,
+                                          string color = null, bool allowEmptySources = false)
+        {
+            foreach (var source in sources)
+            {
+                // Ensure that the calendar source is enabled (i.e. that it has calendars)
+                //
+                if (allowEmptySources || source.GetCalendars(EKEntityType.Event).Count > 0)
+                {
+                    var cal = SaveEKCalendar(source, calendarName, color);
+                    if (cal != null)
+                        return cal;
+                }
+            }
 
             return null;
         }
@@ -544,36 +571,32 @@ namespace Plugin.Calendars
         {
             // first attempt to find any and all iCloud sources
             //
-            var iCloudSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.CalDav && s.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase));
-            foreach (var source in iCloudSources)
+            var iCloudSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.CalDav &&
+                                                          s.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase));
+            var cal = SaveEKCalendar(iCloudSources, calendarName, color);
+            if (cal != null)
             {
-                //Ensure that the calendar is enabled
-                if (source.GetCalendars(EKEntityType.Event).Count > 0)
-                {
-                    var cal = SaveEKCalendar(source, calendarName, color);
-                    if (cal != null)
-                        return cal;
-                }
+                return cal;
             }
 
-            // other sources that we didn't try before that are caldav
+            // other sources that we didn't try before that are CalDav
+            // (may be renamed iCloud)
             //
-            var otherSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.CalDav && !s.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase));
-            foreach (var source in otherSources)
+            var otherSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.CalDav &&
+                                                         !s.Title.Equals("icloud", StringComparison.InvariantCultureIgnoreCase));
+            cal = SaveEKCalendar(otherSources, calendarName, color);
+            if (cal != null)
             {
-                var cal = SaveEKCalendar(source, calendarName, color);
-                if (cal != null)
-                    return cal;
+                return cal;
             }
           
             // finally attempt just local sources
             //
             var localSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.Local);
-            foreach (var source in localSources)
+            cal = SaveEKCalendar(localSources, calendarName, color, true);
+            if (cal != null)
             {
-                var cal = SaveEKCalendar(source, calendarName, color);
-                if (cal != null)
-                    return cal;
+                return cal;
             }
 
             throw new InvalidOperationException("No active calendar sources available to create calendar on.");
