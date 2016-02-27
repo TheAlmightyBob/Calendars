@@ -515,19 +515,10 @@ namespace Plugin.Calendars
         private EKCalendar SaveEKCalendar(IEnumerable<EKSource> sources, string calendarName,
                                           string color = null, bool allowEmptySources = false)
         {
-            foreach (var source in sources)
-            {
-                // Ensure that the calendar source is enabled (i.e. that it has calendars)
-                //
-                if (allowEmptySources || source.GetCalendars(EKEntityType.Event).Count > 0)
-                {
-                    var cal = SaveEKCalendar(source, calendarName, color);
-                    if (cal != null)
-                        return cal;
-                }
-            }
-
-            return null;
+            return sources
+                .Where(source => allowEmptySources || source.GetCalendars(EKEntityType.Event).Any())
+                .Select(source => SaveEKCalendar(source, calendarName, color))
+                .FirstOrDefault(cal => cal != null);
         }
 
         /// <summary>
