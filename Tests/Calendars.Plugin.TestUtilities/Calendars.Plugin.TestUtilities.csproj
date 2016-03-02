@@ -8,7 +8,7 @@
     <ProjectGuid>{88CD6F84-4568-4DE2-A414-D05AD6C221B0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Calendars.Plugin.TestUtilities</RootNamespace>
+    <RootNamespace>Plugin.Calendars.TestUtilities</RootNamespace>
     <AssemblyName>Calendars.Plugin.TestUtilities</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
@@ -45,6 +45,7 @@
     <Compile Include="EventComparer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TaskExtensions.cs" />
+    <Compile Include="TestData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

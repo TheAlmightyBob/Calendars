@@ -6,6 +6,8 @@ using NUnit.Framework;
 using Plugin.Calendars.Abstractions;
 using Plugin.Calendars.TestUtilities;
 
+using static Plugin.Calendars.TestUtilities.TestData;
+
 #if __UNIFIED__
 namespace Plugin.Calendars.iOSUnified.Tests
 #elif __IOS__
@@ -193,11 +195,7 @@ namespace Plugin.Calendars.Android.Tests
         [Test]
         public async void Calendars_AddOrUpdateEvents_AddsEvents()
         {
-            var events = new List<CalendarEvent> {
-                new CalendarEvent { Name = "Bob", Description = "Bob's event", Start = DateTime.Today.AddDays(5), End = DateTime.Today.AddDays(5).AddHours(2), AllDay = false, Location = "here" },
-                new CalendarEvent { Name = "Steve", Description = "Steve's event", Start = DateTime.Today.AddDays(7), End = DateTime.Today.AddDays(8), AllDay = true, Location = "there" },
-                new CalendarEvent { Name = "Wheeee", Description = "Fun times", Start = DateTime.Today.AddDays(13), End = DateTime.Today.AddDays(15), AllDay = true, Location = "everywhere" }
-            };
+            var events = GetTestEvents();
             var calendar = new Calendar { Name = _calendarName };
 
             await _service.AddOrUpdateCalendarAsync(calendar);
@@ -219,7 +217,12 @@ namespace Plugin.Calendars.Android.Tests
         [Test]
         public async void Calendars_AddOrUpdateEvents_StartAfterEndThrows()
         {
-            var calendarEvent = new CalendarEvent { Name = "Bob", Start = DateTime.Today, End = DateTime.Today.AddDays(-1) };
+            var calendarEvent = new CalendarEvent
+            {
+                Name = "Time warp",
+                Start = DateTime.Today,
+                End = DateTime.Today.AddDays(-1)
+            };
             var calendar = new Calendar { Name = _calendarName };
 
             await _service.AddOrUpdateCalendarAsync(calendar);
@@ -234,7 +237,7 @@ namespace Plugin.Calendars.Android.Tests
         [Test]
         public async void Calendars_AddOrUpdateEvent_UnspecifiedCalendarThrows()
         {
-            var calendarEvent = new CalendarEvent { Name = "Bob", Start = DateTime.Today, End = DateTime.Today.AddHours(1) };
+            var calendarEvent = GetTestEvent();
             var calendar = new Calendar { Name = _calendarName };
 
             Assert.IsTrue(await _service.AddOrUpdateEventAsync(calendar, calendarEvent).ThrowsAsync<ArgumentException>(), "Exception wasn't thrown");
@@ -243,7 +246,7 @@ namespace Plugin.Calendars.Android.Tests
         [Test]
         public async void Calendars_AddOrUpdateEvent_NonexistentCalendarThrows()
         {
-            var calendarEvent = new CalendarEvent { Name = "Bob", Start = DateTime.Today, End = DateTime.Today.AddHours(1) };
+            var calendarEvent = GetTestEvent();
             var calendar = new Calendar { Name = _calendarName };
 
             // Create/delete calendar so we have a valid ID for a nonexistent calendar
@@ -258,7 +261,7 @@ namespace Plugin.Calendars.Android.Tests
         [Test]
         public async void Calendars_AddOrUpdateEvent_ReadonlyCalendarThrows()
         {
-            var calendarEvent = new CalendarEvent { Name = "Bob", Start = DateTime.Today, End = DateTime.Today.AddHours(1) };
+            var calendarEvent = GetTestEvent();
             var calendars = await _service.GetCalendarsAsync();
             var readonlyCalendars = calendars.Where(c => !c.CanEditEvents).ToList();
 
@@ -277,16 +280,8 @@ namespace Plugin.Calendars.Android.Tests
         [Test]
         public async void Calendars_AddOrUpdateEvents_UpdatesEvents()
         {
-            var originalEvents = new List<CalendarEvent> {
-                new CalendarEvent { Name = "Bob", Description = "Bob's event", Start = DateTime.Today.AddDays(5), End = DateTime.Today.AddDays(5).AddHours(2), AllDay = false, Location = "here" },
-                new CalendarEvent { Name = "Steve", Description = "Steve's event", Start = DateTime.Today.AddDays(7), End = DateTime.Today.AddDays(8), AllDay = true, Location = "there" },
-                new CalendarEvent { Name = "Wheeee", Description = "Fun times", Start = DateTime.Today.AddDays(13), End = DateTime.Today.AddDays(15), AllDay = true, Location = "everywhere" }
-            };
-            var editedEvents = new List<CalendarEvent> {
-                new CalendarEvent { Name = "Bob (edited)", Description = "Bob's edited event", Start = DateTime.Today.AddDays(5).AddHours(-2), End = DateTime.Today.AddDays(5).AddHours(1), AllDay = false, Location = "nowhere, man" },
-                new CalendarEvent { Name = "Steve (edited)", Description = "Steve's edited event", Start = DateTime.Today.AddDays(6), End = DateTime.Today.AddDays(7).AddHours(-1), AllDay = false, Location = "SPAAAAAAAAACE!" },
-                new CalendarEvent { Name = "Yay (edited)", Description = "Edited fun times", Start = DateTime.Today.AddDays(12), End = DateTime.Today.AddDays(13), AllDay = true, Location = "A small planet somewhere in the vicinity of Betelgeuse" }
-            };
+            var originalEvents = GetTestEvents();
+            var editedEvents = GetEditedTestEvents();
             var calendar = new Calendar { Name = _calendarName };
             var queryStartDate = DateTime.Today;
             var queryEndDate = queryStartDate.AddDays(30);
@@ -301,7 +296,6 @@ namespace Plugin.Calendars.Android.Tests
             var eventResults = await _service.GetEventsAsync(calendar, queryStartDate, queryEndDate);
 
             Assert.That(eventResults, Is.EqualTo(originalEvents).Using<CalendarEvent>(_eventComparer));
-
 
             for (int i = 0; i < eventResults.Count; i++)
             {
@@ -321,13 +315,7 @@ namespace Plugin.Calendars.Android.Tests
         [Test]
         public async void Calendars_AddOrUpdateEvents_CopiesEventsBetweenCalendars()
         {
-            var calendarEvent = new CalendarEvent
-            {
-                Name = "Bob",
-                Start = DateTime.Today.AddDays(5),
-                End = DateTime.Today.AddDays(5).AddHours(2),
-                AllDay = false
-            };
+            var calendarEvent = GetTestEvent();
             var calendarSource = new Calendar { Name = _calendarName };
             var calendarTarget = new Calendar { Name = _calendarName + " copy destination" };
 
@@ -366,13 +354,7 @@ namespace Plugin.Calendars.Android.Tests
         [Test]
         public async void Calendars_DeleteEvent_DeletesExistingEvent()
         {
-            var calendarEvent = new CalendarEvent
-            {
-                Name = "Bob",
-                Start = DateTime.Now.AddDays(5),
-                End = DateTime.Now.AddDays(5).AddHours(2),
-                AllDay = false
-            };
+            var calendarEvent = GetTestEvent();
             var calendar = await _service.CreateCalendarAsync(_calendarName);
 
             await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
@@ -389,13 +371,7 @@ namespace Plugin.Calendars.Android.Tests
 
             // Create and delete an event so that we have a valid event ID for a nonexistent event
             //
-            var calendarEvent = new CalendarEvent
-            {
-                Name = "Bob",
-                Start = DateTime.Now.AddDays(5),
-                End = DateTime.Now.AddDays(5).AddHours(2),
-                AllDay = false
-            };
+            var calendarEvent = GetTestEvent();
             await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
             await _service.DeleteEventAsync(calendar, calendarEvent);
 
@@ -408,13 +384,7 @@ namespace Plugin.Calendars.Android.Tests
             // Create and delete a calendar and event so that we have valid IDs for nonexistent calendar/event
             //
             var calendar = await _service.CreateCalendarAsync(_calendarName);
-            var calendarEvent = new CalendarEvent
-            {
-                Name = "Bob",
-                Start = DateTime.Now.AddDays(5),
-                End = DateTime.Now.AddDays(5).AddHours(2),
-                AllDay = false
-            };
+            var calendarEvent = GetTestEvent();
             await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
             await _service.DeleteCalendarAsync(calendar);
 
@@ -426,13 +396,7 @@ namespace Plugin.Calendars.Android.Tests
         {
             var calendar1 = await _service.CreateCalendarAsync(_calendarName);
             var calendar2 = await _service.CreateCalendarAsync(_calendarName + "2");
-            var calendarEvent = new CalendarEvent
-            {
-                Name = "Bob",
-                Start = DateTime.Now.AddDays(5),
-                End = DateTime.Now.AddDays(5).AddHours(2),
-                AllDay = false
-            };
+            var calendarEvent = GetTestEvent();
             await _service.AddOrUpdateEventAsync(calendar1, calendarEvent);
 
             Assert.IsFalse(await _service.DeleteEventAsync(calendar2, calendarEvent));
