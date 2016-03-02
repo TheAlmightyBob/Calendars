@@ -1,38 +1,35 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 using NUnit.Framework;
 using Plugin.Calendars.Abstractions;
 using Plugin.Calendars.TestUtilities;
 
 #if __UNIFIED__
-using EventKit;
-using Foundation;
-#else
-using MonoTouch.EventKit;
-using MonoTouch.Foundation;
-#endif
-
-#if __UNIFIED__
 namespace Plugin.Calendars.iOSUnified.Tests
-#else
+#elif __IOS__
 namespace Plugin.Calendars.iOS.Tests
+#else
+namespace Plugin.Calendars.Android.Tests
 #endif
 {
     [TestFixture]
 #if __UNIFIED__
     [Category("iOSUnified")]
-#else
+#elif __IOS__
     [Category("iOS")]
+#else
+    [Category("Android")]
 #endif
     class CalendarTests
     {
 #if __UNIFIED__
         private const string _calendarName = "Plugin.Calendars.iOSUnified.Tests.TestCalendar";
-#else
+#elif __IOS__
         private const string _calendarName = "Plugin.Calendars.iOS.Tests.TestCalendar";
+#else
+        private const string _calendarName = "Plugin.Calendars.Android.Tests.TestCalendar";
 #endif
         private EventComparer _eventComparer;
 
@@ -56,6 +53,7 @@ namespace Plugin.Calendars.iOS.Tests
             }
         }
 
+#if __IOS__ // No default calendars on Android...
         [Test]
         public async void Calendars_GetCalendars_ReturnsAtLeastOneCalendar()
         {
@@ -64,6 +62,7 @@ namespace Plugin.Calendars.iOS.Tests
             Assert.IsNotNull(cals);
             Assert.IsTrue(cals.Count > 0);
         }
+#endif
 
         [Test]
         public async void Calendars_CreateCalendar_IsFoundByID()
@@ -132,6 +131,7 @@ namespace Plugin.Calendars.iOS.Tests
             Assert.IsTrue(await _service.AddOrUpdateCalendarAsync(calendar).ThrowsAsync<ArgumentException>(), "Exception wasn't thrown");
         }
 
+#if __IOS__ // no built-in readonly calendar on Android to test with
         [Test]
         public async void Calendars_AddOrUpdateCalendar_ReadonlyThrows()
         {
@@ -151,6 +151,7 @@ namespace Plugin.Calendars.iOS.Tests
             var newCalendars = await _service.GetCalendarsAsync();
             Assert.That(newCalendars.Any(c => c.Name == "Birthdays"), "Calendar name has changed, even after throwing");
         }
+#endif
 
         [Test]
         public async void Calendars_DeleteCalendar_DeletesExistingCalendar()
@@ -177,6 +178,7 @@ namespace Plugin.Calendars.iOS.Tests
             Assert.IsFalse(await _service.DeleteCalendarAsync(calendar));
         }
 
+#if __IOS__ // no built-in readonly calendar on Android to test with
         [Test]
         public async void Calendars_DeleteCalendar_ReadonlyThrows()
         {
@@ -186,6 +188,7 @@ namespace Plugin.Calendars.iOS.Tests
 
             Assert.IsTrue(await _service.DeleteCalendarAsync(calendarToDelete).ThrowsAsync<ArgumentException>(), "Exception wasn't thrown");
         }
+#endif
 
         [Test]
         public async void Calendars_AddOrUpdateEvents_AddsEvents()
@@ -199,7 +202,6 @@ namespace Plugin.Calendars.iOS.Tests
 
             await _service.AddOrUpdateCalendarAsync(calendar);
 
-            //await _service.AddOrUpdateEventsAsync(calendar, events);
             foreach (var cev in events)
             {
                 await _service.AddOrUpdateEventAsync(calendar, cev);
@@ -252,6 +254,7 @@ namespace Plugin.Calendars.iOS.Tests
             Assert.IsTrue(await _service.AddOrUpdateEventAsync(calendar, calendarEvent).ThrowsAsync<ArgumentException>(), "Exception wasn't thrown");
         }
 
+#if __IOS__ // no built-in readonly calendar on Android to test with
         [Test]
         public async void Calendars_AddOrUpdateEvent_ReadonlyCalendarThrows()
         {
@@ -269,12 +272,11 @@ namespace Plugin.Calendars.iOS.Tests
             Assert.IsFalse((await _service.GetEventsAsync(readonlyCalendar, DateTime.Today.AddMonths(-1), DateTime.Today.AddMonths(1))).Any(e => e.Name == "Bob"),
                 "Calendar contains the new event, even after throwing");
         }
+#endif
 
         [Test]
         public async void Calendars_AddOrUpdateEvents_UpdatesEvents()
         {
-            // TODO: Test description
-
             var originalEvents = new List<CalendarEvent> {
                 new CalendarEvent { Name = "Bob", Description = "Bob's event", Start = DateTime.Today.AddDays(5), End = DateTime.Today.AddDays(5).AddHours(2), AllDay = false },
                 new CalendarEvent { Name = "Steve", Description = "Steve's event", Start = DateTime.Today.AddDays(7), End = DateTime.Today.AddDays(8), AllDay = true },
@@ -291,7 +293,6 @@ namespace Plugin.Calendars.iOS.Tests
 
             await _service.AddOrUpdateCalendarAsync(calendar);
 
-            //await _service.AddOrUpdateEventsAsync(calendar, originalEvents);
             foreach (var cev in originalEvents)
             {
                 await _service.AddOrUpdateEventAsync(calendar, cev);
@@ -307,7 +308,6 @@ namespace Plugin.Calendars.iOS.Tests
                 editedEvents.ElementAt(i).ExternalID = eventResults.ElementAt(i).ExternalID;
             }
 
-            //await _service.AddOrUpdateEventsAsync(calendar, editedEvents);
             foreach (var cev in editedEvents)
             {
                 await _service.AddOrUpdateEventAsync(calendar, cev);
@@ -338,7 +338,6 @@ namespace Plugin.Calendars.iOS.Tests
 
             var sourceEvents = await _service.GetEventsAsync(calendarSource, DateTime.Today, DateTime.Today.AddDays(30));
 
-            //await _service.AddOrUpdateEventsAsync(calendarTarget, sourceEvents);
             foreach (var cev in sourceEvents)
             {
                 await _service.AddOrUpdateEventAsync(calendarTarget, cev);
@@ -439,6 +438,7 @@ namespace Plugin.Calendars.iOS.Tests
             Assert.IsFalse(await _service.DeleteEventAsync(calendar2, calendarEvent));
         }
 
+#if __IOS__ // no built-in readonly calendar on Android to test with
         [Test]
         public async void Calendars_DeleteEvent_ReadonlyCalendarThrowsException()
         {
@@ -458,5 +458,6 @@ namespace Plugin.Calendars.iOS.Tests
             // Ensure calendar is still there
             Assert.IsTrue((await _service.GetCalendarsAsync()).Any(c => c.Name == "Birthdays"));
         }
+#endif
     }
 }
