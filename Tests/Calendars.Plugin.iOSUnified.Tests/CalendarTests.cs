@@ -194,9 +194,9 @@ namespace Plugin.Calendars.Android.Tests
         public async void Calendars_AddOrUpdateEvents_AddsEvents()
         {
             var events = new List<CalendarEvent> {
-                new CalendarEvent { Name = "Bob", Description = "Bob's event", Start = DateTime.Today.AddDays(5), End = DateTime.Today.AddDays(5).AddHours(2), AllDay = false },
-                new CalendarEvent { Name = "Steve", Description = "Steve's event", Start = DateTime.Today.AddDays(7), End = DateTime.Today.AddDays(8), AllDay = true },
-                new CalendarEvent { Name = "Wheeee", Description = "Fun times", Start = DateTime.Today.AddDays(13), End = DateTime.Today.AddDays(15), AllDay = true }
+                new CalendarEvent { Name = "Bob", Description = "Bob's event", Start = DateTime.Today.AddDays(5), End = DateTime.Today.AddDays(5).AddHours(2), AllDay = false, Location = "here" },
+                new CalendarEvent { Name = "Steve", Description = "Steve's event", Start = DateTime.Today.AddDays(7), End = DateTime.Today.AddDays(8), AllDay = true, Location = "there" },
+                new CalendarEvent { Name = "Wheeee", Description = "Fun times", Start = DateTime.Today.AddDays(13), End = DateTime.Today.AddDays(15), AllDay = true, Location = "everywhere" }
             };
             var calendar = new Calendar { Name = _calendarName };
 
@@ -278,14 +278,14 @@ namespace Plugin.Calendars.Android.Tests
         public async void Calendars_AddOrUpdateEvents_UpdatesEvents()
         {
             var originalEvents = new List<CalendarEvent> {
-                new CalendarEvent { Name = "Bob", Description = "Bob's event", Start = DateTime.Today.AddDays(5), End = DateTime.Today.AddDays(5).AddHours(2), AllDay = false },
-                new CalendarEvent { Name = "Steve", Description = "Steve's event", Start = DateTime.Today.AddDays(7), End = DateTime.Today.AddDays(8), AllDay = true },
-                new CalendarEvent { Name = "Wheeee", Description = "Fun times", Start = DateTime.Today.AddDays(13), End = DateTime.Today.AddDays(15), AllDay = true }
+                new CalendarEvent { Name = "Bob", Description = "Bob's event", Start = DateTime.Today.AddDays(5), End = DateTime.Today.AddDays(5).AddHours(2), AllDay = false, Location = "here" },
+                new CalendarEvent { Name = "Steve", Description = "Steve's event", Start = DateTime.Today.AddDays(7), End = DateTime.Today.AddDays(8), AllDay = true, Location = "there" },
+                new CalendarEvent { Name = "Wheeee", Description = "Fun times", Start = DateTime.Today.AddDays(13), End = DateTime.Today.AddDays(15), AllDay = true, Location = "everywhere" }
             };
             var editedEvents = new List<CalendarEvent> {
-                new CalendarEvent { Name = "Bob (edited)", Description = "Bob's edited event", Start = DateTime.Today.AddDays(5).AddHours(-2), End = DateTime.Today.AddDays(5).AddHours(1), AllDay = false },
-                new CalendarEvent { Name = "Steve (edited)", Description = "Steve's edited event", Start = DateTime.Today.AddDays(6), End = DateTime.Today.AddDays(7).AddHours(-1), AllDay = false },
-                new CalendarEvent { Name = "Yay (edited)", Description = "Edited fun times", Start = DateTime.Today.AddDays(12), End = DateTime.Today.AddDays(13), AllDay = true }
+                new CalendarEvent { Name = "Bob (edited)", Description = "Bob's edited event", Start = DateTime.Today.AddDays(5).AddHours(-2), End = DateTime.Today.AddDays(5).AddHours(1), AllDay = false, Location = "nowhere, man" },
+                new CalendarEvent { Name = "Steve (edited)", Description = "Steve's edited event", Start = DateTime.Today.AddDays(6), End = DateTime.Today.AddDays(7).AddHours(-1), AllDay = false, Location = "SPAAAAAAAAACE!" },
+                new CalendarEvent { Name = "Yay (edited)", Description = "Edited fun times", Start = DateTime.Today.AddDays(12), End = DateTime.Today.AddDays(13), AllDay = true, Location = "A small planet somewhere in the vicinity of Betelgeuse" }
             };
             var calendar = new Calendar { Name = _calendarName };
             var queryStartDate = DateTime.Today;
