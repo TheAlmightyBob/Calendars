@@ -1,15 +1,18 @@
 ﻿using Plugin.Calendars.Abstractions;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Plugin.Calendars.TestUtilities
 {
     public class EventComparer : IComparer<CalendarEvent>, IComparer
     {
+        private DateTimeComparer _dateTimeComparer;
+
+        public EventComparer(bool includeMS)
+        {
+            _dateTimeComparer = new DateTimeComparer(includeMS);
+        }
+        
         // This is supported by NUnit and preferable to IComparer, but MSTest only supports IComparer,
         // and NUnit also supports IComparer, so....
         //
@@ -56,12 +59,12 @@ namespace Plugin.Calendars.TestUtilities
 
             if (retval == 0)
             {
-                retval = (int)(RoundToMS(x.Start) - RoundToMS(y.Start)).Ticks;
+                retval = _dateTimeComparer.Compare(x.Start, y.Start);
             }
 
             if (retval == 0)
             {
-                retval = (int)(RoundToMS(x.Start) - RoundToMS(y.Start)).Ticks;
+                retval = _dateTimeComparer.Compare(x.End, y.End);
             }
 
             return retval;
@@ -93,15 +96,6 @@ namespace Plugin.Calendars.TestUtilities
             }
 
             return Compare(eventX, eventY);
-        }
-
-        #endregion
-
-        #region Private Static Helpers
-
-        private static DateTime RoundToMS(DateTime dt)
-        {
-            return dt.AddTicks(-(dt.Ticks % TimeSpan.TicksPerMillisecond));
         }
 
         #endregion

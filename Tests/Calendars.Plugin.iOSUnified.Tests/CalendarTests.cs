@@ -34,6 +34,7 @@ namespace Plugin.Calendars.Android.Tests
         private const string _calendarName = "Plugin.Calendars.Android.Tests.TestCalendar";
 #endif
         private EventComparer _eventComparer;
+        private DateTimeComparer _dateTimeComparer;
 
         private ICalendars _service;
 
@@ -41,7 +42,15 @@ namespace Plugin.Calendars.Android.Tests
         public void Setup()
         {
             _service = new CalendarsImplementation();
-            _eventComparer = new EventComparer();
+
+            // Android supports milliseconds, iOS does not
+#if __IOS__
+            _eventComparer = new EventComparer(false);
+            _dateTimeComparer = new DateTimeComparer(false);
+#else
+            _eventComparer = new EventComparer(true);
+            _dateTimeComparer = new DateTimeComparer(true);
+#endif
         }
 
         [TearDown]
@@ -232,6 +241,29 @@ namespace Plugin.Calendars.Android.Tests
             // Ensure that calendar still has no events
             Assert.That(await _service.GetEventsAsync(calendar, DateTime.Today.AddMonths(-1), DateTime.Today.AddMonths(1)), Is.Empty,
                 "Calendar has event, even after throwing");
+        }
+
+        [Test]
+        public async void Calendars_AddOrUpdateEvents_HandlesUTC()
+        {
+            var calendarEvent = GetTestEvent();
+            var calendar = new Calendar { Name = _calendarName };
+
+            var calendarEventUtc = new CalendarEvent
+            {
+                Name = calendarEvent.Name,
+                Start = calendarEvent.Start.ToUniversalTime(),
+                End = calendarEvent.End.ToUniversalTime()
+            };
+
+            await _service.AddOrUpdateCalendarAsync(calendar);
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEventUtc);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEventUtc.ExternalID);
+
+            Assert.That(eventFromId.Start, Is.EqualTo(calendarEvent.Start).Using<DateTime>(_dateTimeComparer));
+            Assert.That(eventFromId.End, Is.EqualTo(calendarEvent.End).Using<DateTime>(_dateTimeComparer));
         }
 
         [Test]
