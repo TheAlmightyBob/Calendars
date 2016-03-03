@@ -8,9 +8,9 @@ namespace Plugin.Calendars.TestUtilities
     {
         private DateTimeComparer _dateTimeComparer;
 
-        public EventComparer(bool includeMS)
+        public EventComparer(Rounding rounding)
         {
-            _dateTimeComparer = new DateTimeComparer(includeMS);
+            _dateTimeComparer = new DateTimeComparer(rounding);
         }
         
         // This is supported by NUnit and preferable to IComparer, but MSTest only supports IComparer,

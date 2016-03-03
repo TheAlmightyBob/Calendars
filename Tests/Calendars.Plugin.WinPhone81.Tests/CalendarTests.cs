@@ -30,8 +30,9 @@ namespace Plugin.Calendars.WinPhone81.Tests
         private const string _testCategory = "WinPhone";
         private const string _calendarName = "Calendars.Plugin.WinPhone81.Tests.TestCalendar";
 #endif
-        private EventComparer _eventComparer;
         private CalendarComparer _calendarComparer;
+        private EventComparer _eventComparer;
+        private DateTimeComparer _dateTimeComparer;
 
         private CalendarsImplementation _service;
 
@@ -39,8 +40,11 @@ namespace Plugin.Calendars.WinPhone81.Tests
         public void Setup()
         {
             _service = new CalendarsImplementation();
-            _eventComparer = new EventComparer();
             _calendarComparer = new CalendarComparer();
+            
+            // Windows only stores times up to minute precision
+            _eventComparer = new EventComparer(Rounding.Minutes);
+            _dateTimeComparer = new DateTimeComparer(Rounding.Minutes);
         }
 
         [TestCleanup]
@@ -231,6 +235,29 @@ namespace Plugin.Calendars.WinPhone81.Tests
 
             Assert.IsTrue(await _service.AddOrUpdateEventAsync(calendar, calendarEvent).ThrowsAsync<ArgumentException>(),
                 "Exception wasn't thrown");
+        }
+
+        [TestMethod, TestCategory(_testCategory)]
+        public async Task Calendars_AddOrUpdateEvents_HandlesUTC()
+        {
+            var calendarEvent = GetTestEvent();
+            var calendar = new Calendar { Name = _calendarName };
+
+            var calendarEventUtc = new CalendarEvent
+            {
+                Name = calendarEvent.Name,
+                Start = calendarEvent.Start.ToUniversalTime(),
+                End = calendarEvent.End.ToUniversalTime()
+            };
+
+            await _service.AddOrUpdateCalendarAsync(calendar);
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEventUtc);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEventUtc.ExternalID);
+
+            Assert.AreEqual(0, _dateTimeComparer.Compare(calendarEvent.Start, eventFromId.Start), "Event start times differ");
+            Assert.AreEqual(0, _dateTimeComparer.Compare(calendarEvent.End, eventFromId.End), "Event end times differ");
         }
 
         [TestMethod, TestCategory(_testCategory)]

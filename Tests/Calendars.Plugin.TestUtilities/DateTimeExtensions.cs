@@ -12,6 +12,11 @@ namespace Plugin.Calendars.TestUtilities
         {
             return dt.AddTicks(-(dt.Ticks % TimeSpan.TicksPerSecond));
         }
+
+        public static DateTime RoundToMinutes(this DateTime dt)
+        {
+            return dt.AddTicks(-(dt.Ticks % TimeSpan.TicksPerMinute));
+        }
     }
 }
 

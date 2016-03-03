@@ -43,13 +43,13 @@ namespace Plugin.Calendars.Android.Tests
         {
             _service = new CalendarsImplementation();
 
-            // Android supports milliseconds, iOS does not
+            // Android supports milliseconds, iOS supports seconds
 #if __IOS__
-            _eventComparer = new EventComparer(false);
-            _dateTimeComparer = new DateTimeComparer(false);
+            _eventComparer = new EventComparer(Rounding.Seconds);
+            _dateTimeComparer = new DateTimeComparer(Rounding.Seconds);
 #else
-            _eventComparer = new EventComparer(true);
-            _dateTimeComparer = new DateTimeComparer(true);
+            _eventComparer = new EventComparer(Rounding.Milliseconds);
+            _dateTimeComparer = new DateTimeComparer(Rounding.Milliseconds);
 #endif
         }
 
