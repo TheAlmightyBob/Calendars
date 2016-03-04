@@ -2,7 +2,7 @@
 
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2014/deployment" AppPlatformVersion="8.1">
   <DefaultLanguage xmlns="" code="en-US"/>
-  <App xmlns="" ProductID="{2d8ba8a7-f160-46b1-affd-78d29aeca2ab}" Title="Calendars.Plugin.WinPhoneSL81.Tests" RuntimeType="Silverlight" Version="0.3.0-alpha" Genre="apps.normal"  Author="Calendars.Plugin.WinPhoneSL81.Tests author" Description="Sample description" SDOptOut ="false" BackUpOptOut ="false" Publisher="Calendars.Plugin.WinPhoneSL81.Tests" PublisherID="{1f52b20c-316b-4977-9100-25a63f8f4d4a}">
+  <App xmlns="" ProductID="{2d8ba8a7-f160-46b1-affd-78d29aeca2ab}" Title="Calendars.Plugin.WinPhoneSL81.Tests" RuntimeType="Silverlight" Version="0.4.2-beta" Genre="apps.normal"  Author="Calendars.Plugin.WinPhoneSL81.Tests author" Description="Sample description" SDOptOut ="false" BackUpOptOut ="false" Publisher="Calendars.Plugin.WinPhoneSL81.Tests" PublisherID="{1f52b20c-316b-4977-9100-25a63f8f4d4a}">
     <IconPath IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING"/>
