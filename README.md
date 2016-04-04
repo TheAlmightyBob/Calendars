@@ -33,10 +33,10 @@ Windows Store 8.1 just throws NotSupportedException (as the platform does not pr
   * The end time for all-day events will be returned as midnight of the following day (which is consistent with WinPhone/Android, but different from native iOS).
 
 ### A Note on Creating Calendars:
-* Android’s default Calendar app (the Google one) does not allow creating *or deleting* calendars. Most 3rd-party calendars do (including those provided by manufacturers like Samsung)… it is not a limitation of Android itself. But it is worth being aware that it’s possible the user may not know how to later remove a calendar your app created.
+* Android’s default Calendar app (the Google one) does not allow creating *or deleting* calendars. Most 3rd-party calendars do (including some provided by manufacturers)… it is not a limitation of Android itself. But it is worth being aware that it’s possible the user may not know how to later remove a calendar your app created.
 * Windows does not allow 3rd-party apps to write to the default calendar. You *must* create an app-specific calendar in order to add events.
 * iOS allows creating/deleting calendars, but it’s a bit tricky: it is very important to specify the correct “calendar source” (e.g. iCloud/Gmail/local) for the user’s device configuration (i.e. whether or not iCloud is enabled), otherwise it may be successfully created but hidden (both from the built-in calendar app and from the API). This library attempts to take care of that for you, but it is theoretically possible that it could fail.
-  * I have noticed that although iOS calendar app allows creating/deleting calendars, most 3rd-party calendar apps do *not* (quite contrary to the Android scenario). Possibly due to this complication.
+  * Although iOS calendar app allows creating/deleting calendars, most 3rd-party calendar apps do *not* (quite contrary to the Android scenario). Possibly due to this complication.
 * More discussion of this in [Issue #10](https://github.com/TheAlmightyBob/Calendars/issues/10)
 
 ### Limitations:
