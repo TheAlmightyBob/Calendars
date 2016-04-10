@@ -11,21 +11,20 @@ namespace Plugin.Calendars.Abstractions
     /// </summary>
     public class CalendarEventReminder
     {
-
         /// <summary>
         /// Amount of time to set the reminder before the start of an event.
         /// Default is 15 minutes
         /// </summary>
         public TimeSpan TimeBefore { get; set; } = TimeSpan.FromMinutes(15);
+
         /// <summary>
-        /// Type of reminder to display
+        /// Type of reminder to display on Android. (not used by Windows/iOS)
         /// </summary>
         public CalendarReminderMethod Method { get; set; } = CalendarReminderMethod.Default;
-
     }
 
     /// <summary>
-    /// Types of methods of the reminder
+    /// Android reminder methods
     /// </summary>
     public enum CalendarReminderMethod
     {
