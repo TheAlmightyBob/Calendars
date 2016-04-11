@@ -33,7 +33,6 @@ namespace Plugin.Calendars
         #region Fields
 
         private EKEventStore _eventStore;
-        private bool? _hasCalendarAccess;
         private double _defaultTimeBefore;
 
         #endregion
@@ -438,28 +437,28 @@ namespace Plugin.Calendars
 
         #region Private Methods
 
-        private async Task<bool> RequestCalendarAccess()
+        private async Task RequestCalendarAccess()
         {
-            if (!_hasCalendarAccess.HasValue)
+            if (EKEventStore.GetAuthorizationStatus(EKEntityType.Event) != EKAuthorizationStatus.Authorized)
             {
                 var accessResult = await _eventStore.RequestAccessAsync(EKEntityType.Event).ConfigureAwait(false);
 
+                bool hasAccess = false;
                 NSError error = null;
 
 #if __UNIFIED__
-                _hasCalendarAccess = accessResult.Item1;
+                hasAccess = accessResult.Item1;
                 error = accessResult.Item2;
 #else
-                _hasCalendarAccess = accessResult;
+                hasAccess = accessResult;
 #endif
 
-                if (!_hasCalendarAccess.Value)
+                if (!hasAccess)
                 {
                     // This is the same exception WinPhone would throw
                     throw new UnauthorizedAccessException("Calendar access denied", error != null ? new NSErrorException(error) : null);
                 }
             }
-            return _hasCalendarAccess.Value;
         }
 
         /// <summary>
