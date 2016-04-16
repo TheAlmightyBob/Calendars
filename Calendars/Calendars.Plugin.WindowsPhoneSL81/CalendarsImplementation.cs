@@ -212,6 +212,11 @@ namespace Plugin.Calendars
             {
                 var existingAppt = await _localApptStore.GetAppointmentAsync(calendarEvent.ExternalID);
 
+                if (existingAppt?.Recurrence != null)
+                {
+                    throw new InvalidOperationException("Editing recurring events is not supported");
+                }
+
                 if (existingAppt != null && existingAppt.CalendarId == appCalendar.LocalId)
                 {
                     appt = existingAppt;
@@ -258,7 +263,12 @@ namespace Plugin.Calendars
             {
                 throw new ArgumentException("Specified calendar event not found on device");
             }
-            
+
+            if (existingAppt.Recurrence != null)
+            {
+                throw new InvalidOperationException("Editing recurring events is not supported");
+            }
+
             var appCalendar = await _localApptStore.GetAppointmentCalendarAsync(existingAppt.CalendarId);
 
             if (appCalendar == null)
@@ -343,6 +353,11 @@ namespace Plugin.Calendars
                 // Verify that event actually exists on calendar
                 //
                 var appt = await appCalendar.GetAppointmentAsync(calendarEvent.ExternalID).ConfigureAwait(false);
+
+                if (appt?.Recurrence != null)
+                {
+                    throw new InvalidOperationException("Editing recurring events is not supported");
+                }
 
                 // The second check is because AppointmentCalendar.GetAppointmentAsync will apparently still
                 // return events if they are associated with a different calendar...

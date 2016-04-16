@@ -238,6 +238,25 @@ namespace Plugin.Calendars.WinPhone81.Tests
         }
 
         [TestMethod, TestCategory(_testCategory)]
+        public async Task Calendars_AddOrUpdateEvent_NonexistentEventCreatesNew()
+        {
+            var calendarEvent = GetTestEvent();
+            var calendar = new Calendar { Name = _calendarName };
+
+            await _service.AddOrUpdateCalendarAsync(calendar);
+
+            // Create and delete an event so that we have a valid event ID for a nonexistent event
+            //
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+            await _service.DeleteEventAsync(calendar, calendarEvent);
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+            Assert.IsNotNull(eventFromId);
+        }
+
+        [TestMethod, TestCategory(_testCategory)]
         public async Task Calendars_AddOrUpdateEvents_HandlesUTC()
         {
             var calendarEvent = GetTestEvent();
