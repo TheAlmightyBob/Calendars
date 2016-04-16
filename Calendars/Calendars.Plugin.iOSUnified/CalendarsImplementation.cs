@@ -243,7 +243,12 @@ namespace Plugin.Calendars
             {
                 var existingEvent = _eventStore.EventFromIdentifier(calendarEvent.ExternalID);
 
-                if (existingEvent.Calendar.CalendarIdentifier == deviceCalendar.CalendarIdentifier)
+                if (existingEvent?.HasRecurrenceRules == true)
+                {
+                    throw new InvalidOperationException("Editing recurring events is not supported");
+                }
+
+                if (existingEvent?.Calendar.CalendarIdentifier == deviceCalendar.CalendarIdentifier)
                 {
                     iosEvent = existingEvent;
                 }
@@ -317,6 +322,11 @@ namespace Plugin.Calendars
             if (existingEvent == null)
             {
                 throw new ArgumentException("Specified calendar event not found on device");
+            }
+
+            if (existingEvent.HasRecurrenceRules)
+            {
+                throw new InvalidOperationException("Editing recurring events is not supported");
             }
 
             var seconds = -reminder?.TimeBefore.TotalSeconds ?? _defaultTimeBefore;
@@ -409,6 +419,11 @@ namespace Plugin.Calendars
             if (iosEvent == null || iosEvent.Calendar.CalendarIdentifier != deviceCalendar.CalendarIdentifier)
             {
                 return false;
+            }
+
+            if (iosEvent.HasRecurrenceRules)
+            {
+                throw new InvalidOperationException("Editing recurring events is not supported");
             }
 
             NSError error = null;

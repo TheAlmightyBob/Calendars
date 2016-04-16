@@ -202,7 +202,7 @@ namespace Plugin.Calendars.Android.Tests
 #endif
 
         [Test]
-        public async void Calendars_AddOrUpdateEvents_AddsEvents()
+        public async void Calendars_AddOrUpdateEvent_AddsEvents()
         {
             var events = GetTestEvents();
             var calendar = new Calendar { Name = _calendarName };
@@ -224,7 +224,7 @@ namespace Plugin.Calendars.Android.Tests
         }
 
         [Test]
-        public async void Calendars_AddOrUpdateEvents_StartAfterEndThrows()
+        public async void Calendars_AddOrUpdateEvent_StartAfterEndThrows()
         {
             var calendarEvent = new CalendarEvent
             {
@@ -244,7 +244,23 @@ namespace Plugin.Calendars.Android.Tests
         }
 
         [Test]
-        public async void Calendars_AddOrUpdateEvents_HandlesUTC()
+        public async void Calendars_AddOrUpdateEvent_NonexistentEventCreatesNew()
+        {
+            var calendarEvent = GetTestEvent();
+            var calendar = new Calendar { Name = _calendarName };
+
+            await _service.AddOrUpdateCalendarAsync(calendar);
+
+            calendarEvent.ExternalID = "forty-two";
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+            Assert.IsNotNull(eventFromId);
+        }
+
+        [Test]
+        public async void Calendars_AddOrUpdateEvent_HandlesUTC()
         {
             var calendarEvent = GetTestEvent();
             var calendar = new Calendar { Name = _calendarName };
