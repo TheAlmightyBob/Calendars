@@ -167,15 +167,15 @@ namespace Plugin.Calendars
             var eventsUriBuilder = CalendarContract.Instances.ContentUri.BuildUpon();
 
             // Note that this is slightly different from the GetEventById projection
-            // due to the Instances API vs. Event API (specifically, IDs)
+            // due to the Instances API vs. Event API (specifically, IDs and start/end times)
             //
             string[] eventsProjection =
             {
 //                CalendarContract.Events.InterfaceConsts.Id,
                 CalendarContract.Events.InterfaceConsts.Title,
                 CalendarContract.Events.InterfaceConsts.Description,
-                CalendarContract.Events.InterfaceConsts.Dtstart,
-                CalendarContract.Events.InterfaceConsts.Dtend,
+                CalendarContract.Instances.Begin,
+                CalendarContract.Instances.End,
                 CalendarContract.Events.InterfaceConsts.AllDay,
                 CalendarContract.Events.InterfaceConsts.EventLocation,
                 CalendarContract.Instances.EventId
@@ -203,8 +203,8 @@ namespace Plugin.Calendars
                                     Name = cursor.GetString(CalendarContract.Events.InterfaceConsts.Title),
                                     ExternalID = cursor.GetString(CalendarContract.Instances.EventId),
                                     Description = cursor.GetString(CalendarContract.Events.InterfaceConsts.Description),
-                                    Start = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtstart),
-                                    End = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtend),
+                                    Start = cursor.GetDateTime(CalendarContract.Instances.Begin),
+                                    End = cursor.GetDateTime(CalendarContract.Instances.End),
                                     Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
                                     AllDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay)
                                 });
@@ -234,7 +234,7 @@ namespace Plugin.Calendars
         public Task<CalendarEvent> GetEventByIdAsync(string externalId)
         {
             // Note that this is slightly different from the GetEvents projection
-            // due to the Instances API vs Events API (specifically, IDs)
+            // due to the Instances API vs Events API (specifically, IDs and start/end times)
             //
             string[] eventsProjection =
             {
