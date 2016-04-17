@@ -404,6 +404,11 @@ namespace Plugin.Calendars
                 {
                     if (long.TryParse(calendarEvent.ExternalID, out existingId))
                     {
+                        if (IsEventRecurring(calendarEvent.ExternalID))
+                        {
+                            throw new InvalidOperationException("Editing recurring events is not supported");
+                        }
+
                         var calendarId = GetCalendarIdForEventId(calendarEvent.ExternalID);
 
                         if (calendarId.HasValue && calendarId.Value.ToString() == calendar.ExternalID)
@@ -457,6 +462,7 @@ namespace Plugin.Calendars
             {
                 throw new ArgumentException("Missing calendar event identifier", "calendarEvent");
             }
+
             // Verify calendar event exists 
             var existingAppt = await GetEventByIdAsync(calendarEvent.ExternalID).ConfigureAwait(false);
 
@@ -467,9 +473,15 @@ namespace Plugin.Calendars
             
             return await Task.Run(() =>
             {
+                if (IsEventRecurring(calendarEvent.ExternalID))
+                {
+                    throw new InvalidOperationException("Editing recurring events is not supported");
+                }
+
                 var reminderValues = new ContentValues();
                 reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Minutes, reminder?.TimeBefore.TotalMinutes ?? 15);
                 reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.EventId, calendarEvent.ExternalID);
+
                 switch(reminder.Method)
                 {
                     case CalendarReminderMethod.Alert:
@@ -484,17 +496,15 @@ namespace Plugin.Calendars
                     case CalendarReminderMethod.Sms:
                         reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Method, (int)RemindersMethod.Sms);
                         break;
-
                 }
+
                 var uri = CalendarContract.Reminders.ContentUri;
                 Insert(uri, reminderValues);
-                
 
                 return true;
             });
 
         }
-
 
         /// <summary>
         /// Removes a calendar and all its events from the system.
@@ -552,6 +562,11 @@ namespace Plugin.Calendars
             {
                 return await Task.Run<bool>(() =>
                     {
+                        if (IsEventRecurring(calendarEvent.ExternalID))
+                        {
+                            throw new InvalidOperationException("Editing recurring events is not supported");
+                        }
+
                         var calendarId = GetCalendarIdForEventId(calendarEvent.ExternalID);
 
                         if (calendarId.HasValue && calendarId.Value.ToString() == calendar.ExternalID)
@@ -613,6 +628,46 @@ namespace Plugin.Calendars
             }
 
             return calendarId;
+        }
+
+        private static bool IsEventRecurring(string externalId)
+        {
+            string[] eventsProjection =
+            {
+                // There are a number of properties related to recurrence that
+                // we could check. The Android docs state: "For non-recurring events,
+                // you must include DTEND. For recurring events, you must include a
+                // DURATION in addition to RRULE or RDATE." The API will also throw
+                // an exception if you try to set both DTEND and DURATION on an
+                // event. Thus, it seems reasonable to trust that DURATION will
+                // only be present if the event is recurring.
+                //
+                CalendarContract.Events.InterfaceConsts.Duration
+            };
+
+            bool isRecurring = false;
+            var cursor = Query(
+                ContentUris.WithAppendedId(_eventsUri, long.Parse(externalId)),
+                eventsProjection);
+
+            try
+            {
+                if (cursor.MoveToFirst())
+                {
+                    //calendarId = cursor.GetLong(CalendarContract.Events.InterfaceConsts.CalendarId);
+                    isRecurring = !string.IsNullOrEmpty(cursor.GetString(CalendarContract.Events.InterfaceConsts.Duration));
+                }
+            }
+            catch (Java.Lang.Exception ex)
+            {
+                throw new PlatformException(ex.Message, ex);
+            }
+            finally
+            {
+                cursor.Close();
+            }
+
+            return isRecurring;
         }
 
         private static Calendar GetCalendar(ICursor cursor)
