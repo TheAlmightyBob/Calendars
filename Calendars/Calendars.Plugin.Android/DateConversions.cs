@@ -16,7 +16,7 @@ namespace Plugin.Calendars
         /// <param name="date">Source DateTime.</param>
         public static long GetDateAsAndroidMS(DateTime date)
         {
-            return (long)(date.ToUniversalTime () - _reference).TotalMilliseconds;
+            return (long)(date.ToUniversalTime() - _reference).TotalMilliseconds;
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Plugin.Calendars
         /// <param name="ms">Source date as milliseconds since 1970.</param>
         public static DateTime GetDateFromAndroidMS(long ms)
         {
-            return _reference.AddMilliseconds (ms).ToLocalTime ();
+            return _reference.AddMilliseconds(ms).ToLocalTime();
         }
     }
 }

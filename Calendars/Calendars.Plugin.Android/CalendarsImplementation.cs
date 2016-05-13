@@ -198,15 +198,17 @@ namespace Plugin.Calendars
                     {
                         do
                         {
+                            bool allDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay);
+
                             events.Add(new CalendarEvent
                                 {
                                     Name = cursor.GetString(CalendarContract.Events.InterfaceConsts.Title),
                                     ExternalID = cursor.GetString(CalendarContract.Instances.EventId),
                                     Description = cursor.GetString(CalendarContract.Events.InterfaceConsts.Description),
-                                    Start = cursor.GetDateTime(CalendarContract.Instances.Begin),
-                                    End = cursor.GetDateTime(CalendarContract.Instances.End),
+                                    Start = cursor.GetDateTime(CalendarContract.Instances.Begin, allDay),
+                                    End = cursor.GetDateTime(CalendarContract.Instances.End, allDay),
                                     Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
-                                    AllDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay)
+                                    AllDay = allDay
                                 });
                         } while (cursor.MoveToNext());
                     }
@@ -258,15 +260,17 @@ namespace Plugin.Calendars
                 {
                     if (cursor.MoveToFirst())
                     {
+                        bool allDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay);
+
                         calendarEvent = new CalendarEvent
                         {
                             Name = cursor.GetString(CalendarContract.Events.InterfaceConsts.Title),
                             ExternalID = cursor.GetString(CalendarContract.Events.InterfaceConsts.Id),
                             Description = cursor.GetString(CalendarContract.Events.InterfaceConsts.Description),
-                            Start = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtstart),
-                            End = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtend),
+                            Start = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtstart, allDay),
+                            End = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtend, allDay),
                             Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
-                            AllDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay)
+                            AllDay = allDay
                         };
                     }
                 }
@@ -418,6 +422,13 @@ namespace Plugin.Calendars
                     }
 
                     var eventValues = new ContentValues();
+                    bool allDay = calendarEvent.AllDay;
+                    var start = allDay
+                        ? DateTime.SpecifyKind(calendarEvent.Start.Date, DateTimeKind.Utc)
+                        : calendarEvent.Start;
+                    var end = allDay
+                        ? DateTime.SpecifyKind(calendarEvent.End.Date, DateTimeKind.Utc)
+                        : calendarEvent.End;
 
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.CalendarId,
                         calendar.ExternalID);
@@ -426,16 +437,18 @@ namespace Plugin.Calendars
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.Description,
                         calendarEvent.Description);
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.Dtstart,
-                        DateConversions.GetDateAsAndroidMS(calendarEvent.Start));
+                        DateConversions.GetDateAsAndroidMS(start));
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.Dtend,
-                        DateConversions.GetDateAsAndroidMS(calendarEvent.End));
+                        DateConversions.GetDateAsAndroidMS(end));
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.AllDay,
-                        calendarEvent.AllDay);
+                        allDay);
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.EventLocation,
                         calendarEvent.Location ?? string.Empty);
 
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.EventTimezone,
-                        Java.Util.TimeZone.Default.ID);
+                        allDay
+                        ? Java.Util.TimeZone.GetTimeZone("UTC")?.ID ?? string.Empty
+                        : Java.Util.TimeZone.Default.ID);
 
                     if (!updateExisting)
                     {
