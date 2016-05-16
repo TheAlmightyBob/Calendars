@@ -506,10 +506,16 @@ namespace Plugin.Calendars
             NSError error = null; 
             if (_eventStore.SaveCalendar(calendar, true, out error))
             {
+                System.Console.WriteLine($"Successfully saved calendar with source {source.Title}");
+
                 // TODO: Should we try calling GetCalendars to make sure that
                 //       the calendar isn't hidden??
                 //
                 return calendar;
+            }
+            else
+            {
+                System.Console.WriteLine($"Tried and failed to save calendar with source {source.Title}");
             }
 
             _eventStore.Reset();
@@ -574,6 +580,15 @@ namespace Plugin.Calendars
         /// <exception cref="System.InvalidOperationException">No active calendar sources available to create calendar on.</exception>
         private EKCalendar CreateEKCalendar(string calendarName, string color = null)
         {
+            // Log the available sources
+            //
+            System.Console.WriteLine("Sources:");
+            
+            foreach (var source in _eventStore.Sources)
+            {
+                System.Console.WriteLine($"{source.Title}, {source.SourceType}");
+            }
+
             // first attempt to find any and all iCloud sources
             //
             var iCloudSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.CalDav &&
