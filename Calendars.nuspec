@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
    <metadata minClientVersion="2.8.1">
        <id>CClarke.Plugin.Calendars</id>
-       <version>0.4.2-beta</version>
+       <version>0.6.0-beta</version>
        <title>Calendars API Plugin for Xamarin and Windows</title>
        <authors>Caleb Clarke</authors>
        <owners>Caleb Clarke</owners>
@@ -16,10 +16,24 @@
          Perform basic CRUD calendar operations on iOS/Android/WinPhone/UWP through a simple common API.
          
 See project site README for usage notes and limitations.
-         
-Warning: Using this to edit events that it did not create is not recommended and could lead to data loss. See README for details. 
        </description>
      <releaseNotes>
+0.6.0-beta changes:
+
+InvalidOperationException is now thrown if trying to edit or delete a recurring event.
+
+iOS API now checks calendar access on each call and throws UnauthorizedAccessException whenever it is denied, rather than only on the first call.
+
+Fixed issue where Android recurring event instances reported incorrect start/end times.
+
+Android all-day events are no longer affected by timezone.
+
+
+0.4.2-beta changes:
+       
+CreateCalendar/AddOrUpdateCalendar now throw InvalidOperationException instead of ArgumentException on iOS if no calendar source can be found with which to create the calendar.
+
+
 0.3.0-alpha changes:
        
 BREAKING CHANGE: New Namespace: Plugin.Calendars
@@ -29,11 +43,6 @@ Support for adding event reminders (no retrieving/editing yet)
 Location field
 
 Fixed issue where calendars added on iOS would be hidden if the device had iCloud calendar sync enabled
-       
-
-0.4.2-beta changes:
-       
-CreateCalendar/AddOrUpdateCalendar now throw InvalidOperationException instead of ArgumentException on iOS if no calendar source can be found with which to create the calendar.
      </releaseNotes>
        <summary>Cross-platform abstraction for querying and modifying device calendars.</summary>
        <tags>xamarin, pcl, xam.pcl, plugin, plugin for xamarin, windows phone, winphone, wp8, android, xamarin.forms, ios, uwp</tags>
