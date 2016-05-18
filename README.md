@@ -3,8 +3,6 @@
 
 Cross-platform plugin for querying and modifying device calendars. Supports basic CRUD operations with calendars and events.
 
-WARNING: I do not recommend using this to edit events that it did not create, as data could be lost if those events use fields that it does not yet support. (see Limitations for details)
-
 ### Setup & Usage
 * Available on NuGet: http://www.nuget.org/packages/CClarke.Plugin.Calendars
 * Install into your PCL project and Client projects.
@@ -24,12 +22,13 @@ Windows Store 8.1 just throws NotSupportedException (as the platform does not pr
 * Android:
   * Requires ReadCalendar & WriteCalendar permissions.
   * Android calendars have additional "account name" and "owner account" properties. By default, this will set those properties for new calendars according to the application package label. However, custom names can be set via the Android implementation class.
+  * Unlike iOS, permissions will _not_ automatically be requested on Android Marshmallow. Check out the [Permissions Plugin](https://github.com/jamesmontemagno/Xamarin.Plugins/tree/master/Permissions) for help with this.
 * Windows Phone & Universal Windows Platform:
   * Calendar color is read-only.
   * Requires the Appointments capability
     * At time of writing, this does not seem to appear as an option in the GUI editor for a UWP manifest, but it is documented on MSDN and will be respected if added by editing the XML.
 * iOS:
-  * Calendar permission will be requested the first time any API function is called, if it has not already been granted.
+  * Calendar permission will be requested when any API function is called, if it has not already been granted.
   * The end time for all-day events will be returned as midnight of the following day (which is consistent with WinPhone/Android, but different from native iOS).
 
 ### A Note on Creating Calendars:
@@ -40,8 +39,9 @@ Windows Store 8.1 just throws NotSupportedException (as the platform does not pr
 * More discussion of this in [Issue #10](https://github.com/TheAlmightyBob/Calendars/issues/10)
 
 ### Limitations:
-* Recurring events are not currently supported. At all. This should not be used to edit existing recurring events. Bad things will likely happen.
-* Reminders, location, meeting attendees, and other custom fields are also not supported.
+* Recurring events are not currently supported.
+* Reminders can be created but not read/edited/removed.
+* Meeting attendees and other custom fields are also not supported.
 * Async is a lie on Android and iOS. Windows provides a native async API, so to provide a common API abstraction, the Android and iOS implementations use background threads.
 * Some performance tradeoffs were made in the interest of providing a clear and consistent API across all platforms with helpful error checking. Android in particular provides certain optimizations for activities that are unavailable to a cross-platform API. However, this may still be useful to an Android app that is not constantly re-querying calendar data, or to one that is written with Xamarin.Forms.
 * Does not currently provide access to the native platform UIs.
