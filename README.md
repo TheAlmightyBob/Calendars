@@ -4,7 +4,7 @@
 Cross-platform plugin for querying and modifying device calendars. Supports basic CRUD operations with calendars and events.
 
 ### Setup & Usage
-* Available on NuGet: http://www.nuget.org/packages/CClarke.Plugin.Calendars [![NuGet](https://img.shields.io/nuget/v/CClarke.Plugin.Calendars.svg?label=NuGet)](https://www.nuget.org/packages/CClarkePlugin.Calendars)
+* Available on NuGet: http://www.nuget.org/packages/CClarke.Plugin.Calendars [![NuGet](https://img.shields.io/nuget/v/CClarke.Plugin.Calendars.svg?label=NuGet)](https://www.nuget.org/packages/CClarke.Plugin.Calendars)
 * Install into your PCL project and Client projects.
 * Call CrossCalendars.Current from any project or PCL to gain access to APIs.
 
