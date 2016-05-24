@@ -213,6 +213,7 @@ namespace Plugin.Calendars
         /// <param name="calendarEvent">Event to add or update</param>
         /// <exception cref="System.ArgumentException">Calendar is not specified, does not exist on device, or is read-only</exception>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
+        /// <exception cref="System.InvalidOperationException">Editing recurring events is not supported</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task AddOrUpdateEventAsync(Calendar calendar, CalendarEvent calendarEvent)
         {
@@ -306,6 +307,7 @@ namespace Plugin.Calendars
         /// <param name="reminder">The reminder</param>
         /// <returns>If successful</returns>
         /// <exception cref="ArgumentException">Calendar event is not created or not valid</exception>
+        /// <exception cref="System.InvalidOperationException">Editing recurring events is not supported</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
         {
@@ -397,6 +399,7 @@ namespace Plugin.Calendars
         /// <returns>True if successfully removed</returns>
         /// <exception cref="System.ArgumentException">Calendar is read-only</exception>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
+        /// <exception cref="System.InvalidOperationException">Editing recurring events is not supported</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<bool> DeleteEventAsync(Calendar calendar, CalendarEvent calendarEvent)
         {
