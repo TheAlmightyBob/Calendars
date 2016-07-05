@@ -47,6 +47,7 @@ namespace Plugin.Calendars
         /// <returns>The DateTime.</returns>
         /// <param name="cursor">Cursor.</param>
         /// <param name="column">Column name.</param>
+        /// <param name="allDay">Whether the event is all-day</param>
         public static DateTime GetDateTime(this ICursor cursor, string column, bool allDay)
         {
             var ms = cursor.GetLong(cursor.GetColumnIndex(column));

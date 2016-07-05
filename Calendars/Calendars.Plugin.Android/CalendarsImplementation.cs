@@ -235,56 +235,7 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public Task<CalendarEvent> GetEventByIdAsync(string externalId)
         {
-            // Note that this is slightly different from the GetEvents projection
-            // due to the Instances API vs Events API (specifically, IDs and start/end times)
-            //
-            string[] eventsProjection =
-            {
-                CalendarContract.Events.InterfaceConsts.Id,
-                CalendarContract.Events.InterfaceConsts.Title,
-                CalendarContract.Events.InterfaceConsts.Description,
-                CalendarContract.Events.InterfaceConsts.Dtstart,
-                CalendarContract.Events.InterfaceConsts.Dtend,
-                CalendarContract.Events.InterfaceConsts.EventLocation,
-                CalendarContract.Events.InterfaceConsts.AllDay
-            };
-                    
-            return Task.Run<CalendarEvent>(() => 
-            {
-                CalendarEvent calendarEvent = null;
-                var cursor = Query(
-                    ContentUris.WithAppendedId(_eventsUri, long.Parse(externalId)),
-                    eventsProjection);
-
-                try
-                {
-                    if (cursor.MoveToFirst())
-                    {
-                        bool allDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay);
-
-                        calendarEvent = new CalendarEvent
-                        {
-                            Name = cursor.GetString(CalendarContract.Events.InterfaceConsts.Title),
-                            ExternalID = cursor.GetString(CalendarContract.Events.InterfaceConsts.Id),
-                            Description = cursor.GetString(CalendarContract.Events.InterfaceConsts.Description),
-                            Start = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtstart, allDay),
-                            End = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtend, allDay),
-                            Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
-                            AllDay = allDay
-                        };
-                    }
-                }
-                catch (Java.Lang.Exception ex)
-                {
-                    throw new PlatformException(ex.Message, ex);
-                }
-                finally
-                {
-                    cursor.Close();
-                }
-                
-                return calendarEvent;
-            });
+            return Task.Run(() => GetEventById(externalId));
         }
 
         /// <summary>
@@ -404,6 +355,7 @@ namespace Plugin.Calendars
 
             bool updateExisting = false;
             long existingId = -1;
+            CalendarEvent existingEvent = null;
 
             await Task.Run(() =>
                 {
@@ -419,6 +371,7 @@ namespace Plugin.Calendars
                         if (calendarId.HasValue && calendarId.Value.ToString() == calendar.ExternalID)
                         {
                             updateExisting = true;
+                            existingEvent = GetEventById(calendarEvent.ExternalID);
                         }
                     }
 
@@ -446,10 +399,18 @@ namespace Plugin.Calendars
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.EventLocation,
                         calendarEvent.Location ?? string.Empty);
 
-                    eventValues.Put(CalendarContract.Events.InterfaceConsts.EventTimezone,
-                        allDay
-                        ? Java.Util.TimeZone.GetTimeZone("UTC")?.ID ?? string.Empty
-                        : Java.Util.TimeZone.Default.ID);
+                    // If we're updating an existing event, don't mess with the existing
+                    // time zone (since we don't support explicitly setting it yet).
+                    // *Unless* we're toggling the "all day" setting
+                    // (because that would mean the time zone is UTC rather than local...).
+                    //
+                    if (!updateExisting || allDay != existingEvent?.AllDay)
+                    {
+                        eventValues.Put(CalendarContract.Events.InterfaceConsts.EventTimezone,
+                            allDay
+                            ? Java.Util.TimeZone.GetTimeZone("UTC")?.ID ?? string.Empty
+                            : Java.Util.TimeZone.Default.ID);
+                    }
 
                     if (!updateExisting)
                     {
@@ -459,7 +420,7 @@ namespace Plugin.Calendars
                     {
                         Update(_eventsUri, existingId, eventValues);
                     }
-                });
+                }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -517,8 +478,7 @@ namespace Plugin.Calendars
                 Insert(uri, reminderValues);
 
                 return true;
-            });
-
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -591,7 +551,7 @@ namespace Plugin.Calendars
                             return Delete(eventsUri, existingId);
                         }
                         return false;
-                    });
+                    }).ConfigureAwait(false);
             }
 
             return false;
@@ -684,6 +644,64 @@ namespace Plugin.Calendars
             }
 
             return isRecurring;
+        }
+
+        /// <summary>
+        /// Gets a single calendar event by platform-specific ID.
+        /// </summary>
+        /// <param name="externalId">Platform-specific calendar event identifier</param>
+        /// <returns>The corresponding calendar event, or null if not found</returns>
+        /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
+        /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        private CalendarEvent GetEventById(string externalId)
+        {
+            // Note that this is slightly different from the GetEvents projection
+            // due to the Instances API vs Events API (specifically, IDs and start/end times)
+            //
+            string[] eventsProjection =
+            {
+                CalendarContract.Events.InterfaceConsts.Id,
+                CalendarContract.Events.InterfaceConsts.Title,
+                CalendarContract.Events.InterfaceConsts.Description,
+                CalendarContract.Events.InterfaceConsts.Dtstart,
+                CalendarContract.Events.InterfaceConsts.Dtend,
+                CalendarContract.Events.InterfaceConsts.EventLocation,
+                CalendarContract.Events.InterfaceConsts.AllDay
+            };
+
+            CalendarEvent calendarEvent = null;
+            var cursor = Query(
+                ContentUris.WithAppendedId(_eventsUri, long.Parse(externalId)),
+                eventsProjection);
+
+            try
+            {
+                if (cursor.MoveToFirst())
+                {
+                    bool allDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay);
+
+                    calendarEvent = new CalendarEvent
+                    {
+                        Name = cursor.GetString(CalendarContract.Events.InterfaceConsts.Title),
+                        ExternalID = cursor.GetString(CalendarContract.Events.InterfaceConsts.Id),
+                        Description = cursor.GetString(CalendarContract.Events.InterfaceConsts.Description),
+                        Start = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtstart, allDay),
+                        End = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtend, allDay),
+                        Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
+                        AllDay = allDay
+                    };
+                }
+            }
+            catch (Java.Lang.Exception ex)
+            {
+                throw new PlatformException(ex.Message, ex);
+            }
+            finally
+            {
+                cursor.Close();
+            }
+
+            return calendarEvent;
         }
 
         private static Calendar GetCalendar(ICursor cursor)
