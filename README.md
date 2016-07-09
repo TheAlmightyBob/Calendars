@@ -2,6 +2,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/rdco9mbbsbvgf66r?svg=true)](https://ci.appveyor.com/project/TheAlmightyBob/calendars)
 
 Cross-platform plugin for querying and modifying device calendars. Supports basic CRUD operations with calendars and events.
+Try it out with the [Calendars Tester](https://github.com/TheAlmightyBob/CalendarsTester).
 
 ### Setup & Usage
 * Available on NuGet: http://www.nuget.org/packages/CClarke.Plugin.Calendars [![NuGet](https://img.shields.io/nuget/v/CClarke.Plugin.Calendars.svg?label=NuGet)](https://www.nuget.org/packages/CClarke.Plugin.Calendars)
