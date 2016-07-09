@@ -26,7 +26,6 @@ Windows Store 8.1 just throws NotSupportedException (as the platform does not pr
 * Windows Phone & Universal Windows Platform:
   * Calendar color is read-only.
   * Requires the Appointments capability
-    * At time of writing, this does not seem to appear as an option in the GUI editor for a UWP manifest, but it is documented on MSDN and will be respected if added by editing the XML.
 * iOS:
   * Calendar permission will be requested when any API function is called, if it has not already been granted.
   * The end time for all-day events will be returned as midnight of the following day (which is consistent with WinPhone/Android, but different from native iOS).
