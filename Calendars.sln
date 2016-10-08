@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendars.Plugin", "Calendars\Calendars.Plugin\Calendars.Plugin.csproj", "{A6FCEF44-D2BA-42C7-B3CB-13667BCD7B54}"
 EndProject
@@ -197,7 +197,6 @@ Global
 		{D7F3AA16-8EF1-4924-9E0A-DAD4AB46B2EB}.Debug|iPhone.ActiveCfg = Debug|Any CPU
 		{D7F3AA16-8EF1-4924-9E0A-DAD4AB46B2EB}.Debug|iPhone.Build.0 = Debug|Any CPU
 		{D7F3AA16-8EF1-4924-9E0A-DAD4AB46B2EB}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{D7F3AA16-8EF1-4924-9E0A-DAD4AB46B2EB}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
 		{D7F3AA16-8EF1-4924-9E0A-DAD4AB46B2EB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{D7F3AA16-8EF1-4924-9E0A-DAD4AB46B2EB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{D7F3AA16-8EF1-4924-9E0A-DAD4AB46B2EB}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -582,7 +581,6 @@ Global
 		{1CF66238-8649-4857-82F5-80DB7CF30754}.Debug|iPhone.ActiveCfg = Debug|iPhone
 		{1CF66238-8649-4857-82F5-80DB7CF30754}.Debug|iPhone.Build.0 = Debug|iPhone
 		{1CF66238-8649-4857-82F5-80DB7CF30754}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
-		{1CF66238-8649-4857-82F5-80DB7CF30754}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
 		{1CF66238-8649-4857-82F5-80DB7CF30754}.Debug|Mixed Platforms.ActiveCfg = Debug|iPhone
 		{1CF66238-8649-4857-82F5-80DB7CF30754}.Debug|Mixed Platforms.Build.0 = Debug|iPhone
 		{1CF66238-8649-4857-82F5-80DB7CF30754}.Debug|x64.ActiveCfg = Debug|iPhone
