@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDisplayName</key>
-	<string>Calendars.Plugin.iOSUnified.Tests</string>
+	<string>Calendars.Plugin.iOS.Tests</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.your-company.Calendars-Plugin-iOSUnified-Tests</string>
+	<string>com.your-company.Calendars-Plugin-iOS-Tests</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
