@@ -100,12 +100,6 @@ Fixed issue where calendars added on iOS would be hidden if the device had iClou
      <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\Plugin.Calendars.Abstractions.xml" target="lib\MonoAndroid10\Plugin.Calendars.Abstractions.xml" />
      <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\Plugin.Calendars.Abstractions.pdb" target="lib\MonoAndroid10\Plugin.Calendars.Abstractions.pdb" />
 
-     <!--Xamarin.iOS-->
-     <file src="Calendars\Calendars.Plugin.iOS\bin\iPhone\Release\Plugin.Calendars.dll" target="lib\MonoTouch10\Plugin.Calendars.dll" />
-     <file src="Calendars\Calendars.Plugin.iOS\bin\iPhone\Release\Plugin.Calendars.xml" target="lib\MonoTouch10\Plugin.Calendars.xml" />
-     <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\Plugin.Calendars.Abstractions.dll" target="lib\MonoTouch10\Plugin.Calendars.Abstractions.dll" />
-     <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\Plugin.Calendars.Abstractions.xml" target="lib\MonoTouch10\Plugin.Calendars.Abstractions.xml" />
-     
      <!--Xamarin.iOS Unified-->
      <file src="Calendars\Calendars.Plugin.iOSUnified\bin\iPhone\Release\Plugin.Calendars.dll" target="lib\Xamarin.iOS10\Plugin.Calendars.dll" />
      <file src="Calendars\Calendars.Plugin.iOSUnified\bin\iPhone\Release\Plugin.Calendars.xml" target="lib\Xamarin.iOS10\Plugin.Calendars.xml" />
