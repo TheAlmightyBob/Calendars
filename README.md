@@ -10,7 +10,6 @@ Try it out with the [Calendars Tester](https://github.com/TheAlmightyBob/Calenda
 * Call CrossCalendars.Current from any project or PCL to gain access to APIs.
 
 **Supports**
-* Xamarin.iOS
 * Xamarin.iOS (x64 Unified)
 * Xamarin.Android
 * Windows Phone 8.1 Silverlight
