@@ -30,7 +30,5 @@
 	</array>
 	<key>MinimumOSVersion</key>
 	<string>7.0</string>
-  <key>NSCalendarsUsageDescription</key>
-  <string>Test</string>
 </dict>
 </plist>
