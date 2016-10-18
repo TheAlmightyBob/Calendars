@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDisplayName</key>
-	<string>Calendars.Plugin.iOSUnified.Tests</string>
+	<string>Calendars.Plugin.iOS.Tests</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.your-company.Calendars-Plugin-iOSUnified-Tests</string>
+	<string>com.your-company.Calendars-Plugin-iOS-Tests</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
@@ -31,6 +31,6 @@
 	<key>MinimumOSVersion</key>
 	<string>7.0</string>
   <key>NSCalendarsUsageDescription</key>
-  <string>Allows Calendar access for testing</string>
+  <string>Allows adding Ag Spectrum events to the device calendar.</string>
 </dict>
 </plist>
