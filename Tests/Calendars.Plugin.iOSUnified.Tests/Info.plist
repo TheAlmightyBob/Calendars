@@ -31,6 +31,6 @@
 	<key>MinimumOSVersion</key>
 	<string>7.0</string>
   <key>NSCalendarsUsageDescription</key>
-  <string>Allows adding Ag Spectrum events to the device calendar.</string>
+  <string>Allows Calendar access for testing</string>
 </dict>
 </plist>
