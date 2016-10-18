@@ -10,7 +10,6 @@ Try it out with the [Calendars Tester](https://github.com/TheAlmightyBob/Calenda
 * Call CrossCalendars.Current from any project or PCL to gain access to APIs.
 
 **Supports**
-* Xamarin.iOS
 * Xamarin.iOS (x64 Unified)
 * Xamarin.Android
 * Windows Phone 8.1 Silverlight
@@ -28,6 +27,7 @@ Windows Store 8.1 just throws NotSupportedException (as the platform does not pr
   * Calendar color is read-only.
   * Requires the Appointments capability
 * iOS:
+  * (iOS 10+) Info.plist must include the NSCalendarsUsageDescription key with user-facing text that explains why your app desires calendar access. See [Apple docs](https://developer.apple.com/library/prerelease/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW15).
   * Calendar permission will be requested when any API function is called, if it has not already been granted.
   * The end time for all-day events will be returned as midnight of the following day (which is consistent with WinPhone/Android, but different from native iOS).
 
