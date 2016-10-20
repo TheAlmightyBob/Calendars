@@ -30,9 +30,7 @@
 	</array>
 	<key>MinimumOSVersion</key>
 	<string>7.0</string>
-	<key>CFBundleName</key>
-	<string>Calendars.Plugin.iOSUnified.Tests</string>
 	<key>NSCalendarsUsageDescription</key>
-    <string>Allow tests to access the local calendar</string>
+        <string>Allow tests to access the local calendar</string>
 </dict>
 </plist>
