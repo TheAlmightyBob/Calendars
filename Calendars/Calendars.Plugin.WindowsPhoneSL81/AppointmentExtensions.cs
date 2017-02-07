@@ -28,6 +28,7 @@ namespace Plugin.Calendars
                 End = appt.StartTime.Add(appt.Duration).LocalDateTime,
                 AllDay = appt.AllDay,
                 Location = appt.Location,
+                Uri = appt.Uri,
                 ExternalID = appt.LocalId
             };
         }

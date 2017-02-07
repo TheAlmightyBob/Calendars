@@ -47,7 +47,13 @@ namespace Plugin.Calendars.Abstractions
         /// </summary>
         /// <remarks>This ID will be the same for each instance of a recurring event.</remarks>
         public string ExternalID { get; set; }
-        
+
+        /// <summary>
+        /// Platform-specific URI/URL field
+        /// </summary>
+        /// <remarks>This ID will be the same for each instance of a recurring event.</remarks>
+        public Uri Uri { get; set; }
+
 
         /// <summary>
         /// Simple ToString helper, to assist with debugging.

@@ -112,6 +112,7 @@ namespace Plugin.Calendars
             options.FetchProperties.Add(AppointmentProperties.Duration);
             options.FetchProperties.Add(AppointmentProperties.AllDay);
             options.FetchProperties.Add(AppointmentProperties.Location);
+            options.FetchProperties.Add(AppointmentProperties.Uri);
 
             var appointments = await deviceCalendar.FindAppointmentsAsync(start, end - start, options).ConfigureAwait(false);
             var events = appointments.Select(a => a.ToCalendarEvent()).ToList();
@@ -235,6 +236,7 @@ namespace Plugin.Calendars
             appt.Duration = calendarEvent.End - calendarEvent.Start;
             appt.AllDay = calendarEvent.AllDay;
             appt.Location = calendarEvent.Location ?? string.Empty;
+            appt.Uri = calendarEvent.Uri;
 
             await appCalendar.SaveAppointmentAsync(appt);
 

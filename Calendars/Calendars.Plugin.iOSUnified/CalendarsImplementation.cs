@@ -265,6 +265,7 @@ namespace Plugin.Calendars
             iosEvent.AllDay = calendarEvent.AllDay;
             iosEvent.Location = calendarEvent.Location ?? string.Empty;
             iosEvent.StartDate = calendarEvent.Start.ToNSDate();
+            iosEvent.Url = calendarEvent.Uri;
 
             // If set to AllDay and given an EndDate of 12am the next day, EventKit
             // assumes that the event consumes two full days.
