@@ -209,7 +209,7 @@ namespace Plugin.Calendars
                                     Start = cursor.GetDateTime(CalendarContract.Instances.Begin, allDay),
                                     End = cursor.GetDateTime(CalendarContract.Instances.End, allDay),
                                     Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
-                                    Uri = cursor.GetString(CalendarContract.Events.InterfaceConsts.CustomAppUri),
+                                    Uri = new Uri(cursor.GetString(CalendarContract.Events.InterfaceConsts.CustomAppUri)),
                                     AllDay = allDay
                                 });
                         } while (cursor.MoveToNext());
@@ -401,7 +401,7 @@ namespace Plugin.Calendars
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.EventLocation,
                         calendarEvent.Location ?? string.Empty);
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.CustomAppUri,
-                        calendarEvent.Uri ?? string.Empty);
+                        calendarEvent.Uri.AbsoluteUri);
 
                     // If we're updating an existing event, don't mess with the existing
                     // time zone (since we don't support explicitly setting it yet).
@@ -693,7 +693,7 @@ namespace Plugin.Calendars
                         Start = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtstart, allDay),
                         End = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtend, allDay),
                         Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
-                        Uri = cursor.GetString(CalendarContract.Events.InterfaceConsts.CustomAppUri),
+                        Uri = new Uri(cursor.GetString(CalendarContract.Events.InterfaceConsts.CustomAppUri)),
                         AllDay = allDay
                     };
                 }
