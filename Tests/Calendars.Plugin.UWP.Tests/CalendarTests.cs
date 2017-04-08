@@ -9,27 +9,14 @@ using System.Threading.Tasks;
 
 using static Plugin.Calendars.TestUtilities.TestData;
 
-#if SILVERLIGHT
-namespace Plugin.Calendars.WinPhoneSL81.Tests
-#elif WINDOWS_UWP
 namespace Plugin.Calendars.UWP.Tests
-#else
-namespace Plugin.Calendars.WinPhone81.Tests
-#endif
 {
     [TestClass]
     public class CalendarTests
     {
-#if SILVERLIGHT
-        private const string _testCategory = "WinPhoneSL";
-        private const string _calendarName = "Calendars.Plugin.WinPhoneSL81.Tests.TestCalendar";
-#elif WINDOWS_UWP
         private const string _testCategory = "UWP";
         private const string _calendarName = "Calendars.Plugin.UWP.Tests.TestCalendar";
-#else
-        private const string _testCategory = "WinPhone";
-        private const string _calendarName = "Calendars.Plugin.WinPhone81.Tests.TestCalendar";
-#endif
+
         private CalendarComparer _calendarComparer;
         private EventComparer _eventComparer;
         private DateTimeComparer _dateTimeComparer;
