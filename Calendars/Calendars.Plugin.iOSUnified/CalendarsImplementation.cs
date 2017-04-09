@@ -3,17 +3,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Text;
 
-#if __UNIFIED__
 using EventKit;
 using Foundation;
-using CGColor = CoreGraphics.CGColor;
-#else
-using MonoTouch.CoreGraphics;
-using MonoTouch.EventKit;
-using MonoTouch.Foundation;
-#endif
 
 
 namespace Plugin.Calendars
@@ -171,7 +163,7 @@ namespace Plugin.Calendars
                 calendar.ExternalID = deviceCalendar.CalendarIdentifier;
 
                 // Update color in case iOS assigned one
-                if(deviceCalendar?.CGColor != null)
+                if (deviceCalendar?.CGColor != null)
                     calendar.Color = ColorConversion.ToHexColor(deviceCalendar.CGColor);
             }
             else
@@ -320,7 +312,7 @@ namespace Plugin.Calendars
 
             //Grab current event
             var existingEvent = _eventStore.EventFromIdentifier(calendarEvent.ExternalID);
-        
+
             if (existingEvent == null)
             {
                 throw new ArgumentException("Specified calendar event not found on device");
@@ -384,7 +376,7 @@ namespace Plugin.Calendars
                 //  we can be pretty confident that won't be an issue)
                 //
                 _eventStore.Reset();
-                
+
                 throw new ArgumentException(error.LocalizedDescription, nameof(calendar), new NSErrorException(error));
             }
 
@@ -407,7 +399,7 @@ namespace Plugin.Calendars
             {
                 return false;
             }
-            
+
             await RequestCalendarAccess().ConfigureAwait(false);
 
             var deviceCalendar = _eventStore.GetCalendar(calendar.ExternalID);
@@ -461,15 +453,8 @@ namespace Plugin.Calendars
             {
                 var accessResult = await _eventStore.RequestAccessAsync(EKEntityType.Event).ConfigureAwait(false);
 
-                bool hasAccess = false;
-                NSError error = null;
-
-#if __UNIFIED__
-                hasAccess = accessResult.Item1;
-                error = accessResult.Item2;
-#else
-                hasAccess = accessResult;
-#endif
+                bool hasAccess = accessResult.Item1;
+                NSError error = accessResult.Item2;
 
                 if (!hasAccess)
                 {
@@ -506,10 +491,10 @@ namespace Plugin.Calendars
 
             calendar.Source = source;
 
-            NSError error = null; 
+            NSError error = null;
             if (_eventStore.SaveCalendar(calendar, true, out error))
             {
-                System.Console.WriteLine($"Successfully saved calendar with source {source.Title}");
+                Console.WriteLine($"Successfully saved calendar with source {source.Title}");
 
                 // TODO: Should we try calling GetCalendars to make sure that
                 //       the calendar isn't hidden??
@@ -518,7 +503,7 @@ namespace Plugin.Calendars
             }
             else
             {
-                System.Console.WriteLine($"Tried and failed to save calendar with source {source.Title}");
+                Console.WriteLine($"Tried and failed to save calendar with source {source.Title}");
             }
 
             _eventStore.Reset();
@@ -585,11 +570,11 @@ namespace Plugin.Calendars
         {
             // Log the available sources
             //
-            System.Console.WriteLine("Sources:");
-            
+            Console.WriteLine("Sources:");
+
             foreach (var source in _eventStore.Sources)
             {
-                System.Console.WriteLine($"{source.Title}, {source.SourceType}");
+                Console.WriteLine($"{source.Title}, {source.SourceType}");
             }
 
             // first attempt to find any and all iCloud sources
@@ -612,7 +597,7 @@ namespace Plugin.Calendars
             {
                 return cal;
             }
-          
+
             // finally attempt just local sources
             //
             var localSources = _eventStore.Sources.Where(s => s.SourceType == EKSourceType.Local);

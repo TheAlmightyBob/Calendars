@@ -8,28 +8,22 @@ using Plugin.Calendars.TestUtilities;
 
 using static Plugin.Calendars.TestUtilities.TestData;
 
-#if __UNIFIED__
+#if __IOS__
 namespace Plugin.Calendars.iOSUnified.Tests
-#elif __IOS__
-namespace Plugin.Calendars.iOS.Tests
 #else
 namespace Plugin.Calendars.Android.Tests
 #endif
 {
     [TestFixture]
-#if __UNIFIED__
+#if __IOS__
     [Category("iOSUnified")]
-#elif __IOS__
-    [Category("iOS")]
 #else
     [Category("Android")]
 #endif
     class CalendarTests
     {
-#if __UNIFIED__
+#if __IOS__
         private const string _calendarName = "Plugin.Calendars.iOSUnified.Tests.TestCalendar";
-#elif __IOS__
-        private const string _calendarName = "Plugin.Calendars.iOS.Tests.TestCalendar";
 #else
         private const string _calendarName = "Plugin.Calendars.Android.Tests.TestCalendar";
 #endif
