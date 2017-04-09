@@ -115,24 +115,14 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Calendars.Plugin.WindowsPhoneSL81\AppointmentCalendarExtensions.cs">
-      <Link>AppointmentCalendarExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Calendars.Plugin.WindowsPhoneSL81\AppointmentExtensions.cs">
-      <Link>AppointmentExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Calendars.Plugin.WindowsPhoneSL81\CalendarsImplementation.cs">
-      <Link>CalendarsImplementation.cs</Link>
-    </Compile>
-    <Compile Include="..\Calendars.Plugin.WindowsPhoneSL81\IAsyncActionExtensions.cs">
-      <Link>IAsyncActionExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Calendars.Plugin.WindowsPhoneSL81\IAsyncOperationExtensions.cs">
-      <Link>IAsyncOperationExtensions.cs</Link>
-    </Compile>
     <Compile Include="..\Calendars.Plugin\CrossCalendars.cs">
       <Link>CrossCalendars.cs</Link>
     </Compile>
+    <Compile Include="AppointmentCalendarExtensions.cs" />
+    <Compile Include="AppointmentExtensions.cs" />
+    <Compile Include="CalendarsImplementation.cs" />
+    <Compile Include="IAsyncActionExtensions.cs" />
+    <Compile Include="IAsyncOperationExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Properties\Calendars.Plugin.UWP.rd.xml" />
   </ItemGroup>
