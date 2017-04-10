@@ -1,9 +1,4 @@
 ﻿using Plugin.Calendars.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.Appointments;
 
 namespace Plugin.Calendars
@@ -27,7 +22,8 @@ namespace Plugin.Calendars
                 Color = apptCalendar.DisplayColor.ToString(),
                 ExternalID = apptCalendar.LocalId,
                 CanEditCalendar = writeable,
-                CanEditEvents = writeable
+                CanEditEvents = writeable,
+                AccountName = apptCalendar.SourceDisplayName
             };
         }
     }
