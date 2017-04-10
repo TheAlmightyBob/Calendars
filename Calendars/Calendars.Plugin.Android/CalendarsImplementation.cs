@@ -28,7 +28,6 @@ namespace Plugin.Calendars
                 CalendarContract.Calendars.InterfaceConsts.CalendarColor,
                 CalendarContract.Calendars.InterfaceConsts.AccountName,
                 CalendarContract.Calendars.InterfaceConsts.CalendarAccessLevel,
-                CalendarContract.Calendars.InterfaceConsts.OwnerAccount,
                 CalendarContract.Calendars.InterfaceConsts.AccountType
             };
         
@@ -171,7 +170,6 @@ namespace Plugin.Calendars
             //
             string[] eventsProjection =
             {
-//                CalendarContract.Events.InterfaceConsts.Id,
                 CalendarContract.Events.InterfaceConsts.Title,
                 CalendarContract.Events.InterfaceConsts.Description,
                 CalendarContract.Instances.Begin,
@@ -717,7 +715,8 @@ namespace Plugin.Calendars
                     ExternalID = cursor.GetString(CalendarContract.Calendars.InterfaceConsts.Id),
                     CanEditCalendar = accountType == CalendarContract.AccountTypeLocal,
                     CanEditEvents = IsCalendarWriteable(accessLevel),
-                    Color = colorString
+                    Color = colorString,
+                    AccountName = cursor.GetString(CalendarContract.Calendars.InterfaceConsts.AccountName)
                 };
         }
             

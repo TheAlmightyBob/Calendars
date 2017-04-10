@@ -24,7 +24,8 @@ namespace Plugin.Calendars
                     ExternalID = ekCalendar.CalendarIdentifier,
                     CanEditCalendar = !ekCalendar.Immutable,
                     CanEditEvents = ekCalendar.AllowsContentModifications,
-                    Color = ColorConversion.ToHexColor(ekCalendar.CGColor)
+                    Color = ColorConversion.ToHexColor(ekCalendar.CGColor),
+                    AccountName = ekCalendar.Source.Title
                 };
         }
     }

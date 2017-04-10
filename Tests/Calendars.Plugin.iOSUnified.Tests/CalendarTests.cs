@@ -86,6 +86,7 @@ namespace Plugin.Calendars.Android.Tests
             Assert.AreEqual(calendar.CanEditEvents, calendarFromId.CanEditEvents);
             Assert.IsFalse(string.IsNullOrWhiteSpace(calendarFromId.Color), "Missing color");
             Assert.AreEqual(calendar.Color, calendarFromId.Color);
+            Assert.That(calendarFromId.AccountName, Is.Not.Null.Or.Empty);
         }
 
         [Test]

@@ -1,10 +1,6 @@
 ﻿using Plugin.Calendars.Abstractions;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Plugin.Calendars.TestUtilities
 {
@@ -34,6 +30,11 @@ namespace Plugin.Calendars.TestUtilities
             if (retval == 0)
             {
                 retval = string.Compare(x.Color, y.Color);
+            }
+
+            if (retval == 0)
+            {
+                retval = string.Compare(x.AccountName, y.AccountName);
             }
 
             return retval;
