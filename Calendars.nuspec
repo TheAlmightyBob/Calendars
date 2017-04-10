@@ -18,6 +18,18 @@
 See project site README for usage notes and limitations.
        </description>
      <releaseNotes>
+0.6.33-beta changes:
+
+Removed support for Windows (and WinPhone) 8.1 and iOS "classic" (pre-Unified).
+
+Added AccountName property to Calendar.
+
+
+0.6.10-beta changes:
+
+Time zone is now preserved when editing events on Android.
+
+
 0.6.0-beta changes:
 
 InvalidOperationException is now thrown if trying to edit or delete a recurring event.
@@ -27,25 +39,9 @@ iOS API now checks calendar access on each call and throws UnauthorizedAccessExc
 Fixed issue where Android recurring event instances reported incorrect start/end times.
 
 Android all-day events are no longer affected by timezone.
-
-
-0.4.2-beta changes:
-       
-CreateCalendar/AddOrUpdateCalendar now throw InvalidOperationException instead of ArgumentException on iOS if no calendar source can be found with which to create the calendar.
-
-
-0.3.0-alpha changes:
-       
-BREAKING CHANGE: New Namespace: Plugin.Calendars
-
-Support for adding event reminders (no retrieving/editing yet)
-
-Location field
-
-Fixed issue where calendars added on iOS would be hidden if the device had iCloud calendar sync enabled
      </releaseNotes>
        <summary>Cross-platform abstraction for querying and modifying device calendars.</summary>
-       <tags>xamarin, pcl, xam.pcl, plugin, plugin for xamarin, windows phone, winphone, wp8, android, xamarin.forms, ios, uwp</tags>
+       <tags>xamarin, pcl, xam.pcl, plugin, android, xamarin.forms, ios, uwp</tags>
        <dependencies>
        </dependencies>
    </metadata>
