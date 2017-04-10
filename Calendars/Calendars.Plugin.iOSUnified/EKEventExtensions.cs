@@ -1,10 +1,6 @@
 using Plugin.Calendars.Abstractions;
 
-#if __UNIFIED__
 using EventKit;
-#else
-using MonoTouch.EventKit;
-#endif
 
 namespace Plugin.Calendars
 {

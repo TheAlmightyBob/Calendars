@@ -1,11 +1,7 @@
 using System.Linq;
 using System.Text;
 
-#if __UNIFIED__
 using CGColor = CoreGraphics.CGColor;
-#else
-using MonoTouch.CoreGraphics;
-#endif
 
 namespace Plugin.Calendars
 {
