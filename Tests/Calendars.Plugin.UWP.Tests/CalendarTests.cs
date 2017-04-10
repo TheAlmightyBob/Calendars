@@ -1,12 +1,10 @@
-﻿using Plugin.Calendars.Abstractions;
-using Plugin.Calendars.TestUtilities;
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-using System;
+﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using Plugin.Calendars.Abstractions;
+using Plugin.Calendars.TestUtilities;
 using static Plugin.Calendars.TestUtilities.TestData;
 
 namespace Plugin.Calendars.UWP.Tests
@@ -80,6 +78,7 @@ namespace Plugin.Calendars.UWP.Tests
             Assert.AreEqual(calendar.ExternalID, calendarFromId.ExternalID);
             Assert.AreEqual(calendar.CanEditCalendar, calendarFromId.CanEditCalendar);
             Assert.AreEqual(calendar.CanEditEvents, calendarFromId.CanEditEvents);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(calendarFromId.AccountName), "Missing AccountName");
 
             // We can't set color on WinPhone, but we can verify we retrieved it...
             Assert.IsFalse(string.IsNullOrWhiteSpace(calendarFromId.Color), "Missing color");

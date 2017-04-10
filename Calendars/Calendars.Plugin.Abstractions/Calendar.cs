@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Plugin.Calendars.Abstractions
+﻿namespace Plugin.Calendars.Abstractions
 {
     /// <summary>
     /// Device calendar abstraction
@@ -36,5 +30,10 @@ namespace Plugin.Calendars.Abstractions
         /// Whether or not events can be created/edited/deleted for the calendar
         /// </summary>
         public bool CanEditEvents { get; internal set; }
+
+        /// <summary>
+        /// Display name of associated calendar account
+        /// </summary>
+        public string AccountName { get; set; }
     }
 }
