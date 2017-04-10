@@ -12,20 +12,16 @@ Try it out with the [Calendars Tester](https://github.com/TheAlmightyBob/Calenda
 **Supports**
 * Xamarin.iOS (x64 Unified)
 * Xamarin.Android
-* Windows Phone 8.1 Silverlight
-* Windows Phone 8.1 RT
 * Universal Windows Platform (uap10.0 NuGet target)
-
-Windows Store 8.1 just throws NotSupportedException (as the platform does not provide a corresponding native API).
 
 ### Platform Notes:
 * Android:
   * Requires ReadCalendar & WriteCalendar permissions.
   * Android calendars have additional "account name" and "owner account" properties. By default, this will set those properties for new calendars according to the application package label. However, custom names can be set via the Android implementation class.
   * Unlike iOS, permissions will _not_ automatically be requested on Android Marshmallow. Check out the [Permissions Plugin](https://github.com/jamesmontemagno/Xamarin.Plugins/tree/master/Permissions) for help with this.
-* Windows Phone & Universal Windows Platform:
+* Universal Windows Platform:
   * Calendar color is read-only.
-  * Requires the Appointments capability
+  * Requires the Appointments capability.
 * iOS:
   * (iOS 10+) Info.plist must include the NSCalendarsUsageDescription key with user-facing text that explains why your app desires calendar access. See [Apple docs](https://developer.apple.com/library/prerelease/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW15).
   * Calendar permission will be requested when any API function is called, if it has not already been granted.
@@ -35,7 +31,7 @@ Windows Store 8.1 just throws NotSupportedException (as the platform does not pr
 * Android’s default Calendar app (the Google one) does not allow creating *or deleting* calendars. Most 3rd-party calendars do (including some provided by manufacturers)… it is not a limitation of Android itself. But it is worth being aware that it’s possible the user may not know how to later remove a calendar your app created.
 * Windows does not allow 3rd-party apps to write to the default calendar. You *must* create an app-specific calendar in order to add events.
 * iOS allows creating/deleting calendars, but it’s a bit tricky: it is very important to specify the correct “calendar source” (e.g. iCloud/Gmail/local) for the user’s device configuration (i.e. whether or not iCloud is enabled), otherwise it may be successfully created but hidden (both from the built-in calendar app and from the API). This library attempts to take care of that for you, but it is theoretically possible that it could fail.
-  * Although iOS calendar app allows creating/deleting calendars, most 3rd-party calendar apps do *not* (quite contrary to the Android scenario). Possibly due to this complication.
+  * Although the built-in iOS calendar app allows creating/deleting calendars, most 3rd-party calendar apps do *not* (quite contrary to the Android scenario). Possibly due to this complication.
 * More discussion of this in [Issue #10](https://github.com/TheAlmightyBob/Calendars/issues/10)
 
 ### Limitations:
