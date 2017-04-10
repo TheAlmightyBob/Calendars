@@ -22,7 +22,7 @@ namespace Plugin.Calendars
                 {
                     Name = ekCalendar.Title,
                     ExternalID = ekCalendar.CalendarIdentifier,
-                    CanEditCalendar = ekCalendar.AllowsContentModifications,
+                    CanEditCalendar = !ekCalendar.Immutable,
                     CanEditEvents = ekCalendar.AllowsContentModifications,
                     Color = ColorConversion.ToHexColor(ekCalendar.CGColor)
                 };
