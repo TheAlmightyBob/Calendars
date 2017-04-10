@@ -444,14 +444,17 @@ namespace Plugin.Calendars.Android.Tests
             Assert.IsFalse(await _service.DeleteEventAsync(calendar2, calendarEvent));
         }
 
-#if __IOS__ // no built-in readonly calendar on Android to test with
+#if __IOS__ // no built-in calendar on Android to test with
         [Test]
-        public async void Calendars_DeleteEvent_ReadonlyCalendarThrowsException()
+        public async void Calendars_DeleteEvent_RecurringEventThrowsException()
         {
             var calendars = await _service.GetCalendarsAsync();
             var readonlyCalendars = calendars.Where(c => !c.CanEditEvents).ToList();
 
-            // For iOS we can rely on the built-in read-only Birthdays calendar
+            // For iOS we can rely on the built-in Birthdays calendar
+            // (birthdays tend to be recurring..)
+            // These events *also* cannot be deleted because the calendar is
+            // read-only, however the recurrence check throws first.
             //
             var readonlyCalendar = readonlyCalendars.First(c => c.Name == "Birthdays");
             
@@ -459,7 +462,7 @@ namespace Plugin.Calendars.Android.Tests
 
             var events = await _service.GetEventsAsync(readonlyCalendar, kateBellsBirthday.AddDays(-1), kateBellsBirthday.AddDays(1));
 
-            Assert.IsTrue(await _service.DeleteEventAsync(readonlyCalendar, events.First()).ThrowsAsync<ArgumentException>(), "Exception wasn't thrown");
+            Assert.IsTrue(await _service.DeleteEventAsync(readonlyCalendar, events.First()).ThrowsAsync<InvalidOperationException>(), "Exception wasn't thrown");
 
             // Ensure calendar is still there
             Assert.IsTrue((await _service.GetCalendarsAsync()).Any(c => c.Name == "Birthdays"));
