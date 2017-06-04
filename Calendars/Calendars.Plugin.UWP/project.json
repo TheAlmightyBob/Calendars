@@ -1,5 +1,6 @@
 ﻿{
   "dependencies": {
+    "gitlink": "3.0.0-unstable0092",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0"
   },
   "frameworks": {
