@@ -77,5 +77,11 @@ Android all-day events are no longer affected by timezone.
      <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\Plugin.Calendars.Abstractions.dll" target="lib\Xamarin.iOS10\Plugin.Calendars.Abstractions.dll" />
      <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\Plugin.Calendars.Abstractions.xml" target="lib\Xamarin.iOS10\Plugin.Calendars.Abstractions.xml" />
 
+     <!--Tizen-->
+     <file src="Calendars\Calendars.Plugin.Tizen\bin\Release\tizen40\Plugin.Calendars.dll" target="lib\tizen40\Plugin.Calendars.dll" />
+     <file src="Calendars\Calendars.Plugin.Tizen\bin\Release\tizen40\Plugin.Calendars.pdb" target="lib\tizen40\Plugin.Calendars.pdb" />
+     <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\tizen40\Plugin.Calendars.Abstractions.dll" target="lib\tizen40\Plugin.Calendars.Abstractions.dll" />
+     <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\tizen40\Plugin.Calendars.Abstractions.pdb" target="lib\tizen40\Plugin.Calendars.Abstractions.pdb" />
+
    </files>
 </package>

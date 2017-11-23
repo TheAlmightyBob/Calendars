@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.0
+VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendars.Plugin", "Calendars\Calendars.Plugin\Calendars.Plugin.csproj", "{A6FCEF44-D2BA-42C7-B3CB-13667BCD7B54}"
 EndProject
@@ -27,6 +27,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendars.Plugin.UWP", "Calendars\Calendars.Plugin.UWP\Calendars.Plugin.UWP.csproj", "{75932C54-5006-4368-A61A-EF7F7AB216BD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendars.Plugin.UWP.Tests", "Tests\Calendars.Plugin.UWP.Tests\Calendars.Plugin.UWP.Tests.csproj", "{449591A6-F24A-437D-857A-212BEF68E4D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendars.Plugin.Tizen", "Calendars\Calendars.Plugin.Tizen\Calendars.Plugin.Tizen.csproj", "{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -525,6 +527,46 @@ Global
 		{449591A6-F24A-437D-857A-212BEF68E4D2}.Release|x86.ActiveCfg = Release|x86
 		{449591A6-F24A-437D-857A-212BEF68E4D2}.Release|x86.Build.0 = Release|x86
 		{449591A6-F24A-437D-857A-212BEF68E4D2}.Release|x86.Deploy.0 = Release|x86
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Ad-Hoc|Any CPU.Build.0 = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Ad-Hoc|ARM.ActiveCfg = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Ad-Hoc|ARM.Build.0 = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Ad-Hoc|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Ad-Hoc|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Ad-Hoc|x64.ActiveCfg = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Ad-Hoc|x64.Build.0 = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Ad-Hoc|x86.ActiveCfg = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Ad-Hoc|x86.Build.0 = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.AppStore|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.AppStore|Any CPU.Build.0 = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.AppStore|ARM.ActiveCfg = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.AppStore|ARM.Build.0 = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.AppStore|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.AppStore|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.AppStore|x64.ActiveCfg = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.AppStore|x64.Build.0 = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.AppStore|x86.ActiveCfg = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.AppStore|x86.Build.0 = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Debug|ARM.Build.0 = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Debug|x64.Build.0 = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Debug|x86.Build.0 = Debug|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Release|ARM.ActiveCfg = Release|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Release|ARM.Build.0 = Release|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Release|x64.ActiveCfg = Release|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Release|x64.Build.0 = Release|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Release|x86.ActiveCfg = Release|Any CPU
+		{6C6A410B-EF52-446C-8FA0-EAF08A4E7D18}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -534,6 +576,9 @@ Global
 		{88CD6F84-4568-4DE2-A414-D05AD6C221B0} = {A191414B-EAFA-42AF-953A-FEBA684922DB}
 		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E} = {A191414B-EAFA-42AF-953A-FEBA684922DB}
 		{449591A6-F24A-437D-857A-212BEF68E4D2} = {A191414B-EAFA-42AF-953A-FEBA684922DB}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {172CC8F7-08A4-4A4D-A8CA-64C32CAB35FF}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
