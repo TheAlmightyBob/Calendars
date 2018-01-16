@@ -6,6 +6,10 @@
     <RootNamespace>Plugin.Calendars</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard1.0\Plugin.Calendars.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Calendars.Plugin.Abstractions\Calendars.Plugin.Abstractions.csproj" />
   </ItemGroup>

@@ -6,4 +6,8 @@
     <RootNamespace>Plugin.Calendars.Abstractions</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard1.0\Plugin.Calendars.Abstractions.xml</DocumentationFile>
+  </PropertyGroup>
+
 </Project>
