@@ -6,8 +6,8 @@ Try it out with the [Calendars Tester](https://github.com/TheAlmightyBob/Calenda
 
 ### Setup & Usage
 * Available on NuGet: http://www.nuget.org/packages/CClarke.Plugin.Calendars [![NuGet](https://img.shields.io/nuget/v/CClarke.Plugin.Calendars.svg?label=NuGet)](https://www.nuget.org/packages/CClarke.Plugin.Calendars)
-* Install into your PCL project and Client projects.
-* Call CrossCalendars.Current from any project or PCL to gain access to APIs.
+* Install into your .NETStandard/PCL project and Client projects.
+* Call CrossCalendars.Current from any project to gain access to APIs.
 
 **Supports**
 * Xamarin.iOS (x64 Unified)
