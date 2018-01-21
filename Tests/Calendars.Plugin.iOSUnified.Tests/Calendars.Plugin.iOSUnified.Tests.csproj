@@ -22,7 +22,8 @@
     <MtouchArch>i386, x86_64</MtouchArch>
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignEntitlements></CodesignEntitlements>
+    <CodesignEntitlements>
+    </CodesignEntitlements>
     <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
@@ -34,7 +35,8 @@
     <MtouchLink>None</MtouchLink>
     <MtouchArch>i386, x86_64</MtouchArch>
     <ConsolePause>false</ConsolePause>
-    <CodesignEntitlements></CodesignEntitlements>
+    <CodesignEntitlements>
+    </CodesignEntitlements>
     <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
@@ -110,7 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Calendars\Calendars.Plugin.Abstractions\Calendars.Plugin.Abstractions.csproj">
-      <Project>{6edb0588-ffc5-4ef5-8a99-9e241d0f878d}</Project>
+      <Project>{ae8e6fff-da18-4ecb-b0b0-abc527b5de32}</Project>
       <Name>Calendars.Plugin.Abstractions</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Calendars\Calendars.Plugin.iOSUnified\Calendars.Plugin.iOSUnified.csproj">

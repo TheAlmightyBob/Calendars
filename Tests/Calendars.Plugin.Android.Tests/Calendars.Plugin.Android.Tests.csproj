@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -68,7 +68,7 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\..\Calendars\Calendars.Plugin.Abstractions\Calendars.Plugin.Abstractions.csproj">
-      <Project>{6EDB0588-FFC5-4EF5-8A99-9E241D0F878D}</Project>
+      <Project>{ae8e6fff-da18-4ecb-b0b0-abc527b5de32}</Project>
       <Name>Calendars.Plugin.Abstractions</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Calendars\Calendars.Plugin.Android\Calendars.Plugin.Android.csproj">

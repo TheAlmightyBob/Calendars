@@ -59,7 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Calendars.Plugin.Abstractions\Calendars.Plugin.Abstractions.csproj">
-      <Project>{6EDB0588-FFC5-4EF5-8A99-9E241D0F878D}</Project>
+      <Project>{ae8e6fff-da18-4ecb-b0b0-abc527b5de32}</Project>
       <Name>Calendars.Plugin.Abstractions</Name>
     </ProjectReference>
   </ItemGroup>
