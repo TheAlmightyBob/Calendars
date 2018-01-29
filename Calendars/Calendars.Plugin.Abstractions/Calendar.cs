@@ -19,7 +19,7 @@
         /// <summary>
         /// Platform-specific unique calendar identifier
         /// </summary>
-        public string ExternalID { get; set; }
+        public string ExternalID { get; internal set; }
 
         /// <summary>
         /// Whether or not the calendar itself (name/color) can be edited
