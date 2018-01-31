@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Plugin.Calendars.Abstractions;
 using Tizen.Pims.Calendar;
@@ -21,11 +20,12 @@ namespace Plugin.Calendars
 		/// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
 		public Task<IList<Calendar>> GetCalendarsAsync()
 		{
-			return Task.Run<IList<Calendar>>(() =>
-			{
-				CalendarRecord calRecord = new CalendarRecord(Book.Uri);
-				var calendars = new List<Calendar>();
+			var calendars = new List<Calendar>();
+			CalendarRecord calRecord = null;
 
+			try
+			{
+				calRecord = new CalendarRecord(Book.Uri);
 				calRecord.Set<string>(Book.Name, "org.tizen.calendar");
 				calendars.Add(
 					new Calendar
@@ -38,12 +38,13 @@ namespace Plugin.Calendars
 						Color = calRecord.Get<string>(Book.Color),
 					}
 				);
-
+			}
+			finally
+			{
 				calRecord?.Dispose();
 				calRecord = null;
-
-				return calendars;
-			});			
+			}
+			return Task.FromResult<IList<Calendar>>(calendars);
 		}
 
 		/// <summary>
@@ -55,21 +56,27 @@ namespace Plugin.Calendars
 		/// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
 		public Task<Calendar> GetCalendarByIdAsync(string externalId)
 		{
-			CalendarRecord calRecord = new CalendarRecord(Book.Uri);
-			Calendar calendar = new Calendar();
+			Calendar calendar = null;
+			CalendarRecord calRecord = null;
 
-			calRecord.Set<string>(Book.Name, "org.tizen.calendar");
-			calendar.Name = calRecord.Get<string>(Book.Name);
-			calendar.ExternalID = calRecord.Get<int>(Book.Id).ToString();
-			calendar.CanEditEvents = true;
-			calendar.CanEditCalendar = false;
-			calendar.AccountName = calRecord.Get<int>(Book.AccountId).ToString();
-			calendar.Color = calRecord.Get<string>(Book.Color);
-
-			calRecord?.Dispose();
-			calRecord = null;
-			
-			return Task.Run(() => calendar);
+			try
+			{
+				calendar = new Calendar();
+				calRecord = new CalendarRecord(Book.Uri);
+				calRecord.Set<string>(Book.Name, "org.tizen.calendar");
+				calendar.Name = calRecord.Get<string>(Book.Name);
+				calendar.ExternalID = calRecord.Get<int>(Book.Id).ToString();
+				calendar.CanEditEvents = true;
+				calendar.CanEditCalendar = false;
+				calendar.AccountName = calRecord.Get<int>(Book.AccountId).ToString();
+				calendar.Color = calRecord.Get<string>(Book.Color);
+			}
+			finally
+			{
+				calRecord?.Dispose();
+				calRecord = null;
+			}
+			return Task.FromResult(calendar);
 		}
 
 		/// <summary>
@@ -84,59 +91,70 @@ namespace Plugin.Calendars
 		/// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
 		public Task<IList<CalendarEvent>> GetEventsAsync(Calendar calendar, DateTime start, DateTime end)
 		{
-			return Task.Run<IList<CalendarEvent>>(() =>
-			{
-				var calendars = new List<CalendarEvent>();
+			var calendars = new List<CalendarEvent>();
+			CalendarManager calManager = null;
+			CalendarQuery calQuery = null;
+			CalendarList calList = null;
+			CalendarRecord calRecord = null;
+			CalendarFilter calFilter = null;
 
-				CalendarManager calManager = new CalendarManager();
-				CalendarQuery calQuery = new CalendarQuery(Event.Uri);
-				CalendarList calList = calManager.Database.GetRecordsWithQuery(calQuery, 0, 0);
-				CalendarRecord calRecord = calList.GetCurrentRecord();
+			try
+			{
+				calManager = new CalendarManager();
+				calFilter.AddCondition(CalendarFilter.LogicalOperator.And, Event.Start, CalendarFilter.IntegerMatchType.GreaterThanOrEqual, ConvertIntPtrToCalendarTime(start));
+				calFilter.AddCondition(CalendarFilter.LogicalOperator.And, Event.End, CalendarFilter.IntegerMatchType.LessThanOrEqual, ConvertIntPtrToCalendarTime(end));
+				calQuery = new CalendarQuery(Event.Uri);
+				calQuery.SetFilter(calFilter);
+				calList = calManager.Database.GetRecordsWithQuery(calQuery, 0, 0);
 
 				if (calList.Count == 0)
-					return calendars;
+					return Task.FromResult<IList<CalendarEvent>>(calendars);
 
 				calList.MoveFirst();
+				calRecord = calList.GetCurrentRecord();
 
 				do
 				{
 					string summary = calRecord.Get<string>(Event.Summary);
-					int IsAllday = calRecord.Get<int>(Event.IsAllday);
-					CalendarTime sTime = Convert.ToBoolean(IsAllday) ? ConvertIntPtrToCalendarTime(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)) : calRecord.Get<CalendarTime>(Event.Start);
-					CalendarTime End = Convert.ToBoolean(IsAllday) ? ConvertIntPtrToCalendarTime(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)): calRecord.Get<CalendarTime>(Event.End);
+					CalendarTime startTime = calRecord.Get<CalendarTime>(Event.Start);
+					CalendarTime endTime = calRecord.Get<CalendarTime>(Event.End);
 					string location = calRecord.Get<string>(Event.Location);
 					string description = calRecord.Get<string>(Event.Description);
+					int IsAllday = calRecord.Get<int>(Event.IsAllday);
 					int Id = calRecord.Get<int>(Event.Id);
-					TimeSpan s = sTime.UtcTime - start;
-					TimeSpan e = end - End.UtcTime;
-					if (s.TotalSeconds >= 0 && e.TotalSeconds >= 0)
-					{
-						calendars.Add(
-							new CalendarEvent
-							{
-								Name = summary,
-								Start = sTime.UtcTime,
-								End = End.UtcTime,
-								Location = location,
-								Description = description,
-								AllDay = Convert.ToBoolean(IsAllday),
-								ExternalID = Id.ToString(),
-							}
-						);
-					}
-				} while (calList.MoveNext());
 
+					calendars.Add(
+						new CalendarEvent
+						{
+							Name = summary,
+							Start = startTime.UtcTime,
+							End = endTime.UtcTime,
+							Location = location,
+							Description = description,
+							AllDay = Convert.ToBoolean(IsAllday),
+							ExternalID = Id.ToString(),
+						}
+					);
+				} while (calList.MoveNext());
+			}
+			finally
+			{
 				calRecord?.Dispose();
 				calRecord = null;
+
+				calFilter?.Dispose();
+				calFilter = null;
+
+				calQuery?.Dispose();
+				calQuery = null;
 
 				calList?.Dispose();
 				calList = null;
 
 				calManager?.Dispose();
 				calManager = null;
-
-				return calendars;
-			});
+			}
+			return Task.FromResult<IList<CalendarEvent>>(calendars);
 		}
 
 		/// <summary>
@@ -148,51 +166,43 @@ namespace Plugin.Calendars
 		/// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
 		public Task<CalendarEvent> GetEventByIdAsync(string externalId)
 		{
-			CalendarEvent events = null;
-			CalendarManager calManager = new CalendarManager();
-			CalendarList calList = calManager.Database.GetAll(Event.Uri, 0, 0);
-			CalendarRecord calRecord = calList.GetCurrentRecord();
+			CalendarEvent calEvent = null;
+			CalendarManager calManager = null;
+			CalendarRecord calRecord = null;
 
-			if (calList.Count == 0)
-				return Task.Run(() => events);
-
-			calList.MoveFirst();
-
-			do
+			try
 			{
+				calManager = new CalendarManager();
+				calRecord = calManager.Database.Get(Event.Uri, Convert.ToInt32(externalId));
+
 				string summary = calRecord.Get<string>(Event.Summary);
 				int IsAllday = calRecord.Get<int>(Event.IsAllday);
-				CalendarTime sTime = Convert.ToBoolean(IsAllday) ? ConvertIntPtrToCalendarTime(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)) : calRecord.Get<CalendarTime>(Event.Start);
-				CalendarTime End = Convert.ToBoolean(IsAllday) ? ConvertIntPtrToCalendarTime(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)) : calRecord.Get<CalendarTime>(Event.End);
+				CalendarTime startTime = Convert.ToBoolean(IsAllday) ? ConvertIntPtrToCalendarTime(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)) : calRecord.Get<CalendarTime>(Event.Start);
+				CalendarTime endTime = Convert.ToBoolean(IsAllday) ? ConvertIntPtrToCalendarTime(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)) : calRecord.Get<CalendarTime>(Event.End);
 				string location = calRecord.Get<string>(Event.Location);
 				string description = calRecord.Get<string>(Event.Description);
 				int Id = calRecord.Get<int>(Event.Id);
-				if (Id.ToString() == externalId)
+
+				calEvent = new CalendarEvent
 				{
-					events = new CalendarEvent
-					{
-						Name = summary,
-						Start = sTime.UtcTime,
-						End = End.UtcTime,
-						Location = location,
-						Description = description,
-						AllDay = Convert.ToBoolean(IsAllday),
-						ExternalID = Id.ToString(),
-					};
-					break;
-				}
-			} while (calList.MoveNext());
+					Name = summary,
+					Start = startTime.UtcTime,
+					End = endTime.UtcTime,
+					Location = location,
+					Description = description,
+					AllDay = Convert.ToBoolean(IsAllday),
+					ExternalID = Id.ToString(),
+				};
+			}
+			finally
+			{
+				calRecord?.Dispose();
+				calRecord = null;
 
-			calRecord?.Dispose();
-			calRecord = null;
-
-			calList?.Dispose();
-			calList = null;
-
-			calManager?.Dispose();
-			calManager = null;
-
-			return Task.Run(() => events);
+				calManager?.Dispose();
+				calManager = null;
+			}
+			return Task.FromResult(calEvent);
 		}
 
 		/// <summary>
@@ -238,48 +248,65 @@ namespace Plugin.Calendars
 			}
 			else
 			{
-				CalendarManager calManager = new CalendarManager();
-				CalendarRecord updateRecord = calManager.Database.Get(Event.Uri, Convert.ToInt32(calendarEvent.ExternalID));
+				CalendarManager calManager = null;
+				CalendarRecord updateRecord = null;
 
-				if (updateRecord != null)
+				try
 				{
-					var start = calendarEvent.AllDay
-							? DateTime.SpecifyKind(calendarEvent.Start, DateTimeKind.Utc)
-							: calendarEvent.Start;
-					var end = calendarEvent.AllDay
-							? DateTime.SpecifyKind(calendarEvent.End, DateTimeKind.Utc)
-							: calendarEvent.End;
-					updateRecord.Set(Event.Summary, calendarEvent.Name);
-					updateRecord.Set(Event.Start, ConvertIntPtrToCalendarTime(start));
-					updateRecord.Set(Event.End, ConvertIntPtrToCalendarTime(end));
-					updateRecord.Set(Event.Location, calendarEvent.Location);
-					updateRecord.Set(Event.Description, calendarEvent.Description);
+					calManager = new CalendarManager();
+					updateRecord = calManager.Database.Get(Event.Uri, Convert.ToInt32(calendarEvent.ExternalID));
 
-					calManager.Database.Update(updateRecord);
+					if (updateRecord != null)
+					{
+						try
+						{
+							DateTime startTime = calendarEvent.AllDay
+									? DateTime.SpecifyKind(calendarEvent.Start, DateTimeKind.Utc)
+									: calendarEvent.Start;
+							DateTime endTime = calendarEvent.AllDay
+									? DateTime.SpecifyKind(calendarEvent.End, DateTimeKind.Utc)
+									: calendarEvent.End;
+							updateRecord.Set(Event.Summary, calendarEvent.Name);
+							updateRecord.Set(Event.Start, ConvertIntPtrToCalendarTime(startTime));
+							updateRecord.Set(Event.End, ConvertIntPtrToCalendarTime(endTime));
+							updateRecord.Set(Event.Location, calendarEvent.Location);
+							updateRecord.Set(Event.Description, calendarEvent.Description);
 
-					updateRecord?.Dispose();
-					updateRecord = null;
+							calManager.Database.Update(updateRecord);
+						}
+						finally
+						{
+							updateRecord?.Dispose();
+							updateRecord = null;
+						}
+					}
+					else
+					{
+						CalendarRecord addRecord = null;
 
-					calManager?.Dispose();
-					calManager = null;
+						try
+						{
+							addRecord = new CalendarRecord(Event.Uri);
+
+							var start = DateTime.SpecifyKind(calendarEvent.Start, DateTimeKind.Utc);
+							var end = DateTime.SpecifyKind(calendarEvent.End, DateTimeKind.Utc);
+							addRecord.Set(Event.Summary, calendarEvent.Name);
+							addRecord.Set(Event.Start, ConvertIntPtrToCalendarTime(start));
+							addRecord.Set(Event.End, ConvertIntPtrToCalendarTime(end));
+							addRecord.Set(Event.Location, calendarEvent.Location);
+							addRecord.Set(Event.Description, calendarEvent.Description);
+
+							calManager.Database.Insert(addRecord);
+						}
+						finally
+						{
+							addRecord?.Dispose();
+							addRecord = null;
+						}
+					}
 				}
-				else
+				finally
 				{
-					CalendarRecord addRecord = new CalendarRecord(Event.Uri);
-
-					var start = DateTime.SpecifyKind(calendarEvent.Start, DateTimeKind.Utc);
-					var end = DateTime.SpecifyKind(calendarEvent.End, DateTimeKind.Utc);
-					addRecord.Set(Event.Summary, calendarEvent.Name);
-					addRecord.Set(Event.Start, ConvertIntPtrToCalendarTime(start));
-					addRecord.Set(Event.End, ConvertIntPtrToCalendarTime(end));
-					addRecord.Set(Event.Location, calendarEvent.Location);
-					addRecord.Set(Event.Description, calendarEvent.Description);
-
-					calManager.Database.Insert(addRecord);
-					
-					addRecord?.Dispose();
-					addRecord = null;
-
 					calManager?.Dispose();
 					calManager = null;
 				}
@@ -320,24 +347,34 @@ namespace Plugin.Calendars
 				throw new ArgumentException("Specified calendar event not found on device");
 			}
 
-			CalendarManager calManager = new CalendarManager();
-			CalendarRecord calRecord = calManager.Database.Get(Event.Uri, Convert.ToInt32(calendarEvent.ExternalID));
-			CalendarTime sTime = calRecord.Get<CalendarTime>(Event.Start);
-			CalendarTime time = new CalendarTime(sTime.UtcTime.AddMinutes(reminder?.TimeBefore.TotalMinutes ?? 15).Ticks);
-			CalendarRecord calAlarm = new CalendarRecord(Alarm.Uri);
+			CalendarManager calManager = null;
+			CalendarRecord calRecord = null, calAlarm = null;
+			CalendarTime startTime = null, calTime = null;
 
-			calAlarm.Set<CalendarTime>(Alarm.AlarmTime, time);
-			calAlarm.Set<int>(Alarm.TickUnit, (int)CalendarTypes.TickUnit.Specific);
-			calRecord.AddChildRecord(Event.Alarm, calAlarm);
-			calManager.Database.Update(calRecord);
+			try
+			{
+				calManager = new CalendarManager();
+				calRecord = calManager.Database.Get(Event.Uri, Convert.ToInt32(calendarEvent.ExternalID));
+				startTime = calRecord.Get<CalendarTime>(Event.Start);
+				calTime = new CalendarTime(startTime.UtcTime.AddMinutes(reminder?.TimeBefore.TotalMinutes ?? 15).Ticks);
+				calAlarm = new CalendarRecord(Alarm.Uri);
 
-			calAlarm?.Dispose();
-			calAlarm = null;
-			calRecord?.Dispose();
-			calRecord = null;
-			calManager?.Dispose();
-			calManager = null;
-			
+				calAlarm.Set<CalendarTime>(Alarm.AlarmTime, calTime);
+				calAlarm.Set<int>(Alarm.TickUnit, (int)CalendarTypes.TickUnit.Specific);
+				calRecord.AddChildRecord(Event.Alarm, calAlarm);
+				calManager.Database.Update(calRecord);
+			}
+			finally
+			{
+				calAlarm?.Dispose();
+				calAlarm = null;
+
+				calRecord?.Dispose();
+				calRecord = null;
+
+				calManager?.Dispose();
+				calManager = null;
+			}
 			return true;
 		}
 
@@ -382,21 +419,25 @@ namespace Plugin.Calendars
 			}
 			else
 			{
-				await Task.Run(() =>
+				CalendarManager calManager = null;
+				CalendarList calList = null;
+
+				try
 				{
-					CalendarManager calManager = new CalendarManager();
-					CalendarList calList = calManager.Database.GetAll(Event.Uri, 0, 0);
-
+					calManager = new CalendarManager();
 					calManager.Database.Delete(Event.Uri, Convert.ToInt32(calendarEvent.ExternalID));
+					calList = calManager.Database.GetAll(Event.Uri, 0, 0);
 					//calManager.Database.Delete(calList);
-
+				}
+				finally
+				{
 					calList?.Dispose();
 					calList = null;
+
 					calManager?.Dispose();
 					calManager = null;
-				});
-
-				return true;
+				}
+				return await Task.FromResult(true);
 			}
 		}
 	}
