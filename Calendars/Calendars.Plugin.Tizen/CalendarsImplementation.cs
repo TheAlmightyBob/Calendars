@@ -91,7 +91,7 @@ namespace Plugin.Calendars
 		/// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
 		public Task<IList<CalendarEvent>> GetEventsAsync(Calendar calendar, DateTime start, DateTime end)
 		{
-			var calendars = new List<CalendarEvent>();
+			var calEvent = new List<CalendarEvent>();
 			CalendarManager calManager = null;
 			CalendarQuery calQuery = null;
 			CalendarList calList = null;
@@ -108,22 +108,22 @@ namespace Plugin.Calendars
 				calList = calManager.Database.GetRecordsWithQuery(calQuery, 0, 0);
 
 				if (calList.Count == 0)
-					return Task.FromResult<IList<CalendarEvent>>(calendars);
+					return Task.FromResult<IList<CalendarEvent>>(calEvent);
 
 				calList.MoveFirst();
-				calRecord = calList.GetCurrentRecord();
 
 				do
 				{
+					calRecord = calList.GetCurrentRecord();
 					string summary = calRecord.Get<string>(Event.Summary);
-					CalendarTime startTime = calRecord.Get<CalendarTime>(Event.Start);
-					CalendarTime endTime = calRecord.Get<CalendarTime>(Event.End);
+					int IsAllday = calRecord.Get<int>(Event.IsAllday);
+					CalendarTime startTime = Convert.ToBoolean(IsAllday) ? ConvertIntPtrToCalendarTime(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)) : calRecord.Get<CalendarTime>(Event.Start);
+					CalendarTime endTime = Convert.ToBoolean(IsAllday) ? ConvertIntPtrToCalendarTime(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)) : calRecord.Get<CalendarTime>(Event.End);
 					string location = calRecord.Get<string>(Event.Location);
 					string description = calRecord.Get<string>(Event.Description);
-					int IsAllday = calRecord.Get<int>(Event.IsAllday);
 					int Id = calRecord.Get<int>(Event.Id);
 
-					calendars.Add(
+					calEvent.Add(
 						new CalendarEvent
 						{
 							Name = summary,
@@ -154,7 +154,7 @@ namespace Plugin.Calendars
 				calManager?.Dispose();
 				calManager = null;
 			}
-			return Task.FromResult<IList<CalendarEvent>>(calendars);
+			return Task.FromResult<IList<CalendarEvent>>(calEvent);
 		}
 
 		/// <summary>
@@ -420,24 +420,18 @@ namespace Plugin.Calendars
 			else
 			{
 				CalendarManager calManager = null;
-				CalendarList calList = null;
 
 				try
 				{
 					calManager = new CalendarManager();
 					calManager.Database.Delete(Event.Uri, Convert.ToInt32(calendarEvent.ExternalID));
-					calList = calManager.Database.GetAll(Event.Uri, 0, 0);
-					//calManager.Database.Delete(calList);
 				}
 				finally
 				{
-					calList?.Dispose();
-					calList = null;
-
 					calManager?.Dispose();
 					calManager = null;
 				}
-				return await Task.FromResult(true);
+				return true;
 			}
 		}
 	}
