@@ -116,11 +116,11 @@ namespace Plugin.Calendars
 				{
 					calRecord = calList.GetCurrentRecord();
 					string summary = calRecord.Get<string>(Event.Summary);
-					int IsAllday = calRecord.Get<int>(Event.IsAllday);
-					CalendarTime startTime = Convert.ToBoolean(IsAllday) ? ConvertIntPtrToCalendarTime(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)) : calRecord.Get<CalendarTime>(Event.Start);
-					CalendarTime endTime = Convert.ToBoolean(IsAllday) ? ConvertIntPtrToCalendarTime(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)) : calRecord.Get<CalendarTime>(Event.End);
+					CalendarTime startTime = calRecord.Get<CalendarTime>(Event.Start);
+					CalendarTime endTime = calRecord.Get<CalendarTime>(Event.End);
 					string location = calRecord.Get<string>(Event.Location);
 					string description = calRecord.Get<string>(Event.Description);
+					int IsAllday = calRecord.Get<int>(Event.IsAllday);
 					int Id = calRecord.Get<int>(Event.Id);
 
 					calEvent.Add(
@@ -176,11 +176,11 @@ namespace Plugin.Calendars
 				calRecord = calManager.Database.Get(Event.Uri, Convert.ToInt32(externalId));
 
 				string summary = calRecord.Get<string>(Event.Summary);
-				int IsAllday = calRecord.Get<int>(Event.IsAllday);
-				CalendarTime startTime = Convert.ToBoolean(IsAllday) ? ConvertIntPtrToCalendarTime(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)) : calRecord.Get<CalendarTime>(Event.Start);
-				CalendarTime endTime = Convert.ToBoolean(IsAllday) ? ConvertIntPtrToCalendarTime(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)) : calRecord.Get<CalendarTime>(Event.End);
+				CalendarTime startTime =calRecord.Get<CalendarTime>(Event.Start);
+				CalendarTime endTime =calRecord.Get<CalendarTime>(Event.End);
 				string location = calRecord.Get<string>(Event.Location);
 				string description = calRecord.Get<string>(Event.Description);
+				int IsAllday = calRecord.Get<int>(Event.IsAllday);
 				int Id = calRecord.Get<int>(Event.Id);
 
 				calEvent = new CalendarEvent
