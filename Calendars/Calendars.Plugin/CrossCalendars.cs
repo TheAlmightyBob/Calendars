@@ -28,7 +28,7 @@ namespace Plugin.Calendars
 
     static ICalendars CreateCalendars()
     {
-#if PORTABLE
+#if NETSTANDARD1_0
         return null;
 #else
         return new CalendarsImplementation();
