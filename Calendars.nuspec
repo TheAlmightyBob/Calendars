@@ -79,7 +79,6 @@ Android all-day events are no longer affected by timezone.
 
      <!--Tizen-->
      <file src="Calendars\Calendars.Plugin.Tizen\bin\Release\tizen40\Plugin.Calendars.dll" target="lib\tizen40\Plugin.Calendars.dll" />
-     <file src="Calendars\Calendars.Plugin.Tizen\bin\Release\tizen40\Plugin.Calendars.xml" target="lib\tizen40\Plugin.Calendars.xml" />
      <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\Plugin.Calendars.Abstractions.dll" target="lib\tizen40\Plugin.Calendars.Abstractions.dll" />
      <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\Plugin.Calendars.Abstractions.xml" target="lib\tizen40\Plugin.Calendars.Abstractions.xml" />
 
