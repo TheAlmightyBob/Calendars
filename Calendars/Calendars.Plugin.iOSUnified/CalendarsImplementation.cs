@@ -135,6 +135,8 @@ namespace Plugin.Calendars
 
         /// <summary>
         /// Creates a new calendar or updates the name and color of an existing one.
+        /// If a new calendar was created, the ExternalID property will be set on the Calendar object,
+        /// to support future queries/updates.
         /// </summary>
         /// <param name="calendar">The calendar to create/update</param>
         /// <exception cref="System.ArgumentException">Calendar does not exist on device or is read-only</exception>
@@ -199,6 +201,8 @@ namespace Plugin.Calendars
 
         /// <summary>
         /// Add new event to a calendar or update an existing event.
+        /// If a new event was added, the ExternalID property will be set on the CalendarEvent object,
+        /// to support future queries/updates.
         /// Throws if Calendar ID is empty, calendar does not exist, or calendar is read-only.
         /// </summary>
         /// <param name="calendar">Destination calendar</param>
