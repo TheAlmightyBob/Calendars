@@ -56,8 +56,8 @@ Android all-day events are no longer affected by timezone.
 
      <!--Universal Windows Platform-->
      <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Plugin.Calendars.dll" target="lib\UAP10\Plugin.Calendars.dll" />
-     <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Plugin.Calendars.pdb" target="lib\UAP10\Plugin.Calendars.pdxmlb" />
-     <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Plugin.Calendars.xml" target="lib\UAP10\Plugin.Calendars.pdb" />
+     <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Plugin.Calendars.pdb" target="lib\UAP10\Plugin.Calendars.pdb" />
+     <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Plugin.Calendars.xml" target="lib\UAP10\Plugin.Calendars.xml" />
      <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\netstandard1.0\Plugin.Calendars.Abstractions.dll" target="lib\UAP10\Plugin.Calendars.Abstractions.dll" />
      <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\netstandard1.0\Plugin.Calendars.Abstractions.xml" target="lib\UAP10\Plugin.Calendars.Abstractions.xml" />
      <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\netstandard1.0\Plugin.Calendars.Abstractions.pdb" target="lib\UAP10\Plugin.Calendars.Abstractions.pdb" />
