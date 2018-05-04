@@ -84,6 +84,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
+    <DocumentationFile>bin\x64\Release\Plugin.Calendars.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <PlatformTarget>x86</PlatformTarget>
@@ -124,7 +125,9 @@
     <Compile Include="IAsyncActionExtensions.cs" />
     <Compile Include="IAsyncOperationExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Content Include="Properties\Calendars.Plugin.UWP.rd.xml" />
+    <EmbeddedResource Include="Properties\Calendars.Plugin.UWP.rd.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Calendars.Plugin.Abstractions\Calendars.Plugin.Abstractions.csproj">
