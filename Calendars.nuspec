@@ -43,7 +43,7 @@ Android all-day events are no longer affected by timezone.
        <tags>xamarin, pcl, xam.pcl, plugin, android, xamarin.forms, ios, uwp</tags>
        <dependencies>
        </dependencies>
-       <repository type="git" url="https://github.com/TheAlmightyBob/Calendars" branch="master" commit="3cf6ce55cfde98292b24437036893e051bb2690a" />
+       <!--<repository type="git" url="https://github.com/TheAlmightyBob/Calendars" branch="master" commit="3cf6ce55cfde98292b24437036893e051bb2690a" />-->
    </metadata>
    <files>
      <!--Core-->
