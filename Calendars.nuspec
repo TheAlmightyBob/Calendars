@@ -8,16 +8,15 @@
        <owners>Caleb Clarke</owners>
        <licenseUrl>https://github.com/TheAlmightyBob/Calendars/blob/master/LICENSE</licenseUrl>
        <projectUrl>https://github.com/TheAlmightyBob/Calendars</projectUrl>
-     <!--Default Icon, a template can be found:  https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Plugins-Templates/icons/plugin_icon.png-->  
-     <iconUrl>https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Plugins-Templates/icons/plugin_icon_nuget.png</iconUrl>
-     
+       <!--Default Icon, a template can be found:  https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Plugins-Templates/icons/plugin_icon.png-->  
+       <iconUrl>https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Plugins-Templates/icons/plugin_icon_nuget.png</iconUrl>
        <requireLicenseAcceptance>false</requireLicenseAcceptance>
        <description>
          Perform basic CRUD calendar operations on iOS/Android/WinPhone/UWP through a simple common API.
          
 See project site README for usage notes and limitations.
        </description>
-     <releaseNotes>
+       <releaseNotes>
 0.6.33-beta changes:
 
 Removed support for Windows (and WinPhone) 8.1 and iOS "classic" (pre-Unified).
@@ -39,11 +38,12 @@ iOS API now checks calendar access on each call and throws UnauthorizedAccessExc
 Fixed issue where Android recurring event instances reported incorrect start/end times.
 
 Android all-day events are no longer affected by timezone.
-     </releaseNotes>
+       </releaseNotes>
        <summary>Cross-platform abstraction for querying and modifying device calendars.</summary>
        <tags>xamarin, pcl, xam.pcl, plugin, android, xamarin.forms, ios, uwp</tags>
        <dependencies>
        </dependencies>
+       <!--<repository type="git" url="https://github.com/TheAlmightyBob/Calendars" branch="master" commit="3cf6ce55cfde98292b24437036893e051bb2690a" />-->
    </metadata>
    <files>
      <!--Core-->
@@ -55,13 +55,22 @@ Android all-day events are no longer affected by timezone.
      <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\netstandard1.0\Plugin.Calendars.Abstractions.pdb" target="lib\netstandard1.0\Plugin.Calendars.Abstractions.pdb" />
 
      <!--Universal Windows Platform-->
-     <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Plugin.Calendars.dll" target="lib\UAP10\Plugin.Calendars.dll" />
-     <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Plugin.Calendars.pdb" target="lib\UAP10\Plugin.Calendars.pdb" />
-     <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Plugin.Calendars.xml" target="lib\UAP10\Plugin.Calendars.xml" />
-     <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\netstandard1.0\Plugin.Calendars.Abstractions.dll" target="lib\UAP10\Plugin.Calendars.Abstractions.dll" />
-     <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\netstandard1.0\Plugin.Calendars.Abstractions.xml" target="lib\UAP10\Plugin.Calendars.Abstractions.xml" />
-     <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\netstandard1.0\Plugin.Calendars.Abstractions.pdb" target="lib\UAP10\Plugin.Calendars.Abstractions.pdb" />
+     <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Plugin.Calendars.dll" target="lib\uap10.0\Plugin.Calendars.dll" />
+     <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Plugin.Calendars.xml" target="lib\uap10.0\Plugin.Calendars.xml" />
+     <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Plugin.Calendars.pdb" target="lib\uap10.0\Plugin.Calendars.pdb" />
+     <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Properties\Calendars.Plugin.UWP.rd.xml" target="lib\uap10.0\Calendars.Plugin.UWP\Properties" />
+     <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\netstandard1.0\Plugin.Calendars.Abstractions.dll" target="lib\uap10.0\Plugin.Calendars.Abstractions.dll" />
+     <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\netstandard1.0\Plugin.Calendars.Abstractions.xml" target="lib\uap10.0\Plugin.Calendars.Abstractions.xml" />
+     <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\netstandard1.0\Plugin.Calendars.Abstractions.pdb" target="lib\uap10.0\Plugin.Calendars.Abstractions.pdb" />
 
+     <!--Added runtimes as listed on https://docs.microsoft.com/en-us/nuget/guides/create-uwp-packages     
+     <file src="Calendars\Calendars.Plugin.UWP\bin\x64\Release\Plugin.Calendars.Abstractions.dll" target="runtimes\win10-x64\native"/>
+     <file src="Calendars\Calendars.Plugin.UWP\bin\x64\Release\Plugin.Calendars.dll" target="runtimes\win10-x64\native"/>
+     <file src="Calendars\Calendars.Plugin.UWP\bin\x64\Release\Plugin.Calendars.pri" target="runtimes\win10-x64\native"/>--> 
+     
+     <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Plugin.Calendars.Abstractions.dll" target="runtimes\win10-x86\native"/>
+     <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Plugin.Calendars.dll" target="runtimes\win10-x86\native"/>
+     <file src="Calendars\Calendars.Plugin.UWP\bin\Release\Plugin.Calendars.pri" target="runtimes\win10-x86\native"/>
 
      <!--Xamarin.Android-->
      <file src="Calendars\Calendars.Plugin.Android\bin\Release\Plugin.Calendars.dll" target="lib\MonoAndroid10\Plugin.Calendars.dll" />
