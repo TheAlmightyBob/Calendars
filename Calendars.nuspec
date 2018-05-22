@@ -18,6 +18,13 @@
 See project site README for usage notes and limitations.
        </description>
      <releaseNotes>
+0.6.64-beta changes:
+
+Fixed UWP assembly load error.
+        
+Breaking change: ExternalID is no longer publicly settable, to clarify that it is provided by the platform.
+
+
 0.6.33-beta changes:
 
 Removed support for Windows (and WinPhone) 8.1 and iOS "classic" (pre-Unified).
