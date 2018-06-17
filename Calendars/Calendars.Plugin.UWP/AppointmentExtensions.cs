@@ -1,4 +1,5 @@
 ﻿using Plugin.Calendars.Abstractions;
+using System.Collections.Generic;
 using Windows.ApplicationModel.Appointments;
 
 namespace Plugin.Calendars
@@ -15,6 +16,8 @@ namespace Plugin.Calendars
         /// <returns>Corresponding Calendars.Plugin.Abstractions.CalendarEvent</returns>
         public static CalendarEvent ToCalendarEvent(this Appointment appt)
         {
+            var reminder = appt.Reminder.HasValue ? new CalendarEventReminder { TimeBefore = appt.Reminder.Value } : null;
+
             return new CalendarEvent
             {
                 Name = appt.Subject,
@@ -23,7 +26,8 @@ namespace Plugin.Calendars
                 End = appt.StartTime.Add(appt.Duration).LocalDateTime,
                 AllDay = appt.AllDay,
                 Location = appt.Location,
-                ExternalID = appt.LocalId
+                ExternalID = appt.LocalId,
+                Reminders = reminder != null ? new List<CalendarEventReminder> { reminder } : null
             };
         }
     }

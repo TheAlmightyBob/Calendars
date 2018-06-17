@@ -192,6 +192,7 @@ namespace Plugin.Calendars
         /// <exception cref="System.ArgumentException">Calendar is not specified, does not exist on device, or is read-only</exception>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
         /// <exception cref="System.InvalidOperationException">Editing recurring events is not supported</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">Windows does not support multiple reminders</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task AddOrUpdateEventAsync(Calendar calendar, CalendarEvent calendarEvent)
         {
@@ -206,6 +207,13 @@ namespace Plugin.Calendars
             else
             {
                 appCalendar = await GetAndValidateLocalCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
+            }
+
+
+            // Android/iOS support multiple reminders, but Windows only allows one
+            if (calendarEvent.Reminders?.Count > 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(calendarEvent), "Windows does not support multiple reminders");
             }
 
             Appointment appt = null;
@@ -239,6 +247,7 @@ namespace Plugin.Calendars
             appt.Duration = calendarEvent.End - calendarEvent.Start;
             appt.AllDay = calendarEvent.AllDay;
             appt.Location = calendarEvent.Location ?? string.Empty;
+            appt.Reminder = calendarEvent.Reminders?.FirstOrDefault()?.TimeBefore;
 
             await appCalendar.SaveAppointmentAsync(appt);
 

@@ -43,6 +43,12 @@ namespace Plugin.Calendars.Abstractions
         public string Description { get; set; }
 
         /// <summary>
+        /// Event reminders
+        /// </summary>
+        /// <remarks>Windows only supports a single reminder</remarks>
+        public IList<CalendarEventReminder> Reminders { get; set; }
+
+        /// <summary>
         /// Platform-specific unique calendar event identifier
         /// </summary>
         /// <remarks>This ID will be the same for each instance of a recurring event.</remarks>

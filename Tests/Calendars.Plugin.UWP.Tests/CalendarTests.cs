@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
@@ -364,6 +365,107 @@ namespace Plugin.Calendars.UWP.Tests
 
             // ...except for their IDs! (i.e., they are actually unique copies)
             CollectionAssert.AreNotEqual(sourceEvents.Select(e => e.ExternalID).ToList(), targetEvents.Select(e => e.ExternalID).ToList());
+        }
+
+        [TestMethod, TestCategory(_testCategory)]
+        public async Task Calendars_AddOrUpdateEvents_NewEventNoReminders()
+        {
+            var calendarEvent = GetTestEvent();
+            var calendar = await _service.CreateCalendarAsync(_calendarName);
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.IsNull(eventFromId.Reminders);
+        }
+
+        [TestMethod, TestCategory(_testCategory)]
+        public async Task Calendars_AddOrUpdateEvents_NewEventWithReminder()
+        {
+            var calendarEvent = GetTestEvent();
+            var reminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42) };
+            var calendar = await _service.CreateCalendarAsync(_calendarName);
+
+            calendarEvent.Reminders = new List<CalendarEventReminder> { reminder };
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.AreEqual(1, eventFromId.Reminders.Count);
+            Assert.AreEqual(reminder.TimeBefore, eventFromId.Reminders.First().TimeBefore);
+        }
+
+        [TestMethod, TestCategory(_testCategory)]
+        public async Task Calendars_AddOrUpdateEvents_NewEventMultipleRemindersThrows()
+        {
+            var calendarEvent = GetTestEvent();
+            var reminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42) };
+            var calendar = await _service.CreateCalendarAsync(_calendarName);
+
+            calendarEvent.Reminders = new List<CalendarEventReminder>
+            {
+                new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42) },
+                new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(10) },
+            };
+
+            Assert.IsTrue(await _service.AddOrUpdateEventAsync(calendar, calendarEvent).ThrowsAsync<ArgumentOutOfRangeException>(), "Exception wasn't thrown");
+        }
+
+        [TestMethod, TestCategory(_testCategory)]
+        public async Task Calendars_AddOrUpdateEvents_ExistingEventEditsReminder()
+        {
+            var calendarEvent = GetTestEvent();
+            var firstReminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42) };
+            var secondReminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(5) };
+            var calendar = await _service.CreateCalendarAsync(_calendarName);
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            // Add reminder to event
+            calendarEvent.Reminders = new List<CalendarEventReminder> { firstReminder };
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+            
+            Assert.AreEqual(firstReminder.TimeBefore, eventFromId.Reminders.Single().TimeBefore);
+
+            // Change reminder on event
+            calendarEvent.Reminders = new List<CalendarEventReminder> { secondReminder };
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.AreEqual(secondReminder.TimeBefore, eventFromId.Reminders.Single().TimeBefore);
+
+            // Remove reminder from event
+            calendarEvent.Reminders = new List<CalendarEventReminder>();
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.IsNull(eventFromId.Reminders);
+        }
+
+        [TestMethod, TestCategory(_testCategory)]
+        public async Task Calendars_AddEventReminder_AddsReminder()
+        {
+            var calendarEvent = GetTestEvent();
+            var reminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42) };
+            var calendar = await _service.CreateCalendarAsync(_calendarName);
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            await _service.AddEventReminderAsync(calendarEvent, reminder);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.AreEqual(1, eventFromId.Reminders.Count);
+            Assert.AreEqual(reminder.TimeBefore, eventFromId.Reminders.First().TimeBefore);
         }
 
         [TestMethod, TestCategory(_testCategory)]
