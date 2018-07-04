@@ -64,10 +64,12 @@ namespace Plugin.Calendars.Abstractions
         /// Add new event to a calendar or update an existing event.
         /// If a new event was added, the ExternalID property will be set on the CalendarEvent object,
         /// to support future queries/updates.
+        /// Note that UWP does not allow adding multiple reminders to an event.
         /// </summary>
         /// <param name="calendar">Destination calendar</param>
         /// <param name="calendarEvent">Event to add or update</param>
         /// <exception cref="System.ArgumentException">Calendar is not specified, does not exist on device, or is read-only</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">Windows does not support multiple reminders</exception>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
         /// <exception cref="System.InvalidOperationException">Editing recurring events is not supported</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
@@ -105,6 +107,7 @@ namespace Plugin.Calendars.Abstractions
         /// <exception cref="ArgumentException">Calendar event is not created or not valid</exception>
         /// <exception cref="System.InvalidOperationException">Editing recurring events is not supported</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
+        [Obsolete("Please use AddOrUpdateEventAsync to update reminders for an event")]
         Task AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder);
     }
 }
