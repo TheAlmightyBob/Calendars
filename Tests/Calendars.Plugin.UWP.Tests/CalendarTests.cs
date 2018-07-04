@@ -469,6 +469,25 @@ namespace Plugin.Calendars.UWP.Tests
         }
 
         [TestMethod, TestCategory(_testCategory)]
+        public async Task Calendars_AddEventReminder_ReplacesExistingReminder()
+        {
+            var calendarEvent = GetTestEvent();
+            var firstReminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42) };
+            var secondReminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(5) };
+            var calendar = await _service.CreateCalendarAsync(_calendarName);
+
+            calendarEvent.Reminders = new List<CalendarEventReminder> { firstReminder };
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            await _service.AddEventReminderAsync(calendarEvent, secondReminder);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.AreEqual(secondReminder, eventFromId.Reminders.Single());
+        }
+
+        [TestMethod, TestCategory(_testCategory)]
         public async Task Calendars_GetEvents_NonexistentCalendarThrows()
         {
             var calendar = new Calendar { Name = "Bob", ExternalID = "42" };
