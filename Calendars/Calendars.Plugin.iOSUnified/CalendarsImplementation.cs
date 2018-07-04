@@ -25,7 +25,6 @@ namespace Plugin.Calendars
         #region Fields
 
         private EKEventStore _eventStore;
-        private double _defaultTimeBefore;
 
         #endregion
 
@@ -37,8 +36,6 @@ namespace Plugin.Calendars
         public CalendarsImplementation()
         {
             _eventStore = new EKEventStore();
-            //iOS stores in negative seconds before the event
-            _defaultTimeBefore = -TimeSpan.FromMinutes(15).TotalSeconds;
         }
 
         #endregion
@@ -177,8 +174,7 @@ namespace Plugin.Calendars
                     deviceCalendar.CGColor = ColorConversion.ToCGColor(calendar.Color);
                 }
 
-                NSError error = null;
-                if (!_eventStore.SaveCalendar(deviceCalendar, true, out error))
+                if (!_eventStore.SaveCalendar(deviceCalendar, true, out NSError error))
                 {
                     // Without this, the eventStore will continue to return the "updated"
                     // calendar even though the save failed!
@@ -269,8 +265,15 @@ namespace Plugin.Calendars
             iosEvent.EndDate = calendarEvent.AllDay ? calendarEvent.End.AddMilliseconds(-1).ToNSDate() : calendarEvent.End.ToNSDate();
             iosEvent.Calendar = deviceCalendar;
 
-            NSError error = null;
-            if (!_eventStore.SaveEvent(iosEvent, EKSpan.ThisEvent, out error))
+            // If the provided reminders are different from the existing alarms, replace themm
+            //
+            if ((calendarEvent.Reminders != null || iosEvent.HasAlarms) &&
+                !(calendarEvent.Reminders?.SequenceEqual(iosEvent.Alarms?.Select(alarm => alarm.ToCalendarEventReminder()) ?? Enumerable.Empty<CalendarEventReminder>()) == true))
+            {
+                iosEvent.Alarms = calendarEvent.Reminders.Select(reminder => reminder.ToEKAlarm()).ToArray();
+            }
+
+            if (!_eventStore.SaveEvent(iosEvent, EKSpan.ThisEvent, out NSError error))
             {
                 // Without this, the eventStore will continue to return the "updated"
                 // event even though the save failed!
@@ -326,13 +329,9 @@ namespace Plugin.Calendars
                 throw new InvalidOperationException("Editing recurring events is not supported");
             }
 
-            var seconds = -reminder?.TimeBefore.TotalSeconds ?? _defaultTimeBefore;
-            var alarm = EKAlarm.FromTimeInterval(seconds);
+            existingEvent.AddAlarm(reminder.ToEKAlarm());
 
-            existingEvent.AddAlarm(alarm);
-
-            NSError error = null;
-            if (!_eventStore.SaveEvent(existingEvent, EKSpan.ThisEvent, out error))
+            if (!_eventStore.SaveEvent(existingEvent, EKSpan.ThisEvent, out NSError error))
             {
                 // Without this, the eventStore will continue to return the "updated"
                 // event even though the save failed!
@@ -369,8 +368,7 @@ namespace Plugin.Calendars
                 return false;
             }
 
-            NSError error = null;
-            if (!_eventStore.RemoveCalendar(deviceCalendar, true, out error))
+            if (!_eventStore.RemoveCalendar(deviceCalendar, true, out NSError error))
             {
                 // Without this, the eventStore may act like the remove succeeded.
                 // (this obviously also resets any other changes, but since we own the eventStore
@@ -422,8 +420,7 @@ namespace Plugin.Calendars
                 throw new InvalidOperationException("Editing recurring events is not supported");
             }
 
-            NSError error = null;
-            if (!_eventStore.RemoveEvent(iosEvent, EKSpan.ThisEvent, true, out error))
+            if (!_eventStore.RemoveEvent(iosEvent, EKSpan.ThisEvent, true, out NSError error))
             {
                 // Without this, the eventStore may act like the remove succeeded.
                 // (this obviously also resets any other changes, but since we own the eventStore
@@ -492,8 +489,7 @@ namespace Plugin.Calendars
 
             calendar.Source = source;
 
-            NSError error = null;
-            if (_eventStore.SaveCalendar(calendar, true, out error))
+            if (_eventStore.SaveCalendar(calendar, true, out NSError error))
             {
                 Console.WriteLine($"Successfully saved calendar with source {source.Title}");
 
