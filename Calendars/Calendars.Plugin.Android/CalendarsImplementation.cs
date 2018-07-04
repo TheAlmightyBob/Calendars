@@ -444,11 +444,10 @@ namespace Plugin.Calendars
         /// </summary>
         /// <param name="calendarEvent">Event to add the reminder to</param>
         /// <param name="reminder">The reminder</param>
-        /// <returns>If successful</returns>
         /// <exception cref="ArgumentException">Calendar event is not created or not valid</exception>
         /// <exception cref="System.InvalidOperationException">Editing recurring events is not supported</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
-        public async Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
+        public async Task AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
         {
             // TODO: Why does this return a bool? It never returns false. Just "true" or throws.
 
@@ -465,7 +464,7 @@ namespace Plugin.Calendars
                 throw new ArgumentException("Specified calendar event not found on device");
             }
             
-            return await Task.Run(() =>
+            await Task.Run(() =>
             {
                 if (IsEventRecurring(calendarEvent.ExternalID))
                 {
@@ -473,8 +472,6 @@ namespace Plugin.Calendars
                 }
 
                 Insert(_remindersUri, reminder.ToContentValues(calendarEvent.ExternalID));
-
-                return true;
             }).ConfigureAwait(false);
         }
 

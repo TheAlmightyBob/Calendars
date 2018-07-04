@@ -301,11 +301,10 @@ namespace Plugin.Calendars
         /// </summary>
         /// <param name="calendarEvent">Event to add the reminder to</param>
         /// <param name="reminder">The reminder</param>
-        /// <returns>If successful</returns>
         /// <exception cref="ArgumentException">Calendar event is not created or not valid</exception>
         /// <exception cref="System.InvalidOperationException">Editing recurring events is not supported</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
-        public async Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
+        public async Task AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
         {
             if (string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
@@ -344,8 +343,6 @@ namespace Plugin.Calendars
 
                 throw new ArgumentException(error.LocalizedDescription, nameof(reminder), new NSErrorException(error));
             }
-
-            return true;
         }
 
         /// <summary>

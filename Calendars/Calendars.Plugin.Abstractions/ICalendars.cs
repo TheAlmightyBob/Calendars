@@ -102,10 +102,9 @@ namespace Plugin.Calendars.Abstractions
         /// </summary>
         /// <param name="calendarEvent">Event to add</param>
         /// <param name="reminder">Reminder to add</param>
-        /// <returns>If successful</returns>
         /// <exception cref="ArgumentException">Calendar event is not created or not valid</exception>
         /// <exception cref="System.InvalidOperationException">Editing recurring events is not supported</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
-        Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder);
+        Task AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder);
     }
 }
