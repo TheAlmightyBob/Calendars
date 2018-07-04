@@ -210,7 +210,7 @@ namespace Plugin.Calendars
                                 Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
                                 AllDay = allDay
                             };
-                            calendarEvent.Reminders = GetEventReminders(calendarEvent);
+                            calendarEvent.Reminders = GetEventReminders(calendarEvent.ExternalID);
 
                             events.Add(calendarEvent);
                         } while (cursor.MoveToNext());
@@ -687,7 +687,7 @@ namespace Plugin.Calendars
                         AllDay = allDay
                     };
 
-                    calendarEvent.Reminders = GetEventReminders(calendarEvent);
+                    calendarEvent.Reminders = GetEventReminders(calendarEvent.ExternalID);
                 }
             }
             catch (Java.Lang.Exception ex)
@@ -706,16 +706,13 @@ namespace Plugin.Calendars
         /// Get reminders for an event.
         /// Assumes that event existence/validity has already been verified.
         /// </summary>
-        /// <param name="calendarEvent">Event for which to retrieve reminders</param>
+        /// <param name="eventID">Event ID for which to retrieve reminders</param>
         /// <returns>Reminders</returns>
-        private IList<CalendarEventReminder> GetEventReminders(CalendarEvent calendarEvent)
+        private IList<CalendarEventReminder> GetEventReminders(string eventID)
         {
-            // TODO: Probably should just take external ID as a parameter rather than a CalendarEvent,
-            //       since this is used to populate a CalendarEvent?
-
-            if (string.IsNullOrEmpty(calendarEvent.ExternalID))
+            if (string.IsNullOrEmpty(eventID))
             {
-                throw new ArgumentException("Missing calendar event identifier", "calendarEvent");
+                throw new ArgumentException("Missing calendar event identifier", "eventID");
             }
 
             // Not bothering to verify that event exists because this is intended for internal use
@@ -730,7 +727,7 @@ namespace Plugin.Calendars
             var reminders = new List<CalendarEventReminder>();
 
             var cursor = Query(CalendarContract.Reminders.ContentUri, remindersProjection,
-                $"{CalendarContract.Reminders.InterfaceConsts.EventId} = {calendarEvent.ExternalID}",
+                $"{CalendarContract.Reminders.InterfaceConsts.EventId} = {eventID}",
                 null, null);
 
             // TODO: Couldn't we use an IterateCursor<T> helper that handles all the MoveToFirst/try/catch/MoveToNext/Close boilerplate
