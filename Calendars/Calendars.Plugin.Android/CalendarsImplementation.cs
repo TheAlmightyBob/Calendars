@@ -428,10 +428,7 @@ namespace Plugin.Calendars
                     eventOperation = eventOperation.WithValues(eventValues);
                     operations.Add(eventOperation.Build());
 
-                    if (updateExisting)
-                    {
-                        operations.AddRange(AddOrUpdateEventReminders(calendarEvent.Reminders, existingEvent));
-                    }
+                    operations.AddRange(BuildReminderUpdateOperations(calendarEvent.Reminders, existingEvent));
 
                     var results = ApplyBatch(operations);
 
@@ -630,7 +627,6 @@ namespace Plugin.Calendars
             {
                 if (cursor.MoveToFirst())
                 {
-                    //calendarId = cursor.GetLong(CalendarContract.Events.InterfaceConsts.CalendarId);
                     isRecurring = !string.IsNullOrEmpty(cursor.GetString(CalendarContract.Events.InterfaceConsts.Duration));
                 }
             }
@@ -759,24 +755,21 @@ namespace Plugin.Calendars
             return reminders.Count > 0 ? reminders : null;
         }
 
-        private IList<ContentProviderOperation> AddOrUpdateEventReminders(IList<CalendarEventReminder> reminders, CalendarEvent existingEvent)
+        private IList<ContentProviderOperation> BuildReminderUpdateOperations(IList<CalendarEventReminder> reminders, CalendarEvent existingEvent)
         {
-            // TODO: Allow existingEvent to be optional and use withValueBackReference to let this be batched together
-            //       with creating a new event.
-
             var operations = new List<ContentProviderOperation>();
 
             // If reminders haven't changed, do nothing
             //
-            if (reminders == existingEvent.Reminders ||
-                (reminders != null && existingEvent.Reminders != null && reminders.SequenceEqual(existingEvent.Reminders)))
+            if (reminders == existingEvent?.Reminders ||
+                (reminders != null && existingEvent?.Reminders != null && reminders.SequenceEqual(existingEvent.Reminders)))
             {
                 return operations;
             }
 
             // Build operations that remove all existing reminders and add new ones
 
-            if (existingEvent.Reminders != null)
+            if (existingEvent?.Reminders != null)
             {
                 operations.AddRange(existingEvent.Reminders.Select(reminder =>
                     ContentProviderOperation.NewDelete(_remindersUri)
@@ -786,10 +779,24 @@ namespace Plugin.Calendars
 
             if (reminders != null)
             {
-                operations.AddRange(reminders.Select(reminder =>
-                    ContentProviderOperation.NewInsert(_remindersUri)
-                                            .WithValues(reminder.ToContentValues(existingEvent.ExternalID))
-                                            .Build()));
+                if (existingEvent != null)
+                {
+                    operations.AddRange(reminders.Select(reminder =>
+                        ContentProviderOperation.NewInsert(_remindersUri)
+                                                .WithValues(reminder.ToContentValues(existingEvent.ExternalID))
+                                                .Build()));
+                }
+                else
+                {
+                    // This assumes that these operations are being added to a batch in which the first operation
+                    // is the event insertion operation
+                    //
+                    operations.AddRange(reminders.Select(reminder =>
+                        ContentProviderOperation.NewInsert(_remindersUri)
+                                                .WithValues(reminder.ToContentValues())
+                                                .WithValueBackReference(CalendarContract.Reminders.InterfaceConsts.EventId, 0)
+                                                .Build()));
+                }
             }
 
             return operations;
