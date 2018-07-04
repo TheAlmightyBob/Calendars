@@ -103,27 +103,12 @@ namespace Plugin.Calendars
 
             return Task.Run<Calendar>(() =>
                 {
-                    Calendar calendar = null;
                     var cursor = Query(
                         ContentUris.WithAppendedId(_calendarsUri, calendarId),
                         _calendarsProjection);
-                   
-                    try
-                    {
-                        if (cursor.MoveToFirst())
-                        {
-                            calendar = GetCalendar(cursor);
-                        }
-                    }
-                    catch (Java.Lang.Exception ex)
-                    {
-                        throw new PlatformException(ex.Message, ex);
-                    }
-                    finally
-                    {
-                        cursor.Close();
-                    }
 
+                    var calendar = SingleItemFromCursor(cursor, () => GetCalendar(cursor));
+                   
                     return calendar;
                 });
         }
@@ -541,26 +526,11 @@ namespace Plugin.Calendars
                 CalendarContract.Events.InterfaceConsts.CalendarId
             };
 
-            long? calendarId = null;
             var cursor = Query(
                 ContentUris.WithAppendedId(_eventsUri, long.Parse(externalId)),
                 eventsProjection);
 
-            try
-            {
-                if (cursor.MoveToFirst())
-                {
-                    calendarId = cursor.GetLong(CalendarContract.Events.InterfaceConsts.CalendarId);
-                }
-            }
-            catch (Java.Lang.Exception ex)
-            {
-                throw new PlatformException(ex.Message, ex);
-            }
-            finally
-            {
-                cursor.Close();
-            }
+            var calendarId = SingleItemFromCursor<long?>(cursor, () => cursor.GetLong(CalendarContract.Events.InterfaceConsts.CalendarId));
 
             return calendarId;
         }
@@ -580,26 +550,12 @@ namespace Plugin.Calendars
                 CalendarContract.Events.InterfaceConsts.Duration
             };
 
-            bool isRecurring = false;
             var cursor = Query(
                 ContentUris.WithAppendedId(_eventsUri, long.Parse(externalId)),
                 eventsProjection);
 
-            try
-            {
-                if (cursor.MoveToFirst())
-                {
-                    isRecurring = !string.IsNullOrEmpty(cursor.GetString(CalendarContract.Events.InterfaceConsts.Duration));
-                }
-            }
-            catch (Java.Lang.Exception ex)
-            {
-                throw new PlatformException(ex.Message, ex);
-            }
-            finally
-            {
-                cursor.Close();
-            }
+            bool isRecurring = SingleItemFromCursor(cursor,
+                () => !string.IsNullOrEmpty(cursor.GetString(CalendarContract.Events.InterfaceConsts.Duration)));
 
             return isRecurring;
         }
@@ -627,39 +583,27 @@ namespace Plugin.Calendars
                 CalendarContract.Events.InterfaceConsts.AllDay
             };
 
-            CalendarEvent calendarEvent = null;
             var cursor = Query(
                 ContentUris.WithAppendedId(_eventsUri, long.Parse(externalId)),
                 eventsProjection);
 
-            try
+            var calendarEvent = SingleItemFromCursor(cursor, () =>
             {
-                if (cursor.MoveToFirst())
+                bool allDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay);
+                string externalID = cursor.GetString(CalendarContract.Events.InterfaceConsts.Id);
+
+                return new CalendarEvent
                 {
-                    bool allDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay);
-
-                    calendarEvent = new CalendarEvent
-                    {
-                        Name = cursor.GetString(CalendarContract.Events.InterfaceConsts.Title),
-                        ExternalID = cursor.GetString(CalendarContract.Events.InterfaceConsts.Id),
-                        Description = cursor.GetString(CalendarContract.Events.InterfaceConsts.Description),
-                        Start = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtstart, allDay),
-                        End = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtend, allDay),
-                        Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
-                        AllDay = allDay
-                    };
-
-                    calendarEvent.Reminders = GetEventReminders(calendarEvent.ExternalID);
-                }
-            }
-            catch (Java.Lang.Exception ex)
-            {
-                throw new PlatformException(ex.Message, ex);
-            }
-            finally
-            {
-                cursor.Close();
-            }
+                    Name = cursor.GetString(CalendarContract.Events.InterfaceConsts.Title),
+                    ExternalID = externalId,
+                    Description = cursor.GetString(CalendarContract.Events.InterfaceConsts.Description),
+                    Start = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtstart, allDay),
+                    End = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtend, allDay),
+                    Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
+                    AllDay = allDay,
+                    Reminders = GetEventReminders(externalID)
+                };
+            });
 
             return calendarEvent;
         }
@@ -873,6 +817,27 @@ namespace Plugin.Calendars
             }
 
             return list;
+        }
+
+        private static T SingleItemFromCursor<T>(ICursor cursor, Func<T> func)
+        {
+            try
+            {
+                if (cursor.MoveToFirst())
+                {
+                    return func();
+                }
+            }
+            catch (Java.Lang.Exception ex)
+            {
+                throw new PlatformException(ex.Message, ex);
+            }
+            finally
+            {
+                cursor.Close();
+            }
+
+            return default(T);
         }
 
         #endregion
