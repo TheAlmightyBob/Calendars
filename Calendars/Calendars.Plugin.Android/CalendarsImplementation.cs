@@ -449,8 +449,6 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
         {
-            // TODO: Why does this return a bool? It never returns false. Just "true" or throws.
-
             if (string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
                 throw new ArgumentException("Missing calendar event identifier", "calendarEvent");
