@@ -702,6 +702,12 @@ namespace Plugin.Calendars
             return calendarEvent;
         }
 
+        /// <summary>
+        /// Get reminders for an event.
+        /// Assumes that event existence/validity has already been verified.
+        /// </summary>
+        /// <param name="calendarEvent">Event for which to retrieve reminders</param>
+        /// <returns>Reminders</returns>
         private IList<CalendarEventReminder> GetEventReminders(CalendarEvent calendarEvent)
         {
             // TODO: Probably should just take external ID as a parameter rather than a CalendarEvent,
@@ -755,7 +761,16 @@ namespace Plugin.Calendars
             return reminders.Count > 0 ? reminders : null;
         }
 
-        private IList<ContentProviderOperation> BuildReminderUpdateOperations(IList<CalendarEventReminder> reminders, CalendarEvent existingEvent)
+        /// <summary>
+        /// Builds ContentProviderOperations for adding/removing reminders.
+        /// Specifically intended for use by AddOrUpdateEvent, as if existingEvent is omitted,
+        /// this requires that the operations are added to a batch in which the first operation
+        /// inserts the event.
+        /// </summary>
+        /// <param name="reminders">New reminders (replacing existing reminders, if any)</param>
+        /// <param name="existingEvent">(optional) Existing event to update reminders for</param>
+        /// <returns>List of ContentProviderOperations for applying reminder updates as part of a batched update</returns>
+        private IList<ContentProviderOperation> BuildReminderUpdateOperations(IList<CalendarEventReminder> reminders, CalendarEvent existingEvent = null)
         {
             var operations = new List<ContentProviderOperation>();
 
