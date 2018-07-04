@@ -478,7 +478,7 @@ namespace Plugin.Calendars.Android.Tests
         }
 
         [Test]
-        public async void Calendars_AddEventReminder_AddsReminder()
+        public async void Calendars_AddEventReminder_SetsSingleReminderIfNone()
         {
             var calendarEvent = GetTestEvent();
             var reminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42) };
@@ -491,6 +491,25 @@ namespace Plugin.Calendars.Android.Tests
             var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
 
             Assert.AreEqual(reminder, eventFromId.Reminders.Single());
+        }
+
+        [Test]
+        public async void Calendars_AddEventReminder_AddsMoreReminders()
+        {
+            var calendarEvent = GetTestEvent();
+            var firstReminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42) };
+            var secondReminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(5) };
+            var calendar = await _service.CreateCalendarAsync(_calendarName);
+
+            calendarEvent.Reminders = new List<CalendarEventReminder> { firstReminder };
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            await _service.AddEventReminderAsync(calendarEvent, secondReminder);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.AreEqual(new List<CalendarEventReminder> { firstReminder, secondReminder }, eventFromId.Reminders);
         }
 
 #if !__IOS__ // Reminder methods are Android-specific
