@@ -1,5 +1,6 @@
 using Plugin.Calendars.Abstractions;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Android.App;
@@ -20,6 +21,7 @@ namespace Plugin.Calendars
 
         private static readonly Android.Net.Uri _calendarsUri = CalendarContract.Calendars.ContentUri;
         private static readonly Android.Net.Uri _eventsUri = CalendarContract.Events.ContentUri;
+        private static readonly Android.Net.Uri _remindersUri = CalendarContract.Reminders.ContentUri;
 
         private static readonly string[] _calendarsProjection =
             {
@@ -380,7 +382,6 @@ namespace Plugin.Calendars
                         }
                     }
 
-                    var eventValues = new ContentValues();
                     bool allDay = calendarEvent.AllDay;
                     var start = allDay
                         ? DateTime.SpecifyKind(calendarEvent.Start.Date, DateTimeKind.Utc)
@@ -389,6 +390,7 @@ namespace Plugin.Calendars
                         ? DateTime.SpecifyKind(calendarEvent.End.Date, DateTimeKind.Utc)
                         : calendarEvent.End;
 
+                    var eventValues = new ContentValues();
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.CalendarId,
                         calendar.ExternalID);
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.Title,
@@ -417,13 +419,25 @@ namespace Plugin.Calendars
                             : Java.Util.TimeZone.Default.ID);
                     }
 
+                    var operations = new List<ContentProviderOperation>();
+
+                    var eventOperation = updateExisting
+                        ? ContentProviderOperation.NewUpdate(ContentUris.WithAppendedId(_eventsUri, existingId))
+                        : ContentProviderOperation.NewInsert(_eventsUri);
+
+                    eventOperation = eventOperation.WithValues(eventValues);
+                    operations.Add(eventOperation.Build());
+
+                    if (updateExisting)
+                    {
+                        operations.AddRange(AddOrUpdateEventReminders(calendarEvent.Reminders, existingEvent));
+                    }
+
+                    var results = ApplyBatch(operations);
+
                     if (!updateExisting)
                     {
-                        calendarEvent.ExternalID = Insert(_eventsUri, eventValues);
-                    }
-                    else
-                    {
-                        Update(_eventsUri, existingId, eventValues);
+                        calendarEvent.ExternalID = results[0].Uri.LastPathSegment;
                     }
                 }).ConfigureAwait(false);
         }
@@ -439,6 +453,8 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
         {
+            // TODO: Why does this return a bool? It never returns false. Just "true" or throws.
+
             if (string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
                 throw new ArgumentException("Missing calendar event identifier", "calendarEvent");
@@ -459,14 +475,7 @@ namespace Plugin.Calendars
                     throw new InvalidOperationException("Editing recurring events is not supported");
                 }
 
-                var reminderValues = new ContentValues();
-                reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Minutes, reminder?.TimeBefore.TotalMinutes ?? 15);
-                reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.EventId, calendarEvent.ExternalID);
-
-                reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Method, (int)reminder.Method.ToRemindersMethod());
-
-                var uri = CalendarContract.Reminders.ContentUri;
-                Insert(uri, reminderValues);
+                Insert(_remindersUri, reminder.ToContentValues(calendarEvent.ExternalID));
 
                 return true;
             }).ConfigureAwait(false);
@@ -719,7 +728,7 @@ namespace Plugin.Calendars
             var reminders = new List<CalendarEventReminder>();
 
             var cursor = Query(CalendarContract.Reminders.ContentUri, remindersProjection,
-                string.Format("{0} = {1}", CalendarContract.Reminders.InterfaceConsts.EventId, calendarEvent.ExternalID),
+                $"{CalendarContract.Reminders.InterfaceConsts.EventId} = {calendarEvent.ExternalID}",
                 null, null);
 
             // TODO: Couldn't we use an IterateCursor<T> helper that handles all the MoveToFirst/try/catch/MoveToNext/Close boilerplate
@@ -748,6 +757,42 @@ namespace Plugin.Calendars
             }
 
             return reminders.Count > 0 ? reminders : null;
+        }
+
+        private IList<ContentProviderOperation> AddOrUpdateEventReminders(IList<CalendarEventReminder> reminders, CalendarEvent existingEvent)
+        {
+            // TODO: Allow existingEvent to be optional and use withValueBackReference to let this be batched together
+            //       with creating a new event.
+
+            var operations = new List<ContentProviderOperation>();
+
+            // If reminders haven't changed, do nothing
+            //
+            if (reminders == existingEvent.Reminders ||
+                (reminders != null && existingEvent.Reminders != null && reminders.SequenceEqual(existingEvent.Reminders)))
+            {
+                return operations;
+            }
+
+            // Build operations that remove all existing reminders and add new ones
+
+            if (existingEvent.Reminders != null)
+            {
+                operations.AddRange(existingEvent.Reminders.Select(reminder =>
+                    ContentProviderOperation.NewDelete(_remindersUri)
+                                            .WithSelection($"{CalendarContract.Reminders.InterfaceConsts.EventId} = {existingEvent.ExternalID}", null)
+                                            .Build()));
+            }
+
+            if (reminders != null)
+            {
+                operations.AddRange(reminders.Select(reminder =>
+                    ContentProviderOperation.NewInsert(_remindersUri)
+                                            .WithValues(reminder.ToContentValues(existingEvent.ExternalID))
+                                            .Build()));
+            }
+
+            return operations;
         }
 
         private static Calendar GetCalendar(ICursor cursor)
@@ -813,6 +858,18 @@ namespace Plugin.Calendars
             try
             {
                 return 0 < Application.Context.ContentResolver.Delete(ContentUris.WithAppendedId(uri, id), null, null);
+            }
+            catch (Java.Lang.Exception ex)
+            {
+                throw TranslateException(ex);
+            }
+        }
+
+        private static ContentProviderResult[] ApplyBatch(IList<ContentProviderOperation> operations)
+        {
+            try
+            {
+                return Application.Context.ContentResolver.ApplyBatch(CalendarContract.Authority, operations);
             }
             catch (Java.Lang.Exception ex)
             {

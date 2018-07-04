@@ -21,6 +21,26 @@ namespace Plugin.Calendars.Abstractions
         /// Type of reminder to display on Android. (not used by Windows/iOS)
         /// </summary>
         public CalendarReminderMethod Method { get; set; } = CalendarReminderMethod.Default;
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj is CalendarEventReminder other)
+            {
+                return TimeBefore == other.TimeBefore &&
+                    Method == other.Method;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Tuple.Create(TimeBefore, Method).GetHashCode();
+        }
     }
 
     /// <summary>
