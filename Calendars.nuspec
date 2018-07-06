@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
    <metadata minClientVersion="2.8.1">
        <id>CClarke.Plugin.Calendars</id>
-       <version>0.6.0-beta</version>
+       <version>0.7.0-beta</version>
        <title>Calendars API Plugin for Xamarin and Windows</title>
        <authors>Caleb Clarke</authors>
        <owners>Caleb Clarke</owners>
@@ -18,34 +18,18 @@
 See project site README for usage notes and limitations.
        </description>
      <releaseNotes>
+0.7.0-beta changes:
+
+Added full reminder support as part of getting/updating events.
+
+AddEventReminderAsync is deprecated since reminders can now be added via AddOrUpdateEventAsync.
+
+
 0.6.64-beta changes:
 
 Fixed UWP assembly load error.
         
 Breaking change: ExternalID is no longer publicly settable, to clarify that it is provided by the platform.
-
-
-0.6.33-beta changes:
-
-Removed support for Windows (and WinPhone) 8.1 and iOS "classic" (pre-Unified).
-
-Added AccountName property to Calendar.
-
-
-0.6.10-beta changes:
-
-Time zone is now preserved when editing events on Android.
-
-
-0.6.0-beta changes:
-
-InvalidOperationException is now thrown if trying to edit or delete a recurring event.
-
-iOS API now checks calendar access on each call and throws UnauthorizedAccessException whenever it is denied, rather than only on the first call.
-
-Fixed issue where Android recurring event instances reported incorrect start/end times.
-
-Android all-day events are no longer affected by timezone.
      </releaseNotes>
        <summary>Cross-platform abstraction for querying and modifying device calendars.</summary>
        <tags>xamarin, pcl, xam.pcl, plugin, android, xamarin.forms, ios, uwp</tags>
