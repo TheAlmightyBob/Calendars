@@ -387,6 +387,152 @@ namespace Plugin.Calendars.Android.Tests
         }
 
         [Test]
+        public async void Calendars_AddOrUpdateEvents_NewEventNoReminders()
+        {
+            var calendarEvent = GetTestEvent();
+            var calendar = await _service.CreateCalendarAsync(_calendarName);
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.IsNull(eventFromId.Reminders);
+
+            var events = await _service.GetEventsAsync(calendar, DateTime.Today, DateTime.Today.AddDays(30));
+
+            Assert.IsNull(events.Single().Reminders);
+        }
+
+        [Test]
+        public async void Calendars_AddOrUpdateEvents_NewEventWithReminder()
+        {
+            var calendarEvent = GetTestEvent();
+            var reminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42) };
+            var calendar = await _service.CreateCalendarAsync(_calendarName);
+
+            calendarEvent.Reminders = new List<CalendarEventReminder> { reminder };
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.AreEqual(reminder, eventFromId.Reminders.Single());
+        }
+
+        [Test]
+        public async void Calendars_AddOrUpdateEvents_NewEventMultipleReminders()
+        {
+            var calendarEvent = GetTestEvent();
+            var reminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42) };
+            var calendar = await _service.CreateCalendarAsync(_calendarName);
+
+            calendarEvent.Reminders = new List<CalendarEventReminder>
+            {
+                new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42) },
+                new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(10) },
+            };
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.AreEqual(calendarEvent.Reminders, eventFromId.Reminders);
+        }
+
+        [Test]
+        public async void Calendars_AddOrUpdateEvents_ExistingEventEditsReminder()
+        {
+            var calendarEvent = GetTestEvent();
+            var firstReminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42) };
+            var secondReminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(5) };
+            var calendar = await _service.CreateCalendarAsync(_calendarName);
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            // Add reminder to event
+            calendarEvent.Reminders = new List<CalendarEventReminder> { firstReminder };
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.AreEqual(firstReminder, eventFromId.Reminders.Single());
+
+            // Change reminder on event
+            calendarEvent.Reminders = new List<CalendarEventReminder> { secondReminder };
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.AreEqual(secondReminder, eventFromId.Reminders.Single());
+
+            // Remove reminder from event
+            calendarEvent.Reminders = new List<CalendarEventReminder>();
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.IsNull(eventFromId.Reminders);
+        }
+
+        [Test]
+        public async void Calendars_AddEventReminder_SetsSingleReminderIfNone()
+        {
+            var calendarEvent = GetTestEvent();
+            var reminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42) };
+            var calendar = await _service.CreateCalendarAsync(_calendarName);
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            await _service.AddEventReminderAsync(calendarEvent, reminder);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.AreEqual(reminder, eventFromId.Reminders.Single());
+        }
+
+        [Test]
+        public async void Calendars_AddEventReminder_AddsMoreReminders()
+        {
+            var calendarEvent = GetTestEvent();
+            var firstReminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42) };
+            var secondReminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(5) };
+            var calendar = await _service.CreateCalendarAsync(_calendarName);
+
+            calendarEvent.Reminders = new List<CalendarEventReminder> { firstReminder };
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            await _service.AddEventReminderAsync(calendarEvent, secondReminder);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.AreEqual(new List<CalendarEventReminder> { firstReminder, secondReminder }, eventFromId.Reminders);
+        }
+
+#if !__IOS__ // Reminder methods are Android-specific
+        [Test]
+        public async void Calendars_AddEventReminder_SetsReminderMethod([Values(CalendarReminderMethod.Alert,
+            CalendarReminderMethod.Default, CalendarReminderMethod.Email, CalendarReminderMethod.Sms)] CalendarReminderMethod reminderMethod)
+        {
+            var calendarEvent = GetTestEvent();
+            var reminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42), Method = reminderMethod };
+            var calendar = await _service.CreateCalendarAsync(_calendarName);
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            await _service.AddEventReminderAsync(calendarEvent, reminder);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.AreEqual(reminder, eventFromId.Reminders.Single());
+        }
+#endif
+
+
+        [Test]
         public async void Calendars_GetEvents_NonexistentCalendarThrows()
         {
             var calendar = new Calendar { Name = "Bob", ExternalID = "42" };

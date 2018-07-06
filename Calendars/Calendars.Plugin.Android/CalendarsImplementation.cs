@@ -1,5 +1,6 @@
 using Plugin.Calendars.Abstractions;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Android.App;
@@ -20,6 +21,7 @@ namespace Plugin.Calendars
 
         private static readonly Android.Net.Uri _calendarsUri = CalendarContract.Calendars.ContentUri;
         private static readonly Android.Net.Uri _eventsUri = CalendarContract.Events.ContentUri;
+        private static readonly Android.Net.Uri _remindersUri = CalendarContract.Reminders.ContentUri;
 
         private static readonly string[] _calendarsProjection =
             {
@@ -75,27 +77,9 @@ namespace Plugin.Calendars
         {
             return Task.Run<IList<Calendar>>(() =>
                 {
-                    var calendars = new List<Calendar>();
                     var cursor = Query(_calendarsUri, _calendarsProjection);
 
-                    try
-                    {
-                        if (cursor.MoveToFirst())
-                        {
-                            do
-                            {
-                                calendars.Add(GetCalendar(cursor));
-                            } while (cursor.MoveToNext());
-                        }
-                    }
-                    catch (Java.Lang.Exception ex)
-                    {
-                        throw new PlatformException(ex.Message, ex);
-                    }
-                    finally
-                    {
-                        cursor.Close();
-                    }
+                    var calendars = IterateCursor(cursor, () => GetCalendar(cursor));
 
                     return calendars;
                 });
@@ -119,27 +103,12 @@ namespace Plugin.Calendars
 
             return Task.Run<Calendar>(() =>
                 {
-                    Calendar calendar = null;
                     var cursor = Query(
                         ContentUris.WithAppendedId(_calendarsUri, calendarId),
                         _calendarsProjection);
-                   
-                    try
-                    {
-                        if (cursor.MoveToFirst())
-                        {
-                            calendar = GetCalendar(cursor);
-                        }
-                    }
-                    catch (Java.Lang.Exception ex)
-                    {
-                        throw new PlatformException(ex.Message, ex);
-                    }
-                    finally
-                    {
-                        cursor.Close();
-                    }
 
+                    var calendar = SingleItemFromCursor(cursor, () => GetCalendar(cursor));
+                   
                     return calendar;
                 });
         }
@@ -182,46 +151,34 @@ namespace Plugin.Calendars
             ContentUris.AppendId(eventsUriBuilder, DateConversions.GetDateAsAndroidMS(start));
             ContentUris.AppendId(eventsUriBuilder, DateConversions.GetDateAsAndroidMS(end));
             var eventsUri = eventsUriBuilder.Build();
-            var events = new List<CalendarEvent>();
 
-            await Task.Run(() => 
+            return await Task.Run(() => 
             {
                 var cursor = Query(eventsUri, eventsProjection,
                    string.Format("{0} = {1}", CalendarContract.Events.InterfaceConsts.CalendarId, calendar.ExternalID),
                    null, CalendarContract.Events.InterfaceConsts.Dtstart + " ASC");
 
-                try
+                var events = IterateCursor(cursor, () =>
                 {
-                    if (cursor.MoveToFirst())
-                    {
-                        do
-                        {
-                            bool allDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay);
+                    bool allDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay);
 
-                            events.Add(new CalendarEvent
-                                {
-                                    Name = cursor.GetString(CalendarContract.Events.InterfaceConsts.Title),
-                                    ExternalID = cursor.GetString(CalendarContract.Instances.EventId),
-                                    Description = cursor.GetString(CalendarContract.Events.InterfaceConsts.Description),
-                                    Start = cursor.GetDateTime(CalendarContract.Instances.Begin, allDay),
-                                    End = cursor.GetDateTime(CalendarContract.Instances.End, allDay),
-                                    Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
-                                    AllDay = allDay
-                                });
-                        } while (cursor.MoveToNext());
-                    }
-                }
-                catch (Java.Lang.Exception ex)
-                {
-                    throw new PlatformException(ex.Message, ex);
-                }
-                finally
-                {
-                    cursor.Close();
-                }
-            });
-            
-            return events;
+                    var calendarEvent = new CalendarEvent
+                    {
+                        Name = cursor.GetString(CalendarContract.Events.InterfaceConsts.Title),
+                        ExternalID = cursor.GetString(CalendarContract.Instances.EventId),
+                        Description = cursor.GetString(CalendarContract.Events.InterfaceConsts.Description),
+                        Start = cursor.GetDateTime(CalendarContract.Instances.Begin, allDay),
+                        End = cursor.GetDateTime(CalendarContract.Instances.End, allDay),
+                        Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
+                        AllDay = allDay
+                    };
+                    calendarEvent.Reminders = GetEventReminders(calendarEvent.ExternalID);
+
+                    return calendarEvent;
+                });
+
+                return events;
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -377,7 +334,6 @@ namespace Plugin.Calendars
                         }
                     }
 
-                    var eventValues = new ContentValues();
                     bool allDay = calendarEvent.AllDay;
                     var start = allDay
                         ? DateTime.SpecifyKind(calendarEvent.Start.Date, DateTimeKind.Utc)
@@ -386,6 +342,7 @@ namespace Plugin.Calendars
                         ? DateTime.SpecifyKind(calendarEvent.End.Date, DateTimeKind.Utc)
                         : calendarEvent.End;
 
+                    var eventValues = new ContentValues();
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.CalendarId,
                         calendar.ExternalID);
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.Title,
@@ -414,13 +371,22 @@ namespace Plugin.Calendars
                             : Java.Util.TimeZone.Default.ID);
                     }
 
+                    var operations = new List<ContentProviderOperation>();
+
+                    var eventOperation = updateExisting
+                        ? ContentProviderOperation.NewUpdate(ContentUris.WithAppendedId(_eventsUri, existingId))
+                        : ContentProviderOperation.NewInsert(_eventsUri);
+
+                    eventOperation = eventOperation.WithValues(eventValues);
+                    operations.Add(eventOperation.Build());
+
+                    operations.AddRange(BuildReminderUpdateOperations(calendarEvent.Reminders, existingEvent));
+
+                    var results = ApplyBatch(operations);
+
                     if (!updateExisting)
                     {
-                        calendarEvent.ExternalID = Insert(_eventsUri, eventValues);
-                    }
-                    else
-                    {
-                        Update(_eventsUri, existingId, eventValues);
+                        calendarEvent.ExternalID = results[0].Uri.LastPathSegment;
                     }
                 }).ConfigureAwait(false);
         }
@@ -430,11 +396,10 @@ namespace Plugin.Calendars
         /// </summary>
         /// <param name="calendarEvent">Event to add the reminder to</param>
         /// <param name="reminder">The reminder</param>
-        /// <returns>If successful</returns>
         /// <exception cref="ArgumentException">Calendar event is not created or not valid</exception>
         /// <exception cref="System.InvalidOperationException">Editing recurring events is not supported</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
-        public async Task<bool> AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
+        public async Task AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
         {
             if (string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
@@ -449,37 +414,14 @@ namespace Plugin.Calendars
                 throw new ArgumentException("Specified calendar event not found on device");
             }
             
-            return await Task.Run(() =>
+            await Task.Run(() =>
             {
                 if (IsEventRecurring(calendarEvent.ExternalID))
                 {
                     throw new InvalidOperationException("Editing recurring events is not supported");
                 }
 
-                var reminderValues = new ContentValues();
-                reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Minutes, reminder?.TimeBefore.TotalMinutes ?? 15);
-                reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.EventId, calendarEvent.ExternalID);
-
-                switch(reminder.Method)
-                {
-                    case CalendarReminderMethod.Alert:
-                        reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Method, (int)RemindersMethod.Alert);
-                        break;
-                    case CalendarReminderMethod.Default:
-                        reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Method, (int)RemindersMethod.Default);
-                        break;
-                    case CalendarReminderMethod.Email:
-                        reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Method, (int)RemindersMethod.Email);
-                        break;
-                    case CalendarReminderMethod.Sms:
-                        reminderValues.Put(CalendarContract.Reminders.InterfaceConsts.Method, (int)RemindersMethod.Sms);
-                        break;
-                }
-
-                var uri = CalendarContract.Reminders.ContentUri;
-                Insert(uri, reminderValues);
-
-                return true;
+                Insert(_remindersUri, reminder.ToContentValues(calendarEvent.ExternalID));
             }).ConfigureAwait(false);
         }
 
@@ -584,26 +526,11 @@ namespace Plugin.Calendars
                 CalendarContract.Events.InterfaceConsts.CalendarId
             };
 
-            long? calendarId = null;
             var cursor = Query(
                 ContentUris.WithAppendedId(_eventsUri, long.Parse(externalId)),
                 eventsProjection);
 
-            try
-            {
-                if (cursor.MoveToFirst())
-                {
-                    calendarId = cursor.GetLong(CalendarContract.Events.InterfaceConsts.CalendarId);
-                }
-            }
-            catch (Java.Lang.Exception ex)
-            {
-                throw new PlatformException(ex.Message, ex);
-            }
-            finally
-            {
-                cursor.Close();
-            }
+            var calendarId = SingleItemFromCursor<long?>(cursor, () => cursor.GetLong(CalendarContract.Events.InterfaceConsts.CalendarId));
 
             return calendarId;
         }
@@ -623,27 +550,12 @@ namespace Plugin.Calendars
                 CalendarContract.Events.InterfaceConsts.Duration
             };
 
-            bool isRecurring = false;
             var cursor = Query(
                 ContentUris.WithAppendedId(_eventsUri, long.Parse(externalId)),
                 eventsProjection);
 
-            try
-            {
-                if (cursor.MoveToFirst())
-                {
-                    //calendarId = cursor.GetLong(CalendarContract.Events.InterfaceConsts.CalendarId);
-                    isRecurring = !string.IsNullOrEmpty(cursor.GetString(CalendarContract.Events.InterfaceConsts.Duration));
-                }
-            }
-            catch (Java.Lang.Exception ex)
-            {
-                throw new PlatformException(ex.Message, ex);
-            }
-            finally
-            {
-                cursor.Close();
-            }
+            bool isRecurring = SingleItemFromCursor(cursor,
+                () => !string.IsNullOrEmpty(cursor.GetString(CalendarContract.Events.InterfaceConsts.Duration)));
 
             return isRecurring;
         }
@@ -671,39 +583,120 @@ namespace Plugin.Calendars
                 CalendarContract.Events.InterfaceConsts.AllDay
             };
 
-            CalendarEvent calendarEvent = null;
             var cursor = Query(
                 ContentUris.WithAppendedId(_eventsUri, long.Parse(externalId)),
                 eventsProjection);
 
-            try
+            var calendarEvent = SingleItemFromCursor(cursor, () =>
             {
-                if (cursor.MoveToFirst())
-                {
-                    bool allDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay);
+                bool allDay = cursor.GetBoolean(CalendarContract.Events.InterfaceConsts.AllDay);
+                string externalID = cursor.GetString(CalendarContract.Events.InterfaceConsts.Id);
 
-                    calendarEvent = new CalendarEvent
-                    {
-                        Name = cursor.GetString(CalendarContract.Events.InterfaceConsts.Title),
-                        ExternalID = cursor.GetString(CalendarContract.Events.InterfaceConsts.Id),
-                        Description = cursor.GetString(CalendarContract.Events.InterfaceConsts.Description),
-                        Start = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtstart, allDay),
-                        End = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtend, allDay),
-                        Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
-                        AllDay = allDay
-                    };
-                }
-            }
-            catch (Java.Lang.Exception ex)
-            {
-                throw new PlatformException(ex.Message, ex);
-            }
-            finally
-            {
-                cursor.Close();
-            }
+                return new CalendarEvent
+                {
+                    Name = cursor.GetString(CalendarContract.Events.InterfaceConsts.Title),
+                    ExternalID = externalId,
+                    Description = cursor.GetString(CalendarContract.Events.InterfaceConsts.Description),
+                    Start = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtstart, allDay),
+                    End = cursor.GetDateTime(CalendarContract.Events.InterfaceConsts.Dtend, allDay),
+                    Location = cursor.GetString(CalendarContract.Events.InterfaceConsts.EventLocation),
+                    AllDay = allDay,
+                    Reminders = GetEventReminders(externalID)
+                };
+            });
 
             return calendarEvent;
+        }
+
+        /// <summary>
+        /// Get reminders for an event.
+        /// Assumes that event existence/validity has already been verified.
+        /// </summary>
+        /// <param name="eventID">Event ID for which to retrieve reminders</param>
+        /// <returns>Reminders</returns>
+        private IList<CalendarEventReminder> GetEventReminders(string eventID)
+        {
+            if (string.IsNullOrEmpty(eventID))
+            {
+                throw new ArgumentException("Missing calendar event identifier", "eventID");
+            }
+
+            // Not bothering to verify that event exists because this is intended for internal use
+            // so we should already know that it exists.
+
+            string[] remindersProjection =
+            {
+                CalendarContract.Reminders.InterfaceConsts.Minutes,
+                CalendarContract.Reminders.InterfaceConsts.Method
+            };
+
+            var cursor = Query(CalendarContract.Reminders.ContentUri, remindersProjection,
+                $"{CalendarContract.Reminders.InterfaceConsts.EventId} = {eventID}",
+                null, null);
+
+            var reminders = IterateCursor(cursor, () => new CalendarEventReminder
+            {
+                TimeBefore = TimeSpan.FromMinutes(cursor.GetInt(CalendarContract.Reminders.InterfaceConsts.Minutes)),
+                Method = ((RemindersMethod)cursor.GetInt(CalendarContract.Reminders.InterfaceConsts.Method)).ToCalendarReminderMethod()
+            });
+
+            return reminders.Count > 0 ? reminders : null;
+        }
+
+        /// <summary>
+        /// Builds ContentProviderOperations for adding/removing reminders.
+        /// Specifically intended for use by AddOrUpdateEvent, as if existingEvent is omitted,
+        /// this requires that the operations are added to a batch in which the first operation
+        /// inserts the event.
+        /// </summary>
+        /// <param name="reminders">New reminders (replacing existing reminders, if any)</param>
+        /// <param name="existingEvent">(optional) Existing event to update reminders for</param>
+        /// <returns>List of ContentProviderOperations for applying reminder updates as part of a batched update</returns>
+        private IList<ContentProviderOperation> BuildReminderUpdateOperations(IList<CalendarEventReminder> reminders, CalendarEvent existingEvent = null)
+        {
+            var operations = new List<ContentProviderOperation>();
+
+            // If reminders haven't changed, do nothing
+            //
+            if (reminders == existingEvent?.Reminders ||
+                (reminders != null && existingEvent?.Reminders != null && reminders.SequenceEqual(existingEvent.Reminders)))
+            {
+                return operations;
+            }
+
+            // Build operations that remove all existing reminders and add new ones
+
+            if (existingEvent?.Reminders != null)
+            {
+                operations.AddRange(existingEvent.Reminders.Select(reminder =>
+                    ContentProviderOperation.NewDelete(_remindersUri)
+                                            .WithSelection($"{CalendarContract.Reminders.InterfaceConsts.EventId} = {existingEvent.ExternalID}", null)
+                                            .Build()));
+            }
+
+            if (reminders != null)
+            {
+                if (existingEvent != null)
+                {
+                    operations.AddRange(reminders.Select(reminder =>
+                        ContentProviderOperation.NewInsert(_remindersUri)
+                                                .WithValues(reminder.ToContentValues(existingEvent.ExternalID))
+                                                .Build()));
+                }
+                else
+                {
+                    // This assumes that these operations are being added to a batch in which the first operation
+                    // is the event insertion operation
+                    //
+                    operations.AddRange(reminders.Select(reminder =>
+                        ContentProviderOperation.NewInsert(_remindersUri)
+                                                .WithValues(reminder.ToContentValues())
+                                                .WithValueBackReference(CalendarContract.Reminders.InterfaceConsts.EventId, 0)
+                                                .Build()));
+                }
+            }
+
+            return operations;
         }
 
         private static Calendar GetCalendar(ICursor cursor)
@@ -776,6 +769,18 @@ namespace Plugin.Calendars
             }
         }
 
+        private static ContentProviderResult[] ApplyBatch(IList<ContentProviderOperation> operations)
+        {
+            try
+            {
+                return Application.Context.ContentResolver.ApplyBatch(CalendarContract.Authority, operations);
+            }
+            catch (Java.Lang.Exception ex)
+            {
+                throw TranslateException(ex);
+            }
+        }
+
         private static Exception TranslateException(Java.Lang.Exception ex)
         {
             if (ex is Java.Lang.SecurityException)
@@ -787,7 +792,54 @@ namespace Plugin.Calendars
                 return new PlatformException(ex.Message, ex);
             }
         }
-            
+
+        private static IList<T> IterateCursor<T>(ICursor cursor, Func<T> func)
+        {
+            var list = new List<T>();
+
+            try
+            {
+                if (cursor.MoveToFirst())
+                {
+                    do
+                    {
+                        list.Add(func());
+                    } while (cursor.MoveToNext());
+                }
+            }
+            catch (Java.Lang.Exception ex)
+            {
+                throw new PlatformException(ex.Message, ex);
+            }
+            finally
+            {
+                cursor.Close();
+            }
+
+            return list;
+        }
+
+        private static T SingleItemFromCursor<T>(ICursor cursor, Func<T> func)
+        {
+            try
+            {
+                if (cursor.MoveToFirst())
+                {
+                    return func();
+                }
+            }
+            catch (Java.Lang.Exception ex)
+            {
+                throw new PlatformException(ex.Message, ex);
+            }
+            finally
+            {
+                cursor.Close();
+            }
+
+            return default(T);
+        }
+
         #endregion
     }
 }

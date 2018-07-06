@@ -48,7 +48,9 @@
     <Compile Include="..\Calendars.Plugin\CrossCalendars.cs">
       <Link>CrossCalendars.cs</Link>
     </Compile>
+    <Compile Include="CalendarEventReminderExtensions.cs" />
     <Compile Include="CalendarsImplementation.cs" />
+    <Compile Include="ReminderMethodExtensions.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CursorExtensions.cs" />

@@ -36,9 +36,11 @@
     <Compile Include="..\Calendars.Plugin\CrossCalendars.cs">
       <Link>CrossCalendars.cs</Link>
     </Compile>
+    <Compile Include="CalendarEventReminderExtensions.cs" />
     <Compile Include="CalendarsImplementation.cs" />
     <Compile Include="ColorConversion.cs" />
     <Compile Include="DateConversionExtensions.cs" />
+    <Compile Include="EKAlarmExtensions.cs" />
     <Compile Include="EKCalendarExtensions.cs" />
     <Compile Include="EKEventExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -54,6 +56,9 @@
       <Project>{ae8e6fff-da18-4ecb-b0b0-abc527b5de32}</Project>
       <Name>Calendars.Plugin.Abstractions</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
