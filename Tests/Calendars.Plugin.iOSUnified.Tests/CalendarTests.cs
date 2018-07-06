@@ -417,6 +417,10 @@ namespace Plugin.Calendars.Android.Tests
             var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
 
             Assert.AreEqual(reminder, eventFromId.Reminders.Single());
+
+            var events = await _service.GetEventsAsync(calendar, DateTime.Today, DateTime.Today.AddDays(30));
+
+            Assert.AreEqual(reminder, events.Single().Reminders.Single());
         }
 
         [Test]
