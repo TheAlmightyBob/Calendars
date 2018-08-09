@@ -13,11 +13,15 @@
      
        <requireLicenseAcceptance>false</requireLicenseAcceptance>
        <description>
-         Perform basic CRUD calendar operations on iOS/Android/WinPhone/UWP through a simple common API.
+         Perform basic CRUD calendar operations on iOS/Android/UWP through a simple common API.
          
 See project site README for usage notes and limitations.
        </description>
      <releaseNotes>
+0.7.7-beta changes:
+        
+Fixed issue where Android all-day events might appear as multi-day in some views of calendar apps.
+
 0.7.0-beta changes:
 
 Added full reminder support as part of getting/updating events.
