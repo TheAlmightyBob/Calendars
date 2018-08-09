@@ -222,7 +222,7 @@ namespace Plugin.Calendars
                 }
                 else
                 {
-                    throw new ArgumentException("Specified calendar does not exist on device", "calendar");
+                    throw new ArgumentException("Specified calendar does not exist on device", nameof(calendar));
                 }
             }
 
@@ -292,7 +292,7 @@ namespace Plugin.Calendars
         {
             if (string.IsNullOrEmpty(calendar.ExternalID))
             {
-                throw new ArgumentException("Missing calendar identifier", "calendar");
+                throw new ArgumentException("Missing calendar identifier", nameof(calendar));
             }
             else
             {
@@ -309,7 +309,7 @@ namespace Plugin.Calendars
             // Validate times
             if (calendarEvent.End < calendarEvent.Start)
             {
-                throw new ArgumentException("End time may not precede start time", "calendarEvent");
+                throw new ArgumentException("End time may not precede start time", nameof(calendarEvent));
             }
 
             bool updateExisting = false;
@@ -403,7 +403,7 @@ namespace Plugin.Calendars
         {
             if (string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
-                throw new ArgumentException("Missing calendar event identifier", "calendarEvent");
+                throw new ArgumentException("Missing calendar event identifier", nameof(calendarEvent));
             }
 
             // Verify calendar event exists 
@@ -443,7 +443,7 @@ namespace Plugin.Calendars
             }
             else if (!existing.CanEditCalendar)
             {
-                throw new ArgumentException("Cannot delete calendar (probably because it's non-local)", "calendar");
+                throw new ArgumentException("Cannot delete calendar (probably because it's non-local)", nameof(calendar));
             }
 
             return await Task.Run(() => Delete(_calendarsUri, long.Parse(calendar.ExternalID))).ConfigureAwait(false);
@@ -475,7 +475,7 @@ namespace Plugin.Calendars
             }
             else if (!existingCal.CanEditEvents)
             {
-                throw new ArgumentException("Cannot delete event from readonly calendar", "calendar");
+                throw new ArgumentException("Cannot delete event from readonly calendar", nameof(calendar));
             }
 
             if (long.TryParse(calendarEvent.ExternalID, out existingId))
@@ -618,7 +618,7 @@ namespace Plugin.Calendars
         {
             if (string.IsNullOrEmpty(eventID))
             {
-                throw new ArgumentException("Missing calendar event identifier", "eventID");
+                throw new ArgumentException("Missing calendar event identifier", nameof(eventID));
             }
 
             // Not bothering to verify that event exists because this is intended for internal use
