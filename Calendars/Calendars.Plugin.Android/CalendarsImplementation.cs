@@ -354,7 +354,7 @@ namespace Plugin.Calendars
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.Dtend,
                         DateConversions.GetDateAsAndroidMS(end));
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.AllDay,
-                        allDay);
+                                    allDay ? 1 : 0);
                     eventValues.Put(CalendarContract.Events.InterfaceConsts.EventLocation,
                         calendarEvent.Location ?? string.Empty);
 
