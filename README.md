@@ -18,7 +18,7 @@ Try it out with the [Calendars Tester](https://github.com/TheAlmightyBob/Calenda
 * Android:
   * Requires ReadCalendar & WriteCalendar permissions.
   * Android calendars have additional "account name" and "owner account" properties. By default, this will set those properties for new calendars according to the application package label. However, custom names can be set via the Android implementation class.
-  * Unlike iOS, permissions will _not_ automatically be requested on Android Marshmallow. Check out the [Permissions Plugin](https://github.com/jamesmontemagno/Xamarin.Plugins/tree/master/Permissions) for help with this.
+  * Unlike iOS, permissions will _not_ automatically be requested on Android M and above. Check out the [Permissions Plugin](https://github.com/jamesmontemagno/PermissionsPlugin) for help with this.
 * Universal Windows Platform:
   * Calendar color is read-only.
   * Requires the Appointments capability.
