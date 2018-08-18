@@ -14,6 +14,24 @@ Try it out with the [Calendars Tester](https://github.com/TheAlmightyBob/Calenda
 * Xamarin.Android
 * Universal Windows Platform (uap10.0 NuGet target)
 
+**Example**
+```csharp
+var calendars = await CrossCalendars.Current.GetCalendarsAsync();
+
+// ...figure out which calendar to use, e.g. by prompting the user and considering the CanEditEvents property...
+
+var calendarEvent = new CalendarEvent
+{
+   Name = "Add calendar support",
+   Start = DateTime.Now,
+   End = DateTime.Now.AddHours(1),
+   Reminders = new List<CalendarEventReminder> { new CalendarEventReminder() }
+};
+await CrossCalendars.Current.AddOrUpdateEventAsync(selectedCalendar, calendarEvent);
+
+// calendarEvent.ExternalID now contains the unique ID for the event, which can be stored and later used to retrieve the event via GetEventByIdAsync
+```
+
 ### Platform Notes:
 * Android:
   * Requires ReadCalendar & WriteCalendar permissions.
@@ -22,6 +40,7 @@ Try it out with the [Calendars Tester](https://github.com/TheAlmightyBob/Calenda
 * Universal Windows Platform:
   * Calendar color is read-only.
   * Requires the Appointments capability.
+  * Only allows a single reminder.
 * iOS:
   * (iOS 10+) Info.plist must include the NSCalendarsUsageDescription key with user-facing text that explains why your app desires calendar access. See [Apple docs](https://developer.apple.com/library/prerelease/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW15).
   * Calendar permission will be requested when any API function is called, if it has not already been granted.
