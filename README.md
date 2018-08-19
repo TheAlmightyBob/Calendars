@@ -55,7 +55,6 @@ await CrossCalendars.Current.AddOrUpdateEventAsync(selectedCalendar, calendarEve
 
 ### Limitations:
 * Recurring events are not currently supported.
-* Reminders can be created but not read/edited/removed.
 * Meeting attendees and other custom fields are also not supported.
 * Async is a lie on Android and iOS. Windows provides a native async API, so to provide a common API abstraction, the Android and iOS implementations use background threads.
 * Some performance tradeoffs were made in the interest of providing a clear and consistent API across all platforms with helpful error checking. Android in particular provides certain optimizations for activities that are unavailable to a cross-platform API. However, this may still be useful to an Android app that is not constantly re-querying calendar data, or to one that is written with Xamarin.Forms.
