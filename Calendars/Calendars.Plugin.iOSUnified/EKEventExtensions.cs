@@ -1,5 +1,6 @@
 using EventKit;
 using Plugin.Calendars.Abstractions;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Plugin.Calendars
@@ -30,6 +31,7 @@ namespace Plugin.Calendars
                 Location = ekEvent.Location,
                 ExternalID = ekEvent.EventIdentifier,
                 Reminders = ekEvent.Alarms?.Select(alarm => alarm.ToCalendarEventReminder()).ToList()
+                    ?? new List<CalendarEventReminder>()
             };
         }
     }

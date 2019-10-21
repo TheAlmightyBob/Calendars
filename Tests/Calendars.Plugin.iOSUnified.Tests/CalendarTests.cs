@@ -403,11 +403,11 @@ namespace Plugin.Calendars.Android.Tests
 
             var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
 
-            Assert.IsNull(eventFromId.Reminders);
+            Assert.That(eventFromId.Reminders, Is.Empty);
 
             var events = await _service.GetEventsAsync(calendar, DateTime.Today, DateTime.Today.AddDays(30));
 
-            Assert.IsNull(events.Single().Reminders);
+            Assert.That(events.Single().Reminders, Is.Empty);
         }
 
         [Test]
@@ -434,7 +434,6 @@ namespace Plugin.Calendars.Android.Tests
         public async void Calendars_AddOrUpdateEvents_NewEventMultipleReminders()
         {
             var calendarEvent = GetTestEvent();
-            var reminder = new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42) };
             var calendar = await _service.CreateCalendarAsync(_calendarName);
 
             calendarEvent.Reminders = new List<CalendarEventReminder>
@@ -447,7 +446,7 @@ namespace Plugin.Calendars.Android.Tests
 
             var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
 
-            Assert.AreEqual(calendarEvent.Reminders, eventFromId.Reminders);
+            Assert.That(eventFromId.Reminders, Is.EquivalentTo(calendarEvent.Reminders));
         }
 
         [Test]
@@ -485,7 +484,40 @@ namespace Plugin.Calendars.Android.Tests
 
             eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
 
-            Assert.IsNull(eventFromId.Reminders);
+            Assert.That(eventFromId.Reminders, Is.Empty);
+        }
+
+        [Test]
+        public async void Calendars_AddOrUpdateEvents_NullRemindersPreservesExisting()
+        {
+            var calendarEvent = GetTestEvent();
+            var calendar = await _service.CreateCalendarAsync(_calendarName);
+
+            var expectedReminders = new List<CalendarEventReminder>
+            {
+                new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(42) },
+                new CalendarEventReminder { TimeBefore = TimeSpan.FromMinutes(10) },
+            };
+
+            calendarEvent.Reminders = expectedReminders;
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            // Edit event without editing reminders
+            // (this is actually more relevant when adding new events on iOS, where
+            //  we don't want to remove the default alert if one is configured, but
+            //  if we're going to support null that way for the initial event creation
+            //  then we should be consistent when editing)
+            //
+            calendarEvent.Reminders = null;
+            calendarEvent.Name += " edited";
+
+            await _service.AddOrUpdateEventAsync(calendar, calendarEvent);
+
+            var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
+
+            Assert.AreEqual(calendarEvent.Name, eventFromId.Name);
+            Assert.That(eventFromId.Reminders, Is.EquivalentTo(expectedReminders));
         }
 
         [Test]
@@ -520,7 +552,7 @@ namespace Plugin.Calendars.Android.Tests
 
             var eventFromId = await _service.GetEventByIdAsync(calendarEvent.ExternalID);
 
-            Assert.AreEqual(new List<CalendarEventReminder> { firstReminder, secondReminder }, eventFromId.Reminders);
+            Assert.That(eventFromId.Reminders, Is.EquivalentTo(new List<CalendarEventReminder> { firstReminder, secondReminder }));
         }
 
 #if !__IOS__ // Reminder methods are Android-specific
