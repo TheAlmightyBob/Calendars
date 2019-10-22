@@ -35,7 +35,14 @@ namespace Plugin.Calendars.Android.Tests
         [SetUp]
         public void Setup()
         {
+            // iOS won't let us keep recreating the event store
+            // (gives the error
+            //  "[EventKit] Client tried to open too many connections to calaccessd. Refusing to open another")
+#if __IOS__
+            _service ??= new CalendarsImplementation();
+#else
             _service = new CalendarsImplementation();
+#endif
 
             // Android supports milliseconds, iOS supports seconds
 #if __IOS__
