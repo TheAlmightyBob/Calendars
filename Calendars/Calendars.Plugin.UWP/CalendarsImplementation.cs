@@ -248,7 +248,11 @@ namespace Plugin.Calendars
             appt.Duration = calendarEvent.End - calendarEvent.Start;
             appt.AllDay = calendarEvent.AllDay;
             appt.Location = calendarEvent.Location ?? string.Empty;
-            appt.Reminder = calendarEvent.Reminders?.FirstOrDefault()?.TimeBefore;
+
+            if (calendarEvent.Reminders != null)
+            {
+                appt.Reminder = calendarEvent.Reminders?.FirstOrDefault()?.TimeBefore;
+            }
 
             await appCalendar.SaveAppointmentAsync(appt);
 

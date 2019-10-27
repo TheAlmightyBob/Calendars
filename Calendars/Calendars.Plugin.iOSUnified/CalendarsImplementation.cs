@@ -267,7 +267,7 @@ namespace Plugin.Calendars
 
             // If the provided reminders are different from the existing alarms, replace themm
             //
-            if ((calendarEvent.Reminders != null || iosEvent.HasAlarms) &&
+            if (calendarEvent.Reminders != null &&
                 !(calendarEvent.Reminders?.SequenceEqual(iosEvent.Alarms?.Select(alarm => alarm.ToCalendarEventReminder()) ?? Enumerable.Empty<CalendarEventReminder>()) == true))
             {
                 iosEvent.Alarms = calendarEvent.Reminders.Select(reminder => reminder.ToEKAlarm()).ToArray();

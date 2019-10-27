@@ -27,7 +27,7 @@ namespace Plugin.Calendars
                 AllDay = appt.AllDay,
                 Location = appt.Location,
                 ExternalID = appt.LocalId,
-                Reminders = reminder != null ? new List<CalendarEventReminder> { reminder } : null
+                Reminders = reminder != null ? new List<CalendarEventReminder> { reminder } : new List<CalendarEventReminder>()
             };
         }
     }

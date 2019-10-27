@@ -640,7 +640,7 @@ namespace Plugin.Calendars
                 Method = ((RemindersMethod)cursor.GetInt(CalendarContract.Reminders.InterfaceConsts.Method)).ToCalendarReminderMethod()
             });
 
-            return reminders.Count > 0 ? reminders : null;
+            return reminders;
         }
 
         /// <summary>
@@ -656,10 +656,10 @@ namespace Plugin.Calendars
         {
             var operations = new List<ContentProviderOperation>();
 
-            // If reminders haven't changed, do nothing
+            // If reminders are null or haven't changed, do nothing
             //
-            if (reminders == existingEvent?.Reminders ||
-                (reminders != null && existingEvent?.Reminders != null && reminders.SequenceEqual(existingEvent.Reminders)))
+            if (reminders == null ||
+                (existingEvent?.Reminders != null && reminders.SequenceEqual(existingEvent.Reminders)))
             {
                 return operations;
             }
