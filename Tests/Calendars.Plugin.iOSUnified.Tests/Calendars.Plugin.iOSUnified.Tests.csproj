@@ -25,7 +25,7 @@
     <CodesignEntitlements>
     </CodesignEntitlements>
     <CodesignKey>iPhone Developer</CodesignKey>
-<LangVersion>8.0</LangVersion>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -39,7 +39,7 @@
     <CodesignEntitlements>
     </CodesignEntitlements>
     <CodesignKey>iPhone Developer</CodesignKey>
-<LangVersion>8.0</LangVersion>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -125,6 +125,7 @@
       <Project>{2882aeeb-d4cd-4eb9-8a6c-6653b33681f0}</Project>
       <Name>Calendars.Plugin.iOSUnified</Name>
       <IsAppExtension>false</IsAppExtension>
+      <IsWatchApp>false</IsWatchApp>
     </ProjectReference>
     <ProjectReference Include="..\Calendars.Plugin.TestUtilities\Calendars.Plugin.TestUtilities.csproj">
       <Project>{88cd6f84-4568-4de2-a414-d05ad6c221b0}</Project>
