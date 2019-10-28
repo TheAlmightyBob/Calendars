@@ -43,7 +43,9 @@ namespace Plugin.Calendars.Abstractions
         public string Description { get; set; }
 
         /// <summary>
-        /// Event reminders
+        /// Event reminders.
+        /// Set to null to preserve existing/default reminders.
+        /// Set to empty list to remove all reminders.
         /// </summary>
         /// <remarks>Windows only supports a single reminder</remarks>
         public IList<CalendarEventReminder> Reminders { get; set; }

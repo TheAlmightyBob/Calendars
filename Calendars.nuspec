@@ -18,22 +18,9 @@
 See project site README for usage notes and limitations.
        </description>
      <releaseNotes>
-0.7.7-beta changes:
-        
-Fixed issue where Android all-day events might appear as multi-day in some views of calendar apps.
+1.0.14 changes:
 
-0.7.0-beta changes:
-
-Added full reminder support as part of getting/updating events.
-
-AddEventReminderAsync is deprecated since reminders can now be added via AddOrUpdateEventAsync.
-
-
-0.6.64-beta changes:
-
-Fixed UWP assembly load error.
-        
-Breaking change: ExternalID is no longer publicly settable, to clarify that it is provided by the platform.
+Setting Reminders to null in AddOrUpdateEventAsyc now preserves existing/default reminders.
      </releaseNotes>
        <summary>Cross-platform abstraction for querying and modifying device calendars.</summary>
        <tags>xamarin, pcl, netstandard, plugin, android, xamarin.forms, ios, uwp</tags>
