@@ -472,7 +472,7 @@ namespace Plugin.Calendars
 
             if (color != null && !string.IsNullOrEmpty(color))
             {
-                calendar.CGColor = ColorConversion.ToCGColor(color) ?? throw new NullReferenceException();
+                calendar.CGColor = ColorConversion.ToCGColor(color) ?? throw new InvalidOperationException("Invalid color");
             }
 
             calendar.Source = source;
