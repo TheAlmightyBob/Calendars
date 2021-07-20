@@ -2,6 +2,8 @@
 using System.Runtime.CompilerServices;
 using Windows.Foundation;
 
+#nullable enable
+
 namespace Plugin.Calendars
 {
     /// <summary>

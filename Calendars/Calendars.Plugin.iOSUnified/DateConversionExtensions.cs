@@ -2,6 +2,8 @@ using System;
 
 using Foundation;
 
+#nullable enable
+
 namespace Plugin.Calendars
 {
     /// <summary>
@@ -11,8 +13,7 @@ namespace Plugin.Calendars
     {
         // Xamarin example had this in local time, but that does not work with daylight savings...
         //
-        private static DateTime _reference =
-            new DateTime(2001, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly DateTime _reference = new(2001, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         /// <summary>
         /// Converts NSDate to System.DateTime

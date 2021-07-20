@@ -8,18 +8,18 @@
         /// <summary>
         /// Calendar display name
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Calendar display color, as a string in hex notation
         /// </summary>
         /// <remarks>Cannot be changed on WinPhone</remarks>
-        public string Color { get; set; }
+        public string? Color { get; set; }
 
         /// <summary>
         /// Platform-specific unique calendar identifier
         /// </summary>
-        public string ExternalID { get; internal set; }
+        public string? ExternalID { get; internal set; }
 
         /// <summary>
         /// Whether or not the calendar itself (name/color) can be edited
@@ -34,6 +34,6 @@
         /// <summary>
         /// Display name of associated calendar account
         /// </summary>
-        public string AccountName { get; set; }
+        public string? AccountName { get; set; }
     }
 }

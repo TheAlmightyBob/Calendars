@@ -1,5 +1,7 @@
 ﻿using System;
 
+#nullable enable
+
 namespace Plugin.Calendars
 {
     /// <summary>
@@ -7,7 +9,7 @@ namespace Plugin.Calendars
     /// </summary>
     internal static class DateConversions
     {
-        private readonly static DateTime _reference = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private readonly static DateTime _reference = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         /// <summary>
         /// Converts a System.DateTime to an Android-expected long of milliseconds since 1970.

@@ -19,7 +19,7 @@ namespace Plugin.Calendars.Abstractions
         /// <param name="calendarName">Calendar name</param>
         /// <param name="color">Preferred color, or null to accept default</param>
         /// <returns>The created calendar</returns>
-        public static async Task<Calendar> CreateCalendarAsync(this ICalendars api, string calendarName, string color = null)
+        public static async Task<Calendar> CreateCalendarAsync(this ICalendars api, string calendarName, string? color = null)
         {
             var calendar = new Calendar
             {

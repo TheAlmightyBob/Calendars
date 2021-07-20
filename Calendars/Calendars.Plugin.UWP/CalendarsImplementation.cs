@@ -1,9 +1,12 @@
 using Plugin.Calendars.Abstractions;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using Windows.ApplicationModel.Appointments;
+
+#nullable enable
 
 namespace Plugin.Calendars
 {
@@ -14,8 +17,8 @@ namespace Plugin.Calendars
     {
         #region Fields
 
-        private AppointmentStore _apptStore;
-        private AppointmentStore _localApptStore;
+        private AppointmentStore? _apptStore;
+        private AppointmentStore? _localApptStore;
 
         #endregion
 
@@ -50,7 +53,7 @@ namespace Plugin.Calendars
         /// <returns>The corresponding calendar, or null if not found</returns>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
-        public async Task<Calendar> GetCalendarByIdAsync(string externalId)
+        public async Task<Calendar?> GetCalendarByIdAsync(string externalId)
         {
             if (string.IsNullOrWhiteSpace(externalId))
             {
@@ -75,7 +78,7 @@ namespace Plugin.Calendars
                 calendar = await _apptStore.GetAppointmentCalendarAsync(externalId).ConfigureAwait(false);
             }
 
-            return calendar == null ? null : calendar.ToCalendar(writeable);
+            return calendar?.ToCalendar(writeable);
         }
 
         /// <summary>
@@ -92,7 +95,7 @@ namespace Plugin.Calendars
         {
             await EnsureInitializedAsync().ConfigureAwait(false);
 
-            AppointmentCalendar deviceCalendar = null;
+            AppointmentCalendar? deviceCalendar = null;
 
             try
             {
@@ -127,7 +130,7 @@ namespace Plugin.Calendars
         /// <returns>The corresponding calendar event, or null if not found</returns>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
-        public async Task<CalendarEvent> GetEventByIdAsync(string externalId)
+        public async Task<CalendarEvent?> GetEventByIdAsync(string externalId)
         {
             if (string.IsNullOrWhiteSpace(externalId))
             {
@@ -138,7 +141,7 @@ namespace Plugin.Calendars
 
             var appt = await _apptStore.GetAppointmentAsync(externalId).ConfigureAwait(false);
 
-            return appt == null ? null : appt.ToCalendarEvent();
+            return appt?.ToCalendarEvent();
         }
 
         /// <summary>
@@ -154,9 +157,9 @@ namespace Plugin.Calendars
         {
             await EnsureInitializedAsync().ConfigureAwait(false);
 
-            AppointmentCalendar existingCalendar = null;
+            AppointmentCalendar? existingCalendar = null;
 
-            if (!string.IsNullOrEmpty(calendar.ExternalID))
+            if (calendar.ExternalID != null && !string.IsNullOrEmpty(calendar.ExternalID))
             {
                 existingCalendar = await GetAndValidateLocalCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
             }
@@ -199,17 +202,12 @@ namespace Plugin.Calendars
         {
             await EnsureInitializedAsync().ConfigureAwait(false);
 
-            AppointmentCalendar appCalendar = null;
-
-            if (string.IsNullOrEmpty(calendar.ExternalID))
+            if (calendar.ExternalID == null || string.IsNullOrEmpty(calendar.ExternalID))
             {
                 throw new ArgumentException("Missing calendar identifier", "calendar");
             }
-            else
-            {
-                appCalendar = await GetAndValidateLocalCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
-            }
 
+            AppointmentCalendar appCalendar = await GetAndValidateLocalCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
 
             // Android/iOS support multiple reminders, but Windows only allows one
             if (calendarEvent.Reminders?.Count > 1)
@@ -217,7 +215,7 @@ namespace Plugin.Calendars
                 throw new ArgumentOutOfRangeException(nameof(calendarEvent), "Windows does not support multiple reminders");
             }
 
-            Appointment appt = null;
+            Appointment? appt = null;
 
             // If Event already corresponds to an existing Appointment in the target
             // Calendar, then edit that instead of creating a new one.
@@ -310,7 +308,7 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<bool> DeleteCalendarAsync(Calendar calendar)
         {
-            if (string.IsNullOrEmpty(calendar.ExternalID))
+            if (calendar.ExternalID == null || string.IsNullOrEmpty(calendar.ExternalID))
             {
                 return false;
             }
@@ -356,7 +354,8 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<bool> DeleteEventAsync(Calendar calendar, CalendarEvent calendarEvent)
         {
-            if (string.IsNullOrEmpty(calendar.ExternalID) || string.IsNullOrEmpty(calendarEvent.ExternalID))
+            if (calendar.ExternalID == null || string.IsNullOrEmpty(calendar.ExternalID)
+                || calendarEvent.ExternalID == null || string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
                 return false;
             }
@@ -411,8 +410,12 @@ namespace Plugin.Calendars
 
 #region Private Methods
 
+        [MemberNotNull(nameof(_apptStore), nameof(_localApptStore))]
         private async Task EnsureInitializedAsync()
         {
+            // If EnsureInitializedAsync is not awaited, they won't be initialized. It's fine.
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+
             if (_apptStore == null)
             {
                 _apptStore = await AppointmentManager.RequestStoreAsync(AppointmentStoreAccessType.AllCalendarsReadOnly).ConfigureAwait(false);
@@ -422,9 +425,11 @@ namespace Plugin.Calendars
             {
                 _localApptStore = await AppointmentManager.RequestStoreAsync(AppointmentStoreAccessType.AppCalendarsReadWrite).ConfigureAwait(false);
             }
+
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
         }
 
-        private async Task<AppointmentCalendar> CreateAppCalendarAsync(string calendarName)
+        private async Task<AppointmentCalendar> CreateAppCalendarAsync(string? calendarName)
         {
             await EnsureInitializedAsync().ConfigureAwait(false);
 
@@ -447,8 +452,8 @@ namespace Plugin.Calendars
         /// <exception cref="System.ArgumentException">Calendar ID does not refer to an app-owned calendar</exception>
         private async Task<AppointmentCalendar> GetAndValidateLocalCalendarAsync(string id)
         {
-            AppointmentCalendar appCalendar = null;
-            Exception platformException = null;
+            AppointmentCalendar? appCalendar = null;
+            Exception? platformException = null;
 
             try
             {
@@ -484,6 +489,8 @@ namespace Plugin.Calendars
         /// <returns>App calendar with write access, or null if not found.</returns>
         private async Task<AppointmentCalendar> GetLocalCalendarAsync(string id)
         {
+            await EnsureInitializedAsync();
+
 #if WINDOWS_UWP
             var calendars = await _localApptStore.FindAppointmentCalendarsAsync().ConfigureAwait(false);
             return calendars.FirstOrDefault(cal => cal.LocalId == id);

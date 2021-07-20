@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Windows.ApplicationModel.Appointments;
 
+#nullable enable
+
 namespace Plugin.Calendars
 {
     /// <summary>

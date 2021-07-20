@@ -4,11 +4,11 @@ using System;
 namespace Plugin.Calendars
 {
   /// <summary>
-  /// Cross platform Calendars implemenations
+  /// Cross platform Calendars implementations
   /// </summary>
   public class CrossCalendars
   {
-    static Lazy<ICalendars> Implementation = new Lazy<ICalendars>(() => CreateCalendars(), System.Threading.LazyThreadSafetyMode.PublicationOnly);
+    static readonly Lazy<ICalendars?> Implementation = new(() => CreateCalendars(), System.Threading.LazyThreadSafetyMode.PublicationOnly);
 
     /// <summary>
     /// Current settings to use
@@ -26,7 +26,7 @@ namespace Plugin.Calendars
       }
     }
 
-    static ICalendars CreateCalendars()
+    static ICalendars? CreateCalendars()
     {
 #if NETSTANDARD1_0
         return null;
