@@ -24,7 +24,7 @@ namespace Plugin.Calendars.Abstractions
         /// <returns>The corresponding calendar, or null if not found</returns>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
-        Task<Calendar> GetCalendarByIdAsync(string externalId);
+        Task<Calendar?> GetCalendarByIdAsync(string externalId);
 
         /// <summary>
         /// Gets all events for a calendar within the specified time range.
@@ -45,7 +45,7 @@ namespace Plugin.Calendars.Abstractions
         /// <returns>The corresponding calendar event, or null if not found</returns>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
-        Task<CalendarEvent> GetEventByIdAsync(string externalId);
+        Task<CalendarEvent?> GetEventByIdAsync(string externalId);
 
 
         /// <summary>
