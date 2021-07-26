@@ -135,6 +135,7 @@ namespace Plugin.Calendars
 
             EKCalendar? deviceCalendar = null;
 
+            // TODO: Remove redundant null check after migrating to .net6
             if (calendar.ExternalID != null && !string.IsNullOrEmpty(calendar.ExternalID))
             {
                 deviceCalendar = _eventStore.GetCalendar(calendar.ExternalID)
@@ -156,6 +157,7 @@ namespace Plugin.Calendars
             {
                 deviceCalendar.Title = calendar.Name;
 
+                // TODO: Remove redundant null check after migrating to .net6
                 if (calendar.Color != null && !string.IsNullOrEmpty(calendar.Color))
                 {
                     deviceCalendar.CGColor = ColorConversion.ToCGColor(calendar.Color) ?? throw new InvalidOperationException("Invalid color");
@@ -200,6 +202,7 @@ namespace Plugin.Calendars
 
             EKCalendar? deviceCalendar = null;
 
+            // TODO: Remove redundant null check after migrating to .net6
             if (calendar.ExternalID == null || string.IsNullOrEmpty(calendar.ExternalID))
             {
                 throw new ArgumentException("Missing calendar identifier", nameof(calendar));
@@ -219,6 +222,7 @@ namespace Plugin.Calendars
             // If Event already corresponds to an existing EKEvent in the target
             // Calendar, then edit that instead of creating a new one.
             //
+            // TODO: Remove redundant null check after migrating to .net6
             if (calendarEvent.ExternalID != null && !string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
                 var existingEvent = _eventStore.EventFromIdentifier(calendarEvent.ExternalID);
@@ -296,6 +300,7 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
         {
+            // TODO: Remove redundant null check after migrating to .net6
             if (calendarEvent.ExternalID == null || string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
                 throw new ArgumentException("Missing calendar event identifier", nameof(calendarEvent));
@@ -341,6 +346,7 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<bool> DeleteCalendarAsync(Calendar calendar)
         {
+            // TODO: Remove redundant null check after migrating to .net6
             if (calendar.ExternalID == null || string.IsNullOrEmpty(calendar.ExternalID))
             {
                 return false;
@@ -381,6 +387,7 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<bool> DeleteEventAsync(Calendar calendar, CalendarEvent calendarEvent)
         {
+            // TODO: Remove redundant null check after migrating to .net6
             if (calendar.ExternalID == null || string.IsNullOrEmpty(calendar.ExternalID) 
                 || calendarEvent.ExternalID == null || string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
@@ -470,6 +477,7 @@ namespace Plugin.Calendars
             //
             calendar.Title = calendarName;
 
+            // TODO: Remove redundant null check after migrating to .net6
             if (color != null && !string.IsNullOrEmpty(color))
             {
                 calendar.CGColor = ColorConversion.ToCGColor(color) ?? throw new InvalidOperationException("Invalid color");

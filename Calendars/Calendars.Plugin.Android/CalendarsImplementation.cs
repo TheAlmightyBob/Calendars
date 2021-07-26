@@ -232,6 +232,7 @@ namespace Plugin.Calendars
             //
             int colorInt = unchecked((int)0xFF0000FF);
 
+            // TODO: Remove redundant null check after migrating to .net6
             if (calendar.Color != null && !string.IsNullOrEmpty(calendar.Color))
             {
                 int.TryParse(calendar.Color.Trim('#'), NumberStyles.HexNumber,
@@ -315,6 +316,7 @@ namespace Plugin.Calendars
 
             await Task.Run(() =>
             {
+                // TODO: Remove redundant null check after migrating to .net6
                 if (calendarEvent.ExternalID != null && long.TryParse(calendarEvent.ExternalID, out existingId))
                 {
                     if (IsEventRecurring(calendarEvent.ExternalID))
@@ -398,6 +400,7 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
         {
+            // TODO: Remove redundant null check after migrating to .net6
             if (calendarEvent.ExternalID == null || string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
                 throw new ArgumentException("Missing calendar event identifier", nameof(calendarEvent));
@@ -475,6 +478,7 @@ namespace Plugin.Calendars
                 throw new ArgumentException("Cannot delete event from readonly calendar", nameof(calendar));
             }
 
+            // TODO: Remove redundant null check after migrating to .net6
             if (calendarEvent.ExternalID != null && long.TryParse(calendarEvent.ExternalID, out existingId))
             {
                 return await Task.Run(() =>

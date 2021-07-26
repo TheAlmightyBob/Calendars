@@ -159,6 +159,7 @@ namespace Plugin.Calendars
 
             AppointmentCalendar? existingCalendar = null;
 
+            // TODO: Remove redundant null check after migrating to .net6
             if (calendar.ExternalID != null && !string.IsNullOrEmpty(calendar.ExternalID))
             {
                 existingCalendar = await GetAndValidateLocalCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
@@ -202,6 +203,7 @@ namespace Plugin.Calendars
         {
             await EnsureInitializedAsync().ConfigureAwait(false);
 
+            // TODO: Remove redundant null check after migrating to .net6
             if (calendar.ExternalID == null || string.IsNullOrEmpty(calendar.ExternalID))
             {
                 throw new ArgumentException("Missing calendar identifier", "calendar");
@@ -308,6 +310,7 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<bool> DeleteCalendarAsync(Calendar calendar)
         {
+            // TODO: Remove redundant null check after migrating to .net6
             if (calendar.ExternalID == null || string.IsNullOrEmpty(calendar.ExternalID))
             {
                 return false;
@@ -354,6 +357,7 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<bool> DeleteEventAsync(Calendar calendar, CalendarEvent calendarEvent)
         {
+            // TODO: Remove redundant null check after migrating to .net6
             if (calendar.ExternalID == null || string.IsNullOrEmpty(calendar.ExternalID)
                 || calendarEvent.ExternalID == null || string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
