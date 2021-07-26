@@ -131,8 +131,7 @@ namespace Plugin.Calendars
                 throw new ArgumentException("Specified calendar not found on device");
             }
 
-            var eventsUriBuilder = CalendarContract.Instances.ContentUri?.BuildUpon()
-                    ?? throw new NullReferenceException("CalendarContract.Instances.ContentUri");
+            var eventsUriBuilder = CalendarContract.Instances.ContentUri!.BuildUpon();
 
             // Note that this is slightly different from the GetEventById projection
             // due to the Instances API vs. Event API (specifically, IDs and start/end times)
@@ -150,7 +149,7 @@ namespace Plugin.Calendars
 
             ContentUris.AppendId(eventsUriBuilder, DateConversions.GetDateAsAndroidMS(start));
             ContentUris.AppendId(eventsUriBuilder, DateConversions.GetDateAsAndroidMS(end));
-            var eventsUri = eventsUriBuilder.Build();
+            var eventsUri = eventsUriBuilder?.Build();
 
             return await Task.Run(() => 
             {

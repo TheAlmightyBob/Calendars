@@ -160,7 +160,7 @@ namespace Plugin.Calendars
                 // TODO: Remove redundant null check after migrating to .net6
                 if (calendar.Color != null && !string.IsNullOrEmpty(calendar.Color))
                 {
-                    deviceCalendar.CGColor = ColorConversion.ToCGColor(calendar.Color) ?? throw new InvalidOperationException("Invalid color");
+                    deviceCalendar.CGColor = ColorConversion.ToCGColor(calendar.Color) ?? throw new ArgumentException("Invalid color");
                 }
 
                 if (!_eventStore.SaveCalendar(deviceCalendar, true, out NSError error))
@@ -259,7 +259,7 @@ namespace Plugin.Calendars
             // If the provided reminders are different from the existing alarms, replace them
             //
             if (calendarEvent.Reminders != null &&
-                !(calendarEvent.Reminders?.SequenceEqual(iosEvent.Alarms?.Select(alarm => alarm.ToCalendarEventReminder()) ?? Enumerable.Empty<CalendarEventReminder>()) == true))
+                !(calendarEvent.Reminders.SequenceEqual(iosEvent.Alarms?.Select(alarm => alarm.ToCalendarEventReminder()) ?? Enumerable.Empty<CalendarEventReminder>()) == true))
             {
                 iosEvent.Alarms = calendarEvent.Reminders.Select(reminder => reminder.ToEKAlarm()).ToArray();
             }
