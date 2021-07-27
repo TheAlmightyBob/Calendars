@@ -79,7 +79,10 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<IList<CalendarEvent>> GetEventsAsync(Calendar calendar, DateTime start, DateTime end)
         {
-            _ = calendar.ExternalID ?? throw new ArgumentNullException("ExternalID cannot be null");
+            if (calendar.ExternalID == null)
+            {
+                throw new ArgumentNullException("calendar.ExternalID cannot be null");
+            }
 
             await RequestCalendarAccess().ConfigureAwait(false);
 
