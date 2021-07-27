@@ -211,7 +211,7 @@ namespace Plugin.Calendars
                 {
                     if (!existingCalendar.CanEditCalendar)
                     {
-                        throw new ArgumentException("Destination calendar is not writeable");
+                        throw new ArgumentException("Destination calendar is not writable");
                     }
 
                     updateExisting = true;
@@ -505,7 +505,7 @@ namespace Plugin.Calendars
 
         #region Private Methods
 
-        private static bool IsCalendarWriteable(int accessLevel) => (CalendarAccess)accessLevel switch
+        private static bool IsCalendarWritable(int accessLevel) => (CalendarAccess)accessLevel switch
         {
             CalendarAccess.AccessContributor
             or CalendarAccess.AccessEditor
@@ -706,7 +706,7 @@ namespace Plugin.Calendars
                 Name = cursor.GetString(CalendarContract.Calendars.InterfaceConsts.CalendarDisplayName),
                 ExternalID = cursor.GetString(CalendarContract.Calendars.InterfaceConsts.Id),
                 CanEditCalendar = accountType == CalendarContract.AccountTypeLocal,
-                CanEditEvents = IsCalendarWriteable(accessLevel),
+                CanEditEvents = IsCalendarWritable(accessLevel),
                 Color = colorString,
                 AccountName = cursor.GetString(CalendarContract.Calendars.InterfaceConsts.AccountName)
             };

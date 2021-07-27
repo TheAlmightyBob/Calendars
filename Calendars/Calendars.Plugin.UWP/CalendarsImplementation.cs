@@ -39,11 +39,11 @@ namespace Plugin.Calendars
 
             return allCalendars
                 .Select(c =>
-                    {
-                        bool writeable = localCalendars.Any(l => l.LocalId == c.LocalId);
-                        return c.ToCalendar(writeable);
-                    }
-                ).ToList();
+                {
+                    bool writable = localCalendars.Any(l => l.LocalId == c.LocalId);
+                    return c.ToCalendar(writable);
+                })
+                .ToList();
         }
 
         /// <summary>
@@ -62,14 +62,14 @@ namespace Plugin.Calendars
 
             await EnsureInitializedAsync().ConfigureAwait(false);
 
-            bool writeable = true;
+            bool writable = true;
 
             //var calendar = await _localApptStore.GetAppointmentCalendarAsync(externalId).ConfigureAwait(false);
             var calendar = await GetLocalCalendarAsync(externalId).ConfigureAwait(false);
 
             if (calendar == null)
             {
-                writeable = false;
+                writable = false;
 
                 // This throws an ArgumentException if externalId is not in the valid
                 // WinPhone calendar ID format. Oddly, the above otherwise-identical call to 
@@ -78,7 +78,7 @@ namespace Plugin.Calendars
                 calendar = await _apptStore.GetAppointmentCalendarAsync(externalId).ConfigureAwait(false);
             }
 
-            return calendar?.ToCalendar(writeable);
+            return calendar?.ToCalendar(writable);
         }
 
         /// <summary>
@@ -331,7 +331,7 @@ namespace Plugin.Calendars
             else
             {
                 // Check for calendar from non-local appt store
-                // If we get it from there, then error that it's not writeable
+                // If we get it from there, then error that it's not writable
                 // else, it just doesn't exist, so return false
 
                 appCalendar = await _apptStore.GetAppointmentCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
@@ -396,7 +396,7 @@ namespace Plugin.Calendars
             else
             {
                 // Check for calendar from non-local appt store
-                // If we get it from there, then error that it's not writeable
+                // If we get it from there, then error that it's not writable
                 // else, it just doesn't exist, so return false
 
                 appCalendar = await _apptStore.GetAppointmentCalendarAsync(calendar.ExternalID).ConfigureAwait(false);
@@ -464,7 +464,7 @@ namespace Plugin.Calendars
 
             if (appCalendar == null)
             {
-                throw new ArgumentException("Specified calendar does not exist or is not writeable", platformException);
+                throw new ArgumentException("Specified calendar does not exist or is not writable", platformException);
             }
 
             return appCalendar;
