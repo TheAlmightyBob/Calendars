@@ -1,6 +1,8 @@
 ﻿using EventKit;
 using Plugin.Calendars.Abstractions;
 
+#nullable enable
+
 namespace Plugin.Calendars
 {
     public static class CalendarEventReminderExtensions

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Plugin.Calendars.Abstractions
 {
@@ -17,7 +13,7 @@ namespace Plugin.Calendars.Abstractions
         /// </summary>
         /// <param name="message">Error description</param>
         /// <param name="innerException">Original platform-specific exception</param>
-        public PlatformException(string message, Exception innerException)
+        public PlatformException(string? message, Exception innerException)
             : base(message, innerException)
         {
         }

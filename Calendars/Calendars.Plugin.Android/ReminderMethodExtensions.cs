@@ -2,50 +2,28 @@
 using Android.Provider;
 using Plugin.Calendars.Abstractions;
 
+#nullable enable
+
 namespace Plugin.Calendars
 {
     static class ReminderMethodExtensions
     {
-        static public RemindersMethod ToRemindersMethod(this CalendarReminderMethod method)
+        static public RemindersMethod ToRemindersMethod(this CalendarReminderMethod method) => method switch
         {
-            switch (method)
-            {
-                case CalendarReminderMethod.Alert:
-                    return RemindersMethod.Alert;
+            CalendarReminderMethod.Alert => RemindersMethod.Alert,
+            CalendarReminderMethod.Default => RemindersMethod.Default,
+            CalendarReminderMethod.Email => RemindersMethod.Email,
+            CalendarReminderMethod.Sms => RemindersMethod.Sms,
+            _ => throw new ArgumentException("Unexpected reminder method", nameof(method)),
+        };
 
-                case CalendarReminderMethod.Default:
-                    return RemindersMethod.Default;
-
-                case CalendarReminderMethod.Email:
-                    return RemindersMethod.Email;
-
-                case CalendarReminderMethod.Sms:
-                    return RemindersMethod.Sms;
-
-                default:
-                    throw new ArgumentException("Unexpected reminder method", nameof(method));
-            }
-        }
-
-        static public CalendarReminderMethod ToCalendarReminderMethod(this RemindersMethod method)
+        static public CalendarReminderMethod ToCalendarReminderMethod(this RemindersMethod method) => method switch
         {
-            switch (method)
-            {
-                case RemindersMethod.Alert:
-                    return CalendarReminderMethod.Alert;
-
-                case RemindersMethod.Default:
-                    return CalendarReminderMethod.Default;
-
-                case RemindersMethod.Email:
-                    return CalendarReminderMethod.Email;
-
-                case RemindersMethod.Sms:
-                    return CalendarReminderMethod.Sms;
-
-                default:
-                    throw new ArgumentException("Unexpected reminders method", nameof(method));
-            }
-        }
+            RemindersMethod.Alert => CalendarReminderMethod.Alert,
+            RemindersMethod.Default => CalendarReminderMethod.Default,
+            RemindersMethod.Email => CalendarReminderMethod.Email,
+            RemindersMethod.Sms => CalendarReminderMethod.Sms,
+            _ => throw new ArgumentException("Unexpected reminders method", nameof(method)),
+        };
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using Android.Database;
 
+#nullable enable
+
 namespace Plugin.Calendars
 {
     /// <summary>
@@ -14,7 +16,7 @@ namespace Plugin.Calendars
         /// <returns>The string.</returns>
         /// <param name="cursor">Cursor.</param>
         /// <param name="column">Column name.</param>
-        public static string GetString(this ICursor cursor, string column)
+        public static string? GetString(this ICursor cursor, string column)
         {
             return cursor.GetString(cursor.GetColumnIndex(column));
         }

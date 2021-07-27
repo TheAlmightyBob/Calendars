@@ -3,6 +3,8 @@ using System.Text;
 
 using CGColor = CoreGraphics.CGColor;
 
+#nullable enable
+
 namespace Plugin.Calendars
 {
     /// <summary>
@@ -15,17 +17,16 @@ namespace Plugin.Calendars
         /// </summary>
         /// <param name="hexColor">Color string, in the hex form "#AARRGGBB"</param>
         /// <returns>Corresponding CGColor, or null if conversion failed</returns>
-        public static CGColor ToCGColor(string hexColor)
+        public static CGColor? ToCGColor(string hexColor)
         {
             var trimmed = hexColor.Trim('#', ' ');
-            int intColor = 0;
 
             if (string.IsNullOrEmpty(trimmed))
             {
                 return null;
             }
 
-            if (int.TryParse(trimmed, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.CurrentCulture, out intColor))
+            if (int.TryParse(trimmed, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.CurrentCulture, out int intColor))
             {
                 byte b = (byte)intColor;
                 byte g = (byte)(intColor >> 8);

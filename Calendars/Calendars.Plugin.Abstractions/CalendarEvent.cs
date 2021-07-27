@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Plugin.Calendars.Abstractions
 {
@@ -14,7 +11,7 @@ namespace Plugin.Calendars.Abstractions
         /// <summary>
         /// Calendar event name/title/subject
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Event start time
@@ -29,7 +26,7 @@ namespace Plugin.Calendars.Abstractions
         /// <summary>
         /// Gets or sets the location of the event
         /// </summary>
-        public string Location { get; set; }
+        public string? Location { get; set; }
 
         /// <summary>
         /// Whether or not this is an "all-day" event.
@@ -40,7 +37,7 @@ namespace Plugin.Calendars.Abstractions
         /// <summary>
         /// Optional event description/details
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Event reminders.
@@ -48,22 +45,19 @@ namespace Plugin.Calendars.Abstractions
         /// Set to empty list to remove all reminders.
         /// </summary>
         /// <remarks>Windows only supports a single reminder</remarks>
-        public IList<CalendarEventReminder> Reminders { get; set; }
+        public IList<CalendarEventReminder>? Reminders { get; set; }
 
         /// <summary>
         /// Platform-specific unique calendar event identifier
         /// </summary>
         /// <remarks>This ID will be the same for each instance of a recurring event.</remarks>
-        public string ExternalID { get; internal set; }
-        
+        public string? ExternalID { get; internal set; }
+
 
         /// <summary>
         /// Simple ToString helper, to assist with debugging.
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            return "Name=" + Name + ", AllDay=" + AllDay + ", Start=" + Start + ", End=" + End + ", Location=" + Location;
-        }
+        public override string ToString() => $"Name={Name}, AllDay={AllDay}, Start={Start}, End={End}, Location={Location}";
     }
 }

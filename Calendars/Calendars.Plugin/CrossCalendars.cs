@@ -1,14 +1,17 @@
 ﻿using Plugin.Calendars.Abstractions;
 using System;
+using System.Threading;
+
+#nullable enable
 
 namespace Plugin.Calendars
 {
   /// <summary>
-  /// Cross platform Calendars implemenations
+  /// Cross platform Calendars implementations
   /// </summary>
   public class CrossCalendars
   {
-    static Lazy<ICalendars> Implementation = new Lazy<ICalendars>(() => CreateCalendars(), System.Threading.LazyThreadSafetyMode.PublicationOnly);
+    static readonly Lazy<ICalendars?> Implementation = new(() => CreateCalendars(), LazyThreadSafetyMode.PublicationOnly);
 
     /// <summary>
     /// Current settings to use
@@ -26,7 +29,7 @@ namespace Plugin.Calendars
       }
     }
 
-    static ICalendars CreateCalendars()
+    static ICalendars? CreateCalendars()
     {
 #if NETSTANDARD1_0
         return null;
@@ -37,7 +40,7 @@ namespace Plugin.Calendars
 
     internal static Exception NotImplementedInReferenceAssembly()
     {
-      return new NotImplementedException("This functionality is not implemented in the portable version of this assembly.  You should reference the NuGet package from your main application project in order to reference the platform-specific implementation.");
+      return new NotImplementedException("This functionality is not implemented in the portable version of this assembly. You should reference the NuGet package from your main application project in order to reference the platform-specific implementation.");
     }
   }
 }

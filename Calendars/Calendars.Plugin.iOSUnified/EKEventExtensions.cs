@@ -3,6 +3,8 @@ using Plugin.Calendars.Abstractions;
 using System.Collections.Generic;
 using System.Linq;
 
+#nullable enable
+
 namespace Plugin.Calendars
 {
     /// <summary>

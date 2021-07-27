@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using EventKit;
 using Foundation;
 
+#nullable enable
 
 namespace Plugin.Calendars
 {
@@ -24,19 +25,7 @@ namespace Plugin.Calendars
 
         #region Fields
 
-        private EKEventStore _eventStore;
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public CalendarsImplementation()
-        {
-            _eventStore = new EKEventStore();
-        }
+        private readonly EKEventStore _eventStore = new();
 
         #endregion
 
@@ -64,7 +53,7 @@ namespace Plugin.Calendars
         /// <returns>The corresponding calendar, or null if not found</returns>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
-        public async Task<Calendar> GetCalendarByIdAsync(string externalId)
+        public async Task<Calendar?> GetCalendarByIdAsync(string externalId)
         {
             if (string.IsNullOrWhiteSpace(externalId))
             {
@@ -75,7 +64,7 @@ namespace Plugin.Calendars
 
             var calendar = _eventStore.GetCalendar(externalId);
 
-            return calendar == null ? null : calendar.ToCalendar();
+            return calendar?.ToCalendar();
         }
 
         /// <summary>
@@ -90,20 +79,21 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<IList<CalendarEvent>> GetEventsAsync(Calendar calendar, DateTime start, DateTime end)
         {
+            if (calendar.ExternalID == null)
+            {
+                throw new ArgumentNullException("calendar.ExternalID cannot be null");
+            }
+
             await RequestCalendarAccess().ConfigureAwait(false);
 
-            var deviceCalendar = _eventStore.GetCalendar(calendar.ExternalID);
-
-            if (deviceCalendar == null)
-            {
-                throw new ArgumentException("Specified calendar not found on device");
-            }
+            var deviceCalendar = _eventStore.GetCalendar(calendar.ExternalID)
+                ?? throw new ArgumentException("Specified calendar not found on device");
 
             var query = _eventStore.PredicateForEvents(start.ToNSDate(), end.ToNSDate(), new EKCalendar[] { deviceCalendar });
             var events = await Task.Run(() =>
             {
                 var iosEvents = _eventStore.EventsMatching(query);
-                return iosEvents == null ? new List<CalendarEvent>() : iosEvents.Select(e => e.ToCalendarEvent()).ToList();
+                return iosEvents.Select(e => e.ToCalendarEvent()).ToList();
             }).ConfigureAwait(false);
 
             return events;
@@ -116,7 +106,7 @@ namespace Plugin.Calendars
         /// <returns>The corresponding calendar event, or null if not found</returns>
         /// <exception cref="System.UnauthorizedAccessException">Calendar access denied</exception>
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
-        public async Task<CalendarEvent> GetEventByIdAsync(string externalId)
+        public async Task<CalendarEvent?> GetEventByIdAsync(string externalId)
         {
             if (string.IsNullOrWhiteSpace(externalId))
             {
@@ -127,7 +117,7 @@ namespace Plugin.Calendars
 
             var iosEvent = _eventStore.EventFromIdentifier(externalId);
 
-            return iosEvent == null ? null : iosEvent.ToCalendarEvent();
+            return iosEvent?.ToCalendarEvent();
         }
 
         /// <summary>
@@ -142,18 +132,20 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task AddOrUpdateCalendarAsync(Calendar calendar)
         {
+            if (calendar.Name == null)
+            {
+                throw new ArgumentNullException("calendar.Name cannot be null");
+            }
+
             await RequestCalendarAccess().ConfigureAwait(false);
 
-            EKCalendar deviceCalendar = null;
+            EKCalendar? deviceCalendar = null;
 
-            if (!string.IsNullOrEmpty(calendar.ExternalID))
+            // TODO: Remove redundant null check after migrating to .net6
+            if (calendar.ExternalID != null && !string.IsNullOrEmpty(calendar.ExternalID))
             {
-                deviceCalendar = _eventStore.GetCalendar(calendar.ExternalID);
-
-                if (deviceCalendar == null)
-                {
-                    throw new ArgumentException("Specified calendar does not exist on device", nameof(calendar));
-                }
+                deviceCalendar = _eventStore.GetCalendar(calendar.ExternalID)
+                    ?? throw new ArgumentException("Specified calendar does not exist on device", nameof(calendar));
             }
 
             if (deviceCalendar == null)
@@ -162,16 +154,19 @@ namespace Plugin.Calendars
                 calendar.ExternalID = deviceCalendar.CalendarIdentifier;
 
                 // Update color in case iOS assigned one
-                if (deviceCalendar?.CGColor != null)
+                if (deviceCalendar.CGColor != null)
+                {
                     calendar.Color = ColorConversion.ToHexColor(deviceCalendar.CGColor);
+                }
             }
             else
             {
                 deviceCalendar.Title = calendar.Name;
 
-                if (!string.IsNullOrEmpty(calendar.Color))
+                // TODO: Remove redundant null check after migrating to .net6
+                if (calendar.Color != null && !string.IsNullOrEmpty(calendar.Color))
                 {
-                    deviceCalendar.CGColor = ColorConversion.ToCGColor(calendar.Color);
+                    deviceCalendar.CGColor = ColorConversion.ToCGColor(calendar.Color) ?? throw new ArgumentException("Invalid color");
                 }
 
                 if (!_eventStore.SaveCalendar(deviceCalendar, true, out NSError error))
@@ -211,9 +206,10 @@ namespace Plugin.Calendars
         {
             await RequestCalendarAccess().ConfigureAwait(false);
 
-            EKCalendar deviceCalendar = null;
+            EKCalendar? deviceCalendar = null;
 
-            if (string.IsNullOrEmpty(calendar.ExternalID))
+            // TODO: Remove redundant null check after migrating to .net6
+            if (calendar.ExternalID == null || string.IsNullOrEmpty(calendar.ExternalID))
             {
                 throw new ArgumentException("Missing calendar identifier", nameof(calendar));
             }
@@ -227,12 +223,13 @@ namespace Plugin.Calendars
                 }
             }
 
-            EKEvent iosEvent = null;
+            EKEvent? iosEvent = null;
 
             // If Event already corresponds to an existing EKEvent in the target
             // Calendar, then edit that instead of creating a new one.
             //
-            if (!string.IsNullOrEmpty(calendarEvent.ExternalID))
+            // TODO: Remove redundant null check after migrating to .net6
+            if (calendarEvent.ExternalID != null && !string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
                 var existingEvent = _eventStore.EventFromIdentifier(calendarEvent.ExternalID);
 
@@ -241,7 +238,7 @@ namespace Plugin.Calendars
                     throw new InvalidOperationException("Editing recurring events is not supported");
                 }
 
-                if (existingEvent?.Calendar.CalendarIdentifier == deviceCalendar.CalendarIdentifier)
+                if (existingEvent?.Calendar?.CalendarIdentifier == deviceCalendar.CalendarIdentifier)
                 {
                     iosEvent = existingEvent;
                 }
@@ -265,10 +262,10 @@ namespace Plugin.Calendars
             iosEvent.EndDate = calendarEvent.AllDay ? calendarEvent.End.AddMilliseconds(-1).ToNSDate() : calendarEvent.End.ToNSDate();
             iosEvent.Calendar = deviceCalendar;
 
-            // If the provided reminders are different from the existing alarms, replace themm
+            // If the provided reminders are different from the existing alarms, replace them
             //
             if (calendarEvent.Reminders != null &&
-                !(calendarEvent.Reminders?.SequenceEqual(iosEvent.Alarms?.Select(alarm => alarm.ToCalendarEventReminder()) ?? Enumerable.Empty<CalendarEventReminder>()) == true))
+                !(calendarEvent.Reminders.SequenceEqual(iosEvent.Alarms?.Select(alarm => alarm.ToCalendarEventReminder()) ?? Enumerable.Empty<CalendarEventReminder>()) == true))
             {
                 iosEvent.Alarms = calendarEvent.Reminders.Select(reminder => reminder.ToEKAlarm()).ToArray();
             }
@@ -309,7 +306,8 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task AddEventReminderAsync(CalendarEvent calendarEvent, CalendarEventReminder reminder)
         {
-            if (string.IsNullOrEmpty(calendarEvent.ExternalID))
+            // TODO: Remove redundant null check after migrating to .net6
+            if (calendarEvent.ExternalID == null || string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
                 throw new ArgumentException("Missing calendar event identifier", nameof(calendarEvent));
             }
@@ -354,7 +352,8 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<bool> DeleteCalendarAsync(Calendar calendar)
         {
-            if (string.IsNullOrEmpty(calendar.ExternalID))
+            // TODO: Remove redundant null check after migrating to .net6
+            if (calendar.ExternalID == null || string.IsNullOrEmpty(calendar.ExternalID))
             {
                 return false;
             }
@@ -394,7 +393,9 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task<bool> DeleteEventAsync(Calendar calendar, CalendarEvent calendarEvent)
         {
-            if (string.IsNullOrEmpty(calendar.ExternalID) || string.IsNullOrEmpty(calendarEvent.ExternalID))
+            // TODO: Remove redundant null check after migrating to .net6
+            if (calendar.ExternalID == null || string.IsNullOrEmpty(calendar.ExternalID) 
+                || calendarEvent.ExternalID == null || string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
                 return false;
             }
@@ -410,7 +411,7 @@ namespace Plugin.Calendars
 
             var iosEvent = _eventStore.EventFromIdentifier(calendarEvent.ExternalID);
 
-            if (iosEvent == null || iosEvent.Calendar.CalendarIdentifier != deviceCalendar.CalendarIdentifier)
+            if (iosEvent?.Calendar == null || iosEvent.Calendar.CalendarIdentifier != deviceCalendar.CalendarIdentifier)
             {
                 return false;
             }
@@ -474,7 +475,7 @@ namespace Plugin.Calendars
         /// <param name="source">Calendar source (e.g. iCloud vs local vs gmail)</param>
         /// <param name="calendarName">Calendar name.</param>
         /// <param name="color">Calendar color.</param>
-        private EKCalendar SaveEKCalendar(EKSource source, string calendarName, string color = null)
+        private EKCalendar? SaveEKCalendar(EKSource source, string calendarName, string? color = null)
         {
             var calendar = EKCalendar.Create(EKEntityType.Event, _eventStore);
 
@@ -482,14 +483,15 @@ namespace Plugin.Calendars
             //
             calendar.Title = calendarName;
 
-            if (!string.IsNullOrEmpty(color))
+            // TODO: Remove redundant null check after migrating to .net6
+            if (color != null && !string.IsNullOrEmpty(color))
             {
-                calendar.CGColor = ColorConversion.ToCGColor(color);
+                calendar.CGColor = ColorConversion.ToCGColor(color) ?? throw new InvalidOperationException("Invalid color");
             }
 
             calendar.Source = source;
 
-            if (_eventStore.SaveCalendar(calendar, true, out NSError error))
+            if (_eventStore.SaveCalendar(calendar, true, out NSError _))
             {
                 Console.WriteLine($"Successfully saved calendar with source {source.Title}");
 
@@ -517,8 +519,8 @@ namespace Plugin.Calendars
         /// <param name="calendarName">Calendar name.</param>
         /// <param name="color">Calendar color.</param>
         /// <param name="allowEmptySources">Whether to include empty sources (sources that currently lack calendars).</param>
-        private EKCalendar SaveEKCalendar(IEnumerable<EKSource> sources, string calendarName,
-                                          string color = null, bool allowEmptySources = false)
+        private EKCalendar? SaveEKCalendar(IEnumerable<EKSource> sources, string calendarName,
+                                          string? color = null, bool allowEmptySources = false)
         {
             return sources
                 .Where(source => allowEmptySources || source.GetCalendars(EKEntityType.Event).Any())
@@ -563,7 +565,7 @@ namespace Plugin.Calendars
         /// <param name="calendarName">Calendar name.</param>
         /// <param name="color">Calendar color.</param>
         /// <exception cref="System.InvalidOperationException">No active calendar sources available to create calendar on.</exception>
-        private EKCalendar CreateEKCalendar(string calendarName, string color = null)
+        private EKCalendar CreateEKCalendar(string calendarName, string? color = null)
         {
             // Log the available sources
             //
