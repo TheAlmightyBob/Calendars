@@ -129,7 +129,10 @@ namespace Plugin.Calendars
         /// <exception cref="Plugin.Calendars.Abstractions.PlatformException">Unexpected platform-specific error</exception>
         public async Task AddOrUpdateCalendarAsync(Calendar calendar)
         {
-            _ = calendar.Name ?? throw new ArgumentNullException("Name cannot be null");
+            if (calendar.Name == null)
+            {
+                throw new ArgumentNullException("calendar.Name cannot be null");
+            }
 
             await RequestCalendarAccess().ConfigureAwait(false);
 

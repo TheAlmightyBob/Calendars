@@ -420,15 +420,9 @@ namespace Plugin.Calendars
             // If EnsureInitializedAsync is not awaited, they won't be initialized. It's fine.
 #pragma warning disable CS8774 // Member must have a non-null value when exiting.
 
-            if (_apptStore == null)
-            {
-                _apptStore = await AppointmentManager.RequestStoreAsync(AppointmentStoreAccessType.AllCalendarsReadOnly).ConfigureAwait(false);
-            }
+            _apptStore ??= await AppointmentManager.RequestStoreAsync(AppointmentStoreAccessType.AllCalendarsReadOnly).ConfigureAwait(false);
 
-            if (_localApptStore == null)
-            {
-                _localApptStore = await AppointmentManager.RequestStoreAsync(AppointmentStoreAccessType.AppCalendarsReadWrite).ConfigureAwait(false);
-            }
+            _localApptStore ??= await AppointmentManager.RequestStoreAsync(AppointmentStoreAccessType.AppCalendarsReadWrite).ConfigureAwait(false);
 
 #pragma warning restore CS8774 // Member must have a non-null value when exiting.
         }
