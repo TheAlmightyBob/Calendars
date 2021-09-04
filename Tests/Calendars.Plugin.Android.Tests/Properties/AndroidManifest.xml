@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="Calendars.Plugin.Android.Tests">
-	<uses-sdk android:minSdkVersion="15" android:targetSdkVersion="15" />
+	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="30" />
 	<application android:label="Calendars.Plugin.Android.Tests"></application>
 	<uses-permission android:name="android.permission.READ_CALENDAR" />
 	<uses-permission android:name="android.permission.WRITE_CALENDAR" />
