@@ -59,7 +59,7 @@ namespace Plugin.Calendars.Android.Tests
         {
             var calendars = _service.GetCalendarsAsync().Result;
 
-            foreach (var calendar in calendars.Where(c => c.CanEditCalendar == true && c.Name.Contains(_calendarName)))
+            foreach (var calendar in calendars.Where(c => c.CanEditCalendar == true && c.Name?.Contains(_calendarName) == true))
             {
                 _service.DeleteCalendarAsync(calendar).Wait();
             }

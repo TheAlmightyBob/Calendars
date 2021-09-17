@@ -62,7 +62,8 @@ namespace Plugin.Calendars
         /// </summary>
         public CalendarsImplementation()
         {
-            AccountName = OwnerAccount = Application.Context.ApplicationInfo?.LoadLabel(Application.Context.PackageManager);
+            AccountName = OwnerAccount = Application.Context.PackageManager != null
+                ? Application.Context.ApplicationInfo?.LoadLabel(Application.Context.PackageManager) : null;
         }
 
         #endregion
@@ -102,6 +103,11 @@ namespace Plugin.Calendars
 
             return Task.Run(() =>
             {
+                if (_calendarsUri == null)
+                {
+                    throw new NullReferenceException(nameof(_calendarsUri));
+                }
+
                 var cursor = Query(
                     ContentUris.WithAppendedId(_calendarsUri, calendarId),
                     _calendarsProjection);
@@ -131,7 +137,7 @@ namespace Plugin.Calendars
                 throw new ArgumentException("Specified calendar not found on device");
             }
 
-            var eventsUriBuilder = CalendarContract.Instances.ContentUri!.BuildUpon();
+            var eventsUriBuilder = CalendarContract.Instances.ContentUri!.BuildUpon()!;
 
             // Note that this is slightly different from the GetEventById projection
             // due to the Instances API vs. Event API (specifically, IDs and start/end times)
@@ -369,6 +375,11 @@ namespace Plugin.Calendars
                         : Java.Util.TimeZone.Default?.ID ?? string.Empty);
                 }
 
+                if (_eventsUri == null)
+                {
+                    throw new NullReferenceException(nameof(_eventsUri));
+                }
+
                 var operations = new List<ContentProviderOperation>();
 
                 var eventOperation = updateExisting
@@ -521,6 +532,11 @@ namespace Plugin.Calendars
                 CalendarContract.Events.InterfaceConsts.CalendarId
             };
 
+            if (_eventsUri == null)
+            {
+                throw new NullReferenceException(nameof(_eventsUri));
+            }
+
             var cursor = Query(
                 ContentUris.WithAppendedId(_eventsUri, long.Parse(externalId)),
                 eventsProjection);
@@ -544,6 +560,11 @@ namespace Plugin.Calendars
                 //
                 CalendarContract.Events.InterfaceConsts.Duration
             };
+
+            if (_eventsUri == null)
+            {
+                throw new NullReferenceException(nameof(_eventsUri));
+            }
 
             var cursor = Query(
                 ContentUris.WithAppendedId(_eventsUri, long.Parse(externalId)),
@@ -577,6 +598,11 @@ namespace Plugin.Calendars
                 CalendarContract.Events.InterfaceConsts.EventLocation,
                 CalendarContract.Events.InterfaceConsts.AllDay
             };
+
+            if (_eventsUri == null)
+            {
+                throw new NullReferenceException(nameof(_eventsUri));
+            }
 
             var cursor = Query(
                 ContentUris.WithAppendedId(_eventsUri, long.Parse(externalId)),
@@ -659,6 +685,11 @@ namespace Plugin.Calendars
                 return operations;
             }
 
+            if (_remindersUri == null)
+            {
+                throw new NullReferenceException(nameof(_remindersUri));
+            }
+
             // Build operations that remove all existing reminders and add new ones
 
             if (existingEvent?.Reminders != null)
@@ -715,6 +746,11 @@ namespace Plugin.Calendars
         private static ICursor Query(Android.Net.Uri? uri, string[] projection, string? selection = null,
             string[]? selectionArgs = null, string? sortOrder = null)
         {
+            if (uri == null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+
             try
             {
                 return Application.Context.ContentResolver?.Query(uri, projection, selection, selectionArgs, sortOrder)
@@ -731,6 +767,11 @@ namespace Plugin.Calendars
         /// </summary>
         private static string Insert(Android.Net.Uri? uri, ContentValues values)
         {
+            if (uri == null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+
             try
             {
                 return Application.Context.ContentResolver?.Insert(uri, values)?.LastPathSegment
@@ -744,6 +785,11 @@ namespace Plugin.Calendars
 
         private static void Update(Android.Net.Uri? uri, long id, ContentValues values)
         {
+            if (uri == null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+
             try
             {
                 Application.Context.ContentResolver?.Update(ContentUris.WithAppendedId(uri, id), values, null, null);
@@ -756,6 +802,11 @@ namespace Plugin.Calendars
 
         private static bool Delete(Android.Net.Uri? uri, long id)
         {
+            if (uri == null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+
             try
             {
                 return 0 < Application.Context.ContentResolver?.Delete(ContentUris.WithAppendedId(uri, id), null, null);
