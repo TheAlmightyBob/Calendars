@@ -25,6 +25,10 @@ Setting Reminders to null in AddOrUpdateEventAsyc now preserves existing/default
        <summary>Cross-platform abstraction for querying and modifying device calendars.</summary>
        <tags>xamarin, pcl, netstandard, plugin, android, xamarin.forms, ios, uwp</tags>
        <dependencies>
+           <group targetFramework=".NETStandard1.0" />
+           <group targetFramework="UAP1.0" />
+           <group targetFramework="MonoAndroid1.0" />
+           <group targetFramework="Xamarin.iOS1.0" />
        </dependencies>
    </metadata>
    <files>
