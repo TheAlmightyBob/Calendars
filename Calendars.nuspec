@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
    <metadata minClientVersion="2.8.1">
        <id>CClarke.Plugin.Calendars</id>
-       <version>1.0.0</version>
+       <version>1.1.0</version>
        <title>Calendars API Plugin for Xamarin and Windows</title>
        <authors>Caleb Clarke</authors>
        <owners>Caleb Clarke</owners>
@@ -18,6 +18,10 @@
 See project site README for usage notes and limitations.
        </description>
      <releaseNotes>
+1.1.0 changes:
+
+Support for C#8 nullable reference types.
+        
 1.0.14 changes:
 
 Setting Reminders to null in AddOrUpdateEventAsyc now preserves existing/default reminders.
