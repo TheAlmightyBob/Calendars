@@ -6,10 +6,10 @@
        <title>Calendars API Plugin for Xamarin and Windows</title>
        <authors>Caleb Clarke</authors>
        <owners>Caleb Clarke</owners>
-       <licenseUrl>https://github.com/TheAlmightyBob/Calendars/blob/master/LICENSE</licenseUrl>
+       <license type="expression">MIT</license>
        <projectUrl>https://github.com/TheAlmightyBob/Calendars</projectUrl>
-     <!--Default Icon, a template can be found: https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Templates/icons/plugin_icon.png-->  
-     <iconUrl>https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Templates/icons/plugin_icon_nuget.png</iconUrl>
+       <!--Default Icon, a template can be found: https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Templates/icons/plugin_icon.png-->
+       <icon>plugin_icon_nuget.png</icon>
      
        <requireLicenseAcceptance>false</requireLicenseAcceptance>
        <description>
@@ -25,9 +25,15 @@ Setting Reminders to null in AddOrUpdateEventAsyc now preserves existing/default
        <summary>Cross-platform abstraction for querying and modifying device calendars.</summary>
        <tags>xamarin, pcl, netstandard, plugin, android, xamarin.forms, ios, uwp</tags>
        <dependencies>
+           <group targetFramework=".NETStandard1.0" />
+           <group targetFramework="UAP1.0" />
+           <group targetFramework="MonoAndroid1.0" />
+           <group targetFramework="Xamarin.iOS1.0" />
        </dependencies>
    </metadata>
    <files>
+     <file src="plugin_icon_nuget.png" target="" />
+
      <!--Core-->
      <file src="Calendars\Calendars.Plugin\bin\Release\netstandard1.0\Plugin.Calendars.dll" target="lib\netstandard1.0\Plugin.Calendars.dll" />
      <file src="Calendars\Calendars.Plugin\bin\Release\netstandard1.0\Plugin.Calendars.xml" target="lib\netstandard1.0\Plugin.Calendars.xml" />
