@@ -7,10 +7,8 @@
        <authors>Caleb Clarke</authors>
        <owners>Caleb Clarke</owners>
        <license type="expression">MIT</license>
-       <licenseUrl>https://github.com/TheAlmightyBob/Calendars/blob/master/LICENSE</licenseUrl>
        <projectUrl>https://github.com/TheAlmightyBob/Calendars</projectUrl>
-       <!--Default Icon, a template can be found: https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Templates/icons/plugin_icon.png-->  
-       <iconUrl>https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Templates/icons/plugin_icon_nuget.png</iconUrl>
+       <!--Default Icon, a template can be found: https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Templates/icons/plugin_icon.png-->
        <icon>plugin_icon_nuget.png</icon>
      
        <requireLicenseAcceptance>false</requireLicenseAcceptance>
