@@ -6,10 +6,12 @@
        <title>Calendars API Plugin for Xamarin and Windows</title>
        <authors>Caleb Clarke</authors>
        <owners>Caleb Clarke</owners>
-       <license>https://github.com/TheAlmightyBob/Calendars/blob/master/LICENSE</license>
+       <license type="expression">MIT</license>
+       <licenseUrl>https://github.com/TheAlmightyBob/Calendars/blob/master/LICENSE</licenseUrl>
        <projectUrl>https://github.com/TheAlmightyBob/Calendars</projectUrl>
-     <!--Default Icon, a template can be found: https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Templates/icons/plugin_icon.png-->  
-     <icon>https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Templates/icons/plugin_icon_nuget.png</icon>
+       <!--Default Icon, a template can be found: https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Templates/icons/plugin_icon.png-->  
+       <iconUrl>https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Templates/icons/plugin_icon_nuget.png</iconUrl>
+       <icon>plugin_icon_nuget.png</icon>
      
        <requireLicenseAcceptance>false</requireLicenseAcceptance>
        <description>
@@ -28,6 +30,8 @@ Setting Reminders to null in AddOrUpdateEventAsyc now preserves existing/default
        </dependencies>
    </metadata>
    <files>
+     <file src="plugin_icon_nuget.png" target="" />
+
      <!--Core-->
      <file src="Calendars\Calendars.Plugin\bin\Release\netstandard1.0\Plugin.Calendars.dll" target="lib\netstandard1.0\Plugin.Calendars.dll" />
      <file src="Calendars\Calendars.Plugin\bin\Release\netstandard1.0\Plugin.Calendars.xml" target="lib\netstandard1.0\Plugin.Calendars.xml" />
