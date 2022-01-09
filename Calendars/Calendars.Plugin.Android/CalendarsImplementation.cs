@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Calendar = Plugin.Calendars.Abstractions.Calendar;
+using Application = Android.App.Application;
 
 #nullable enable
 
@@ -34,9 +35,9 @@ namespace Plugin.Calendars
                 CalendarContract.Calendars.InterfaceConsts.CalendarAccessLevel,
                 CalendarContract.Calendars.InterfaceConsts.AccountType
             };
-        
+
         #endregion
-        
+
         #region Properties
 
         /// <summary>
@@ -113,7 +114,7 @@ namespace Plugin.Calendars
                     _calendarsProjection);
 
                 var calendar = SingleItemFromCursor(cursor, () => GetCalendar(cursor));
-                   
+
                 return calendar;
             });
         }
@@ -157,7 +158,7 @@ namespace Plugin.Calendars
             ContentUris.AppendId(eventsUriBuilder, DateConversions.GetDateAsAndroidMS(end));
             var eventsUri = eventsUriBuilder?.Build();
 
-            return await Task.Run(() => 
+            return await Task.Run(() =>
             {
                 var cursor = Query(eventsUri, eventsProjection,
                    string.Format("{0} = {1}", CalendarContract.Events.InterfaceConsts.CalendarId, calendar.ExternalID),
@@ -416,14 +417,14 @@ namespace Plugin.Calendars
                 throw new ArgumentException("Missing calendar event identifier", nameof(calendarEvent));
             }
 
-            // Verify calendar event exists 
+            // Verify calendar event exists
             var existingAppt = await GetEventByIdAsync(calendarEvent.ExternalID).ConfigureAwait(false);
 
             if (existingAppt == null)
             {
                 throw new ArgumentException("Specified calendar event not found on device");
             }
-            
+
             await Task.Run(() =>
             {
                 if (IsEventRecurring(calendarEvent.ExternalID))
@@ -456,7 +457,7 @@ namespace Plugin.Calendars
                 throw new ArgumentException("Cannot delete calendar (probably because it's non-local)", nameof(calendar));
             }
 
-            return await Task.Run(() => Delete(_calendarsUri, long.Parse(calendar.ExternalID))).ConfigureAwait(false);
+            return await Task.Run(() => Delete(_calendarsUri, long.Parse(calendar.ExternalID ?? String.Empty))).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -742,7 +743,7 @@ namespace Plugin.Calendars
                 AccountName = cursor.GetString(CalendarContract.Calendars.InterfaceConsts.AccountName)
             };
         }
-            
+
         private static ICursor Query(Android.Net.Uri? uri, string[] projection, string? selection = null,
             string[]? selectionArgs = null, string? sortOrder = null)
         {

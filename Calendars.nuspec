@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
    <metadata minClientVersion="2.8.1">
        <id>CClarke.Plugin.Calendars</id>
-       <version>1.1.0</version>
+       <version>1.2.0</version>
        <title>Calendars API Plugin for Xamarin and Windows</title>
        <authors>Caleb Clarke</authors>
        <owners>Caleb Clarke</owners>
@@ -10,18 +10,22 @@
        <projectUrl>https://github.com/TheAlmightyBob/Calendars</projectUrl>
        <!--Default Icon, a template can be found: https://raw.githubusercontent.com/jamesmontemagno/Xamarin-Templates/master/Templates/icons/plugin_icon.png-->
        <icon>plugin_icon_nuget.png</icon>
-     
+
        <requireLicenseAcceptance>false</requireLicenseAcceptance>
        <description>
-         Perform basic CRUD calendar operations on iOS/Android/UWP through a simple common API.
-         
+         Perform basic CRUD calendar operations on iOS/Android/UWP/MAUI through a simple common API.
+
 See project site README for usage notes and limitations.
        </description>
      <releaseNotes>
+1.2.0 changes:
+
+Add .NET MAUI support.
+
 1.1.0 changes:
 
 Support for C#8 nullable reference types.
-        
+
 1.0.14 changes:
 
 Setting Reminders to null in AddOrUpdateEventAsyc now preserves existing/default reminders.
@@ -69,5 +73,17 @@ Setting Reminders to null in AddOrUpdateEventAsyc now preserves existing/default
      <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\netstandard1.0\Plugin.Calendars.Abstractions.dll" target="lib\Xamarin.iOS10\Plugin.Calendars.Abstractions.dll" />
      <file src="Calendars\Calendars.Plugin.Abstractions\bin\Release\netstandard1.0\Plugin.Calendars.Abstractions.xml" target="lib\Xamarin.iOS10\Plugin.Calendars.Abstractions.xml" />
 
+     <!-- .NET MAUI -->
+     <file src="Calendars\Calendars.Plugin.MAUI\bin\Release\net6.0\Calendars.Plugin.MAUI.dll" target="lib\net6.0\Calendars.Plugin.MAUI.dll" />
+     <file src="Calendars\Calendars.Plugin.MAUI\bin\Release\net6.0\Calendars.Plugin.MAUI.xml" target="lib\net6.0\Calendars.Plugin.MAUI.xml" />
+     <file src="Calendars\Calendars.Plugin.MAUI\bin\Release\net6.0-android\Calendars.Plugin.MAUI.aar" target="lib\net6.0-android\Calendars.Plugin.MAUI.aar" />
+     <file src="Calendars\Calendars.Plugin.MAUI\bin\Release\net6.0-android\Calendars.Plugin.MAUI.dll" target="lib\net6.0-android\Calendars.Plugin.MAUI.dll" />
+     <file src="Calendars\Calendars.Plugin.MAUI\bin\Release\net6.0-android\Calendars.Plugin.MAUI.xml" target="lib\net6.0-android\Calendars.Plugin.MAUI.xml" />
+     <file src="Calendars\Calendars.Plugin.MAUI\bin\Release\net6.0-ios\Calendars.Plugin.MAUI.dll" target="lib\net6.0-ios\Calendars.Plugin.MAUI.dll" />
+     <file src="Calendars\Calendars.Plugin.MAUI\bin\Release\net6.0-ios\Calendars.Plugin.MAUI.xml" target="lib\net6.0-ios\Calendars.Plugin.MAUI.xml" />
+     <file src="Calendars\Calendars.Plugin.MAUI\bin\Release\net6.0-maccatalyst\Calendars.Plugin.MAUI.dll" target="lib\net6.0-maccatalyst\Calendars.Plugin.MAUI.dll" />
+     <file src="Calendars\Calendars.Plugin.MAUI\bin\Release\net6.0-maccatalyst\Calendars.Plugin.MAUI.xml" target="lib\net6.0-maccatalyst\Calendars.Plugin.MAUI.xml" />
+     <file src="Calendars\Calendars.Plugin.MAUI\bin\Release\net6.0-windows10.0.19041\Calendars.Plugin.MAUI.dll" target="lib\net6.0-windows\Calendars.Plugin.MAUI.dll" />
+     <file src="Calendars\Calendars.Plugin.MAUI\bin\Release\net6.0-windows10.0.19041\Calendars.Plugin.MAUI.xml" target="lib\net6.0-windows\Calendars.Plugin.MAUI.xml" />
    </files>
 </package>

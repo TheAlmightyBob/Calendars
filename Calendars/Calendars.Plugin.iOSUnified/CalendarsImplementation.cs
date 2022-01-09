@@ -154,7 +154,9 @@ namespace Plugin.Calendars
                 calendar.ExternalID = deviceCalendar.CalendarIdentifier;
 
                 // Update color in case iOS assigned one
+#if !NET6_0
                 if (deviceCalendar.CGColor != null)
+#endif
                 {
                     calendar.Color = ColorConversion.ToHexColor(deviceCalendar.CGColor);
                 }
@@ -394,7 +396,7 @@ namespace Plugin.Calendars
         public async Task<bool> DeleteEventAsync(Calendar calendar, CalendarEvent calendarEvent)
         {
             // TODO: Remove redundant null check after migrating to .net6
-            if (calendar.ExternalID == null || string.IsNullOrEmpty(calendar.ExternalID) 
+            if (calendar.ExternalID == null || string.IsNullOrEmpty(calendar.ExternalID)
                 || calendarEvent.ExternalID == null || string.IsNullOrEmpty(calendarEvent.ExternalID))
             {
                 return false;
@@ -558,7 +560,7 @@ namespace Plugin.Calendars
         ///       check that there exists at least one calendar for that source.
         ///    d. We do not know if we can save to a calendar source until we actually try to do
         ///       so. Hence the repeated save attempts.
-        /// 
+        ///
         /// Full lengthy discussion at https://github.com/TheAlmightyBob/Calendars/issues/10
         /// </remarks>
         /// <returns>The new native calendar.</returns>
