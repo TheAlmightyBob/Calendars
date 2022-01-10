@@ -154,9 +154,7 @@ namespace Plugin.Calendars
                 calendar.ExternalID = deviceCalendar.CalendarIdentifier;
 
                 // Update color in case iOS assigned one
-#if !NET
                 if (deviceCalendar.CGColor != null!)
-#endif
                 {
                     calendar.Color = ColorConversion.ToHexColor(deviceCalendar.CGColor);
                 }
