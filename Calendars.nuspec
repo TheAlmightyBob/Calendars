@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
    <metadata minClientVersion="2.8.1">
        <id>CClarke.Plugin.Calendars</id>
-       <version>1.2.0</version>
+       <version>1.2.0-preview11</version>
        <title>Calendars API Plugin for Xamarin and Windows</title>
        <authors>Caleb Clarke</authors>
        <owners>Caleb Clarke</owners>
@@ -20,7 +20,7 @@ See project site README for usage notes and limitations.
      <releaseNotes>
 1.2.0 changes:
 
-Add .NET MAUI support.
+Add .NET MAUI preview 11 support.
 
 1.1.0 changes:
 
