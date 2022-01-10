@@ -31,7 +31,7 @@ namespace Plugin.Calendars
 
     static ICalendars? CreateCalendars()
     {
-#if NETSTANDARD1_0 || (NET6_0 && !ANDROID && !IOS && !MACCATALYST && !WINDOWS)
+#if NETSTANDARD1_0 || (NET && !ANDROID && !IOS && !MACCATALYST && !WINDOWS)
         return null;
 #else
         return new CalendarsImplementation();
