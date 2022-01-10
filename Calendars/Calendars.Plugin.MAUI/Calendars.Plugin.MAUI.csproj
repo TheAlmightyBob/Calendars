@@ -9,9 +9,9 @@
       <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
       <GenerateDocumentationFile>True</GenerateDocumentationFile>
 
-      <SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-ios'">14.2</SupportedOSPlatformVersion>
-      <SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-maccatalyst'">14.0</SupportedOSPlatformVersion>
-      <SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-android'">21.0</SupportedOSPlatformVersion>
+      <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains(-ios))">14.2</SupportedOSPlatformVersion>
+      <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains(-maccatalyst))">14.0</SupportedOSPlatformVersion>
+      <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains(-android))">21.0</SupportedOSPlatformVersion>
       <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</SupportedOSPlatformVersion>
       <TargetPlatformMinVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</TargetPlatformMinVersion>
     </PropertyGroup>
@@ -27,14 +27,14 @@
       <Compile Include="..\Calendars.Plugin\CrossCalendars.cs" Link="CrossCalendars.cs" />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-android'">
+    <ItemGroup Condition="$(TargetFramework.Contains(-android))">
       <Compile Include="..\Calendars.Plugin.Android\CalendarEventReminderExtensions.cs" Link="Platforms\Android\CalendarEventReminderExtensions.cs" />
       <Compile Include="..\Calendars.Plugin.Android\CalendarsImplementation.cs" Link="Platforms\Android\CalendarsImplementation.cs" />
       <Compile Include="..\Calendars.Plugin.Android\CursorExtensions.cs" Link="Platforms\Android\CursorExtensions.cs" />
       <Compile Include="..\Calendars.Plugin.Android\DateConversions.cs" Link="Platforms\Android\DateConversions.cs" />
       <Compile Include="..\Calendars.Plugin.Android\ReminderMethodExtensions.cs" Link="Platforms\Android\ReminderMethodExtensions.cs" />
     </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-ios'">
+    <ItemGroup Condition="$(TargetFramework.Contains(-ios))">
       <Compile Include="..\Calendars.Plugin.iOSUnified\CalendarEventReminderExtensions.cs" Link="Platforms\iOS\CalendarEventReminderExtensions.cs" />
       <Compile Include="..\Calendars.Plugin.iOSUnified\CalendarsImplementation.cs" Link="Platforms\iOS\CalendarsImplementation.cs" />
       <Compile Include="..\Calendars.Plugin.iOSUnified\ColorConversion.cs" Link="Platforms\iOS\ColorConversion.cs" />
@@ -43,7 +43,7 @@
       <Compile Include="..\Calendars.Plugin.iOSUnified\EKCalendarExtensions.cs" Link="Platforms\iOS\EKCalendarExtensions.cs" />
       <Compile Include="..\Calendars.Plugin.iOSUnified\EKEventExtensions.cs" Link="Platforms\iOS\EKEventExtensions.cs" />
     </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-maccatalyst'">
+    <ItemGroup Condition="$(TargetFramework.Contains(-maccatalyst))">
       <Compile Include="..\Calendars.Plugin.iOSUnified\CalendarEventReminderExtensions.cs" Link="Platforms\MacCatalyst\CalendarEventReminderExtensions.cs" />
       <Compile Include="..\Calendars.Plugin.iOSUnified\CalendarsImplementation.cs" Link="Platforms\MacCatalyst\CalendarsImplementation.cs" />
       <Compile Include="..\Calendars.Plugin.iOSUnified\ColorConversion.cs" Link="Platforms\MacCatalyst\ColorConversion.cs" />
