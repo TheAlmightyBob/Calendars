@@ -155,7 +155,7 @@ namespace Plugin.Calendars
 
                 // Update color in case iOS assigned one
 #if !NET
-                if (deviceCalendar.CGColor != null)
+                if (deviceCalendar.CGColor != null!)
 #endif
                 {
                     calendar.Color = ColorConversion.ToHexColor(deviceCalendar.CGColor);
