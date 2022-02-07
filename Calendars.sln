@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2020
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32106.194
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendars.Plugin.iOSUnified", "Calendars\Calendars.Plugin.iOSUnified\Calendars.Plugin.iOSUnified.csproj", "{2882AEEB-D4CD-4EB9-8A6C-6653B33681F0}"
 EndProject
@@ -26,9 +26,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendars.Plugin.UWP", "Cal
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendars.Plugin.UWP.Tests", "Tests\Calendars.Plugin.UWP.Tests\Calendars.Plugin.UWP.Tests.csproj", "{449591A6-F24A-437D-857A-212BEF68E4D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendars.Plugin.Abstractions", "Calendars\Calendars.Plugin.Abstractions\Calendars.Plugin.Abstractions.csproj", "{AE8E6FFF-DA18-4ECB-B0B0-ABC527B5DE32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calendars.Plugin.Abstractions", "Calendars\Calendars.Plugin.Abstractions\Calendars.Plugin.Abstractions.csproj", "{AE8E6FFF-DA18-4ECB-B0B0-ABC527B5DE32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendars.Plugin", "Calendars\Calendars.Plugin\Calendars.Plugin.csproj", "{D62199DA-C277-4422-8344-F80886CE3861}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calendars.Plugin", "Calendars\Calendars.Plugin\Calendars.Plugin.csproj", "{D62199DA-C277-4422-8344-F80886CE3861}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -293,7 +293,6 @@ Global
 		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E}.Release|x64.ActiveCfg = Release|Any CPU
 		{E6284EB0-BDB0-4D38-AFC4-ECDC7BFF6D6E}.Release|x86.ActiveCfg = Release|Any CPU
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Ad-Hoc|Android.ActiveCfg = Release|Any CPU
-		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Ad-Hoc|Android.Build.0 = Release|Any CPU
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Ad-Hoc|ARM.ActiveCfg = Release|ARM
@@ -309,7 +308,6 @@ Global
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Ad-Hoc|x86.ActiveCfg = Release|x86
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Ad-Hoc|x86.Build.0 = Release|x86
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.AppStore|Android.ActiveCfg = Release|Any CPU
-		{75932C54-5006-4368-A61A-EF7F7AB216BD}.AppStore|Android.Build.0 = Release|Any CPU
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.AppStore|Any CPU.Build.0 = Release|Any CPU
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.AppStore|ARM.ActiveCfg = Release|ARM
@@ -325,7 +323,6 @@ Global
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.AppStore|x86.ActiveCfg = Release|x86
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.AppStore|x86.Build.0 = Release|x86
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Debug|Android.ActiveCfg = Debug|Any CPU
-		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Debug|Android.Build.0 = Debug|Any CPU
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Debug|ARM.ActiveCfg = Debug|ARM
@@ -341,7 +338,6 @@ Global
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Debug|x86.ActiveCfg = Debug|x86
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Debug|x86.Build.0 = Debug|x86
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Release|Android.ActiveCfg = Release|Any CPU
-		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Release|Android.Build.0 = Release|Any CPU
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Release|ARM.ActiveCfg = Release|ARM
@@ -357,7 +353,6 @@ Global
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Release|x86.ActiveCfg = Release|x86
 		{75932C54-5006-4368-A61A-EF7F7AB216BD}.Release|x86.Build.0 = Release|x86
 		{449591A6-F24A-437D-857A-212BEF68E4D2}.Ad-Hoc|Android.ActiveCfg = Release|x86
-		{449591A6-F24A-437D-857A-212BEF68E4D2}.Ad-Hoc|Android.Build.0 = Release|x86
 		{449591A6-F24A-437D-857A-212BEF68E4D2}.Ad-Hoc|Android.Deploy.0 = Release|x86
 		{449591A6-F24A-437D-857A-212BEF68E4D2}.Ad-Hoc|Any CPU.ActiveCfg = Release|x86
 		{449591A6-F24A-437D-857A-212BEF68E4D2}.Ad-Hoc|Any CPU.Build.0 = Release|x86
@@ -381,7 +376,6 @@ Global
 		{449591A6-F24A-437D-857A-212BEF68E4D2}.Ad-Hoc|x86.Build.0 = Release|x86
 		{449591A6-F24A-437D-857A-212BEF68E4D2}.Ad-Hoc|x86.Deploy.0 = Release|x86
 		{449591A6-F24A-437D-857A-212BEF68E4D2}.AppStore|Android.ActiveCfg = Release|x86
-		{449591A6-F24A-437D-857A-212BEF68E4D2}.AppStore|Android.Build.0 = Release|x86
 		{449591A6-F24A-437D-857A-212BEF68E4D2}.AppStore|Android.Deploy.0 = Release|x86
 		{449591A6-F24A-437D-857A-212BEF68E4D2}.AppStore|Any CPU.ActiveCfg = Release|x86
 		{449591A6-F24A-437D-857A-212BEF68E4D2}.AppStore|Any CPU.Build.0 = Release|x86
