@@ -24,4 +24,4 @@ jobs:
       run: nuget restore
       
     - name: Build
-      run: msbuild Tests/Calendars.Plugin.Android.Tests/Calendars.Plugin.Android.Tests.csproj /p:Platform=Android /p:Configuration=Release
+      run: msbuild /p:Platform=Android /p:Configuration=Release
