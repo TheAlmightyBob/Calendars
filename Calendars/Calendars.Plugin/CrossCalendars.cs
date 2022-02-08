@@ -1,4 +1,4 @@
-﻿using Plugin.Calendars.Abstractions;
+using Plugin.Calendars.Abstractions;
 using System;
 using System.Threading;
 
@@ -31,7 +31,7 @@ namespace Plugin.Calendars
 
     static ICalendars? CreateCalendars()
     {
-#if NETSTANDARD1_0
+#if NETSTANDARD1_0 || (NET && !ANDROID && !IOS && !MACCATALYST && !WINDOWS)
         return null;
 #else
         return new CalendarsImplementation();

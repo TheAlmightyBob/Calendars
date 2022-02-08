@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+      <TargetFrameworks>net6.0;net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
+      <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) and '$(MSBuildRuntimeType)' == 'Full'">$(TargetFrameworks);net6.0-windows10.0.19041</TargetFrameworks>
+      <UseMaui>true</UseMaui>
+      <SingleProject>true</SingleProject>
+      <ImplicitUsings>enable</ImplicitUsings>
+      <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+      <GenerateDocumentationFile>True</GenerateDocumentationFile>
+
+      <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains(-ios))">14.2</SupportedOSPlatformVersion>
+      <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains(-maccatalyst))">14.0</SupportedOSPlatformVersion>
+      <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains(-android))">21.0</SupportedOSPlatformVersion>
+      <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</SupportedOSPlatformVersion>
+      <TargetPlatformMinVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</TargetPlatformMinVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Include="..\Calendars.Plugin.Abstractions\Calendar.cs" Link="Calendar.cs" />
+      <Compile Include="..\Calendars.Plugin.Abstractions\CalendarEvent.cs" Link="CalendarEvent.cs" />
+      <Compile Include="..\Calendars.Plugin.Abstractions\CalendarEventReminder.cs" Link="CalendarEventReminder.cs" />
+      <Compile Include="..\Calendars.Plugin.Abstractions\ICalendars.cs" Link="ICalendars.cs" />
+      <Compile Include="..\Calendars.Plugin.Abstractions\ICalendarsExtensions.cs" Link="ICalendarsExtensions.cs" />
+      <Compile Include="..\Calendars.Plugin.Abstractions\PlatformException.cs" Link="PlatformException.cs" />
+
+      <Compile Include="..\Calendars.Plugin\CrossCalendars.cs" Link="CrossCalendars.cs" />
+    </ItemGroup>
+
+    <ItemGroup Condition="$(TargetFramework.Contains(-android))">
+      <Compile Include="..\Calendars.Plugin.Android\CalendarEventReminderExtensions.cs" Link="Platforms\Android\CalendarEventReminderExtensions.cs" />
+      <Compile Include="..\Calendars.Plugin.Android\CalendarsImplementation.cs" Link="Platforms\Android\CalendarsImplementation.cs" />
+      <Compile Include="..\Calendars.Plugin.Android\CursorExtensions.cs" Link="Platforms\Android\CursorExtensions.cs" />
+      <Compile Include="..\Calendars.Plugin.Android\DateConversions.cs" Link="Platforms\Android\DateConversions.cs" />
+      <Compile Include="..\Calendars.Plugin.Android\ReminderMethodExtensions.cs" Link="Platforms\Android\ReminderMethodExtensions.cs" />
+    </ItemGroup>
+    <ItemGroup Condition="$(TargetFramework.Contains(-ios))">
+      <Compile Include="..\Calendars.Plugin.iOSUnified\CalendarEventReminderExtensions.cs" Link="Platforms\iOS\CalendarEventReminderExtensions.cs" />
+      <Compile Include="..\Calendars.Plugin.iOSUnified\CalendarsImplementation.cs" Link="Platforms\iOS\CalendarsImplementation.cs" />
+      <Compile Include="..\Calendars.Plugin.iOSUnified\ColorConversion.cs" Link="Platforms\iOS\ColorConversion.cs" />
+      <Compile Include="..\Calendars.Plugin.iOSUnified\DateConversionExtensions.cs" Link="Platforms\iOS\DateConversionExtensions.cs" />
+      <Compile Include="..\Calendars.Plugin.iOSUnified\EKAlarmExtensions.cs" Link="Platforms\iOS\EKAlarmExtensions.cs" />
+      <Compile Include="..\Calendars.Plugin.iOSUnified\EKCalendarExtensions.cs" Link="Platforms\iOS\EKCalendarExtensions.cs" />
+      <Compile Include="..\Calendars.Plugin.iOSUnified\EKEventExtensions.cs" Link="Platforms\iOS\EKEventExtensions.cs" />
+    </ItemGroup>
+    <ItemGroup Condition="$(TargetFramework.Contains(-maccatalyst))">
+      <Compile Include="..\Calendars.Plugin.iOSUnified\CalendarEventReminderExtensions.cs" Link="Platforms\MacCatalyst\CalendarEventReminderExtensions.cs" />
+      <Compile Include="..\Calendars.Plugin.iOSUnified\CalendarsImplementation.cs" Link="Platforms\MacCatalyst\CalendarsImplementation.cs" />
+      <Compile Include="..\Calendars.Plugin.iOSUnified\ColorConversion.cs" Link="Platforms\MacCatalyst\ColorConversion.cs" />
+      <Compile Include="..\Calendars.Plugin.iOSUnified\DateConversionExtensions.cs" Link="Platforms\MacCatalyst\DateConversionExtensions.cs" />
+      <Compile Include="..\Calendars.Plugin.iOSUnified\EKAlarmExtensions.cs" Link="Platforms\MacCatalyst\EKAlarmExtensions.cs" />
+      <Compile Include="..\Calendars.Plugin.iOSUnified\EKCalendarExtensions.cs" Link="Platforms\MacCatalyst\EKCalendarExtensions.cs" />
+      <Compile Include="..\Calendars.Plugin.iOSUnified\EKEventExtensions.cs" Link="Platforms\MacCatalyst\EKEventExtensions.cs" />
+    </ItemGroup>
+    <ItemGroup Condition="$(TargetFramework.Contains('-windows'))">
+      <Compile Include="..\Calendars.Plugin.UWP\AppointmentCalendarExtensions.cs" Link="Platforms\Windows\AppointmentCalendarExtensions.cs" />
+      <Compile Include="..\Calendars.Plugin.UWP\AppointmentExtensions.cs" Link="Platforms\Windows\AppointmentExtensions.cs" />
+      <Compile Include="..\Calendars.Plugin.UWP\CalendarsImplementation.cs" Link="Platforms\Windows\CalendarsImplementation.cs" />
+      <Compile Include="..\Calendars.Plugin.UWP\IAsyncActionExtensions.cs" Link="Platforms\Windows\IAsyncActionExtensions.cs" />
+      <Compile Include="..\Calendars.Plugin.UWP\IAsyncOperationExtensions.cs" Link="Platforms\Windows\IAsyncOperationExtensions.cs" />
+    </ItemGroup>
+
+</Project>
