@@ -8,3 +8,5 @@ sudo chmod +x MonoFramework-MDK-6.12.0.145.macos10.xamarin.universal.pkg
 
 # Install Mono 6.12.0.145
 sudo installer -pkg MonoFramework-MDK-6.12.0.145.macos10.xamarin.universal.pkg -target / 
+
+sudo dotnet restore
