@@ -152,12 +152,7 @@ namespace Plugin.Calendars
             {
                 deviceCalendar = CreateEKCalendar(calendar.Name, calendar.Color);
                 calendar.ExternalID = deviceCalendar.CalendarIdentifier;
-
-                // Update color in case iOS assigned one
-                if (deviceCalendar.CGColor != null!)
-                {
-                    calendar.Color = ColorConversion.ToHexColor(deviceCalendar.CGColor);
-                }
+                calendar.Color = ColorConversion.ToHexColor(deviceCalendar.CGColor);
             }
             else
             {
